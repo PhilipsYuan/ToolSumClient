@@ -32,6 +32,7 @@ import App from './App.vue'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import routeSetting from './route/route';
 import './style/global.css'
+import './config/electronAction'
 
 
 const app = createApp(App)

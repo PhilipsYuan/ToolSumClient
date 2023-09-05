@@ -1,8 +1,8 @@
 {
-  "name": "dailyCookFood",
-  "productName": "dailyCookFood",
+  "name": "ToolSumClient",
+  "productName": "ToolSumClient",
   "version": "1.0.0",
-  "description": "dailyCookFood",
+  "description": "ToolSumClient",
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start --inspect-electron",
@@ -51,6 +51,7 @@
     "vue-router": "4"
   },
   "dependencies": {
+    "child_process": "^1.0.2",
     "electron-squirrel-startup": "^1.0.0",
     "python-shell": "^5.0.0"
   }

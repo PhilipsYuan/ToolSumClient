@@ -4,10 +4,12 @@ import {contextBridge, ipcMain, ipcRenderer} from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
     // 渲染器进程到主进程（双向）
+    generateVideo: ( url, name, outPath) => ipcRenderer.invoke('generate-video',  url, name, outPath),
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),
     updateMenus: () => ipcRenderer.send('update-menus'),
     // 主进程到渲染器进程
+    getM3u8DownloadTips: (callback) => ipcRenderer.on('m3u8-download-tip', callback),
 })
 
 window.addEventListener('DOMContentLoaded', () => {
