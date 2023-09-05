@@ -1,4 +1,4 @@
-import got from 'got'
+// import axios from '../util/nodeAxios'
 import {app, ipcMain} from "electron";
 import fs from "fs";
 import { getSecretKeys, getPlayList } from "../util/m3u8Parse"
@@ -6,6 +6,7 @@ import childProcess from "child_process"
 import { deleteDirectory, makeDir } from "../util/fs"
 const basePath = app.getPath('userData')
 const tempSourcePath = `${basePath}/m3u8Video/tempSource`
+const axios = require('axios')
 
 ipcMain.handle('generate-video', generateVideo)
 /**
@@ -16,10 +17,9 @@ async function generateVideo(event, url, name, outPath) {
     makeDir(tempPath)
     const urlObject = new URL(url);
     const host = `${urlObject.protocol}//${urlObject.host}`
-    const res = await got.get(url)
-    console.log("here")
-    const m3u8Data = await downloadSecretKey(res.body, host, tempPath)
-    await downloadTsFiles(m3u8Data, host, tempPath)
+    const res = await axios.get(url)
+    const m3u8Data = await downloadSecretKey(res.data, host, tempPath, urlObject.pathname)
+    await downloadTsFiles(m3u8Data, host, tempPath, urlObject.pathname)
     combineVideo(tempPath, name, outPath)
 }
 
@@ -27,13 +27,18 @@ async function generateVideo(event, url, name, outPath) {
  * 下载解码key，并进行替换,
  * 文件里可能会出现多个
  */
-async function downloadSecretKey(data, host, tempPath) {
+async function downloadSecretKey(data, host, tempPath, pathname) {
     const keys = getSecretKeys(data)
     let i = 0;
     while(i < keys.length) {
-        const url = host + keys[i]
-        const res = await got.get(url)
-        await fs.writeFileSync(`${tempPath}/key${i + 1}.key`, res.body, "utf-8")
+        let url = null
+        if(keys[i][0] !== '/') {
+            url = host + pathname.match(/\/.*\//)[0] + keys[i]
+        } else {
+            url = host + keys[i]
+        }
+        const res = await axios.get(url)
+        await fs.writeFileSync(`${tempPath}/key${i + 1}.key`, res.data, "utf-8")
         i ++
     }
     let m3u8Data = data
@@ -48,8 +53,8 @@ async function downloadSecretKey(data, host, tempPath) {
  * 下载ts文件，并进行替换
  * @returns {Promise<void>}
  */
-async function downloadTsFiles(data, host, tempPath) {
-    global.mainWindow.webContents.send('m3u8-download-tip', '开始下载视频')
+async function downloadTsFiles(data, host, tempPath, pathname) {
+    global.mainWindow.webContents.send('m3u8-download-tip', '下载0%')
     const urls = getPlayList(data)
     const twoUrls = splitArray(urls, 50)
     const length = twoUrls.length
@@ -58,21 +63,28 @@ async function downloadTsFiles(data, host, tempPath) {
             const pros = twoUrls[index]
             const promises = pros.map(async (item, subIndex) => {
                 const number = index * 50 + 1 + subIndex
-                const result =  await getFileAndStore(host + item, number, tempPath)
+                let url = null
+                if(item[0] !== '/') {
+                    url = host + pathname.match(/\/.*\//)[0] + item
+                } else {
+                    url = host + item
+                }
+                const result =  await getFileAndStore(url, number, tempPath)
                 console.log(`完成第${number}个`)
                 return result
             })
             return Promise.all(promises)
-                .then((results) => {
-                    global.mainWindow.webContents.send('m3u8-download-tip', `下载完成${Number((index + 1) / length).toFixed(2)}%`)
+                .then( async (results) => {
+                    global.mainWindow.webContents.send('m3u8-download-tip', `下载完成${Number(((index + 1) / length) * 100).toFixed(2)}%`)
                     index = index + 1
-                    download(index)
+                    return await download(index)
                 })
                 .catch((e) => console.log(e))
+        } else {
+            await replaceTsFileUrls(urls, data, tempPath)
         }
     }
     await download(0)
-    await replaceTsFileUrls(urls, data, tempPath)
 }
 
 async function replaceTsFileUrls(urls, data, tempPath) {
@@ -102,13 +114,13 @@ function splitArray(array, subGroupLength) {
  * 获取分片文件，然后存储到临时文件夹中
  */
 async function getFileAndStore(url, index, tempPath) {
-    const res = await got.get(url, {
+    const res = await axios.get(url, {
         responseType: "arraybuffer",
         headers: {
             "Content-Type": "application/octet-stream",
         }
     })
-    await fs.writeFileSync(`${tempPath}/${index}.ts`, res.body, 'binary')
+    await fs.writeFileSync(`${tempPath}/${index}.ts`, res.data, 'binary')
 }
 
 /**
@@ -116,7 +128,7 @@ async function getFileAndStore(url, index, tempPath) {
  */
 function combineVideo( tempPath, name, outPath) {
     global.mainWindow.webContents.send('m3u8-download-tip', `开始合成`)
-    childProcess.exec(`ffmpeg -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i ${tempPath}/index.m3u8 -c copy ${outPath}/${name}.mp4`, (error, stdout, stderr) => {
+    childProcess.exec(`cd "${tempPath}" && ffmpeg -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -c copy "${outPath}/${name}.mp4"`, (error, stdout, stderr) => {
         if(error) {
             console.error(error)
         } else {

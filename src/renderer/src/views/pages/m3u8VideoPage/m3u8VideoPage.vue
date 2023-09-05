@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     async getInfo() {
-      window.electronAPI.generateVideo("https://vip1.155bf.com/20230829/iJ7RF8jl/1000kb/hls/index.m3u8", 'test', `/Users/smart-philip/Documents/m3u8Test`)
+      window.electronAPI.generateVideo(this.m3u8Url, 'test', `/Users/smart-philip/Documents/m3u8Test`)
     },
     showMessage(message) {
       this.message = message

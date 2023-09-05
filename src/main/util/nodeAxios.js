@@ -1,8 +1,10 @@
 import axios from "axios"
-import httpAdapter from '../../../node_modules/axios/lib/adapters/http';
+// import httpAdapter from 'axios/lib/adapters/http.js';
+
+// axios.getDef
 
 const instance = axios.create({
-    adapter: httpAdapter
+    adapter: ["http"]
 });
 
 export default instance
