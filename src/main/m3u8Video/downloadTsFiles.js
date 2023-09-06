@@ -43,13 +43,13 @@ export async function downloadTsFiles(data, host, tempPath, pathname) {
 async function downloadAllContent(data, host, tempPath, pathname) {
     const urls = getPlayList(data)
     totalTs = urls.length
-    const twoUrls = splitArray(urls, 50)
+    const twoUrls = splitArray(urls, 100)
     const length = twoUrls.length
     async function download(index) {
         if (index < length) {
             const pros = twoUrls[index]
             const promises = pros.map(async (item, subIndex) => {
-                const number = index * 50 + 1 + subIndex
+                const number = index * 100 + 1 + subIndex
                 let url = null
                 if (item[0] !== '/') {
                     url = host + pathname.match(/\/.*\//)[0] + item
@@ -75,7 +75,7 @@ async function downloadAllContent(data, host, tempPath, pathname) {
  * 检测是否有错误ts下载，再次请求
  * @returns {Promise<void>}
  */
-async function checkFirstErrorTs(data, host, pathname, tempPath) {
+async function checkFirstErrorTs(data, host, tempPath, pathname) {
     console.log('出现了请求失败的了')
     console.log(firstError)
     console.log('对失败的进行第二次请求')
@@ -96,7 +96,7 @@ async function checkFirstErrorTs(data, host, pathname, tempPath) {
  * 检测是否有错误ts下载，再次请求
  * @returns {Promise<void>}
  */
-async function checkSecondErrorTs(data, host, pathname, tempPath) {
+async function checkSecondErrorTs(data, host, tempPath, pathname) {
     const promises = firstError.map(async (item, subIndex) => {
         return await getFileAndStore(item.url, item.number, host, pathname, tempPath, thirdError)
     })

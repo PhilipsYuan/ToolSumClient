@@ -31,13 +31,16 @@ import { createApp } from 'vue';
 import App from './App.vue'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import routeSetting from './route/route';
+import "element-plus/theme-chalk/el-message-box.css";
+import "element-plus/theme-chalk/el-message.css";
 import './style/global.css'
 import './config/electronAction'
+import { ElMessage } from 'element-plus'
 
 
 const app = createApp(App)
 window.app = app
-
+app.config.globalProperties.$message = ElMessage
 app.use(routeSetting)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)

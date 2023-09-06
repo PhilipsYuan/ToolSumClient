@@ -2,7 +2,7 @@
   <div>
     <el-form :model="form" label-width="120px">
       <el-form-item label="m3u8链接">
-        <el-input v-model="form.m3u8Url" class="!w-80"/>
+        <el-input v-model="form.m3u8Url" class="!w-160"/>
       </el-form-item>
       <el-form-item label="文件名称">
         <el-input v-model="form.name"  class="!w-80"/>
@@ -33,8 +33,9 @@ export default {
   methods: {
     async getInfo() {
       if (this.form.name && this.form.m3u8Url) {
-        const path = `/Users/smart-philip/Documents/m3u8Test/${thi.form.name}.mp4`
+        const path = `/Users/smart-philip/Documents/m3u8Test/${this.form.name}.mp4`
         const isNotExist = await window.electronAPI.checkOutputFileNotExist(path)
+        console.log(isNotExist)
         if(isNotExist) {
           window.electronAPI.generateVideo(this.form.m3u8Url, this.form.name, `/Users/smart-philip/Documents/m3u8Test`)
         } else {
