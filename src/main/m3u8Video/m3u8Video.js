@@ -1,4 +1,3 @@
-// import axios from '../util/nodeAxios'
 import {app, ipcMain} from "electron";
 import fs from "fs";
 import { getSecretKeys, getPlayList } from "../util/m3u8Parse"
@@ -18,6 +17,7 @@ async function generateVideo(event, url, name, outPath) {
     const urlObject = new URL(url);
     const host = `${urlObject.protocol}//${urlObject.host}`
     const res = await axios.get(url)
+    console.log(res.data)
     const m3u8Data = await downloadSecretKey(res.data, host, tempPath, urlObject.pathname)
     await downloadTsFiles(m3u8Data, host, tempPath, urlObject.pathname)
     combineVideo(tempPath, name, outPath)
@@ -30,22 +30,24 @@ async function generateVideo(event, url, name, outPath) {
 async function downloadSecretKey(data, host, tempPath, pathname) {
     const keys = getSecretKeys(data)
     let i = 0;
-    while(i < keys.length) {
-        let url = null
-        if(keys[i][0] !== '/') {
-            url = host + pathname.match(/\/.*\//)[0] + keys[i]
-        } else {
-            url = host + keys[i]
-        }
-        const res = await axios.get(url)
-        await fs.writeFileSync(`${tempPath}/key${i + 1}.key`, res.data, "utf-8")
-        i ++
-    }
     let m3u8Data = data
-    keys.forEach((item, index) => {
-        m3u8Data = m3u8Data.replace(item, `./key${index + 1}.key`)
-    })
-    await fs.writeFileSync(`${tempPath}/index.m3u8`, m3u8Data, "utf-8")
+    if(keys.length > 0) {
+        while(i < keys.length) {
+            let url = null
+            if(keys[i][0] !== '/') {
+                url = host + pathname.match(/\/.*\//)[0] + keys[i]
+            } else {
+                url = host + keys[i]
+            }
+            const res = await axios.get(url)
+            await fs.writeFileSync(`${tempPath}/key${i + 1}.key`, res.data, "utf-8")
+            i ++
+        }
+        keys.forEach((item, index) => {
+            m3u8Data = m3u8Data.replace(item, `./key${index + 1}.key`)
+        })
+        await fs.writeFileSync(`${tempPath}/index.m3u8`, m3u8Data, "utf-8")
+    }
     return m3u8Data
 }
 

@@ -1,13 +1,17 @@
 export function getSecretKeys(data) {
     const maps = data.match(/#EXT-X-KEY[^\n]*\n/g)
-    const keys = maps.filter((item) => {
-        return /URI/.test(item)
-    })
-    if (keys.length > 0) {
-        return keys.map((item) => item.match(/"[^"]*"/)[0].replace(/"/g, ""))
-    } else {
-        return null
-    }
+     if(maps && maps.length > 0) {
+         const keys = maps.filter((item) => {
+             return /URI/.test(item)
+         })
+         if (keys.length > 0) {
+             return keys.map((item) => item.match(/"[^"]*"/)[0].replace(/"/g, ""))
+         } else {
+             return []
+         }
+     } else {
+         return []
+     }
 }
 
 /**
