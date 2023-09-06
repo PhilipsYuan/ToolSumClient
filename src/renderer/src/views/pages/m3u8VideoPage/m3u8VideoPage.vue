@@ -33,7 +33,13 @@ export default {
   methods: {
     async getInfo() {
       if (this.form.name && this.form.m3u8Url) {
-        window.electronAPI.generateVideo(this.form.m3u8Url, this.form.name, `/Users/smart-philip/Documents/m3u8Test`)
+        const path = `/Users/smart-philip/Documents/m3u8Test/${thi.form.name}.mp4`
+        const isNotExist = await window.electronAPI.checkOutputFileNotExist(path)
+        if(isNotExist) {
+          window.electronAPI.generateVideo(this.form.m3u8Url, this.form.name, `/Users/smart-philip/Documents/m3u8Test`)
+        } else {
+          this.$message.error("输出的文件名称已经存在，请更换一个名称")
+        }
       }
     },
     showMessage(message) {
