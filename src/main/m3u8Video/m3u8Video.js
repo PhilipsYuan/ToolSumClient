@@ -66,6 +66,7 @@ function combineVideo( tempPath, outputPath) {
         if(error) {
             console.error(error)
             sendTips('m3u8-download-tip', `合成失败`)
+            sendTips('m3u8-download-tip', error)
         } else {
             sendTips('m3u8-download-tip', `合成完成`)
             deleteTempSource(tempPath)

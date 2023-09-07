@@ -9,6 +9,7 @@ let firstError = []
 // 再次请求后再出错的暂存
 let secondError = []
 let thirdError = []
+let fourthError = []
 let successTs = 0
 let totalTs = 0
 
@@ -24,6 +25,7 @@ export async function downloadTsFiles(data, host, tempPath, pathname) {
     firstError = [];
     secondError = [];
     thirdError = [];
+    fourthError = [];
     successTs = 0;
     totalTs = 0;
     let m3u8Data = await downloadAllContent(data, host, tempPath, pathname)
@@ -34,6 +36,9 @@ export async function downloadTsFiles(data, host, tempPath, pathname) {
         m3u8Data = await checkSecondErrorTs(m3u8Data, host, tempPath, pathname)
     }
     if (thirdError.length > 0) {
+        m3u8Data = await checkThirdErrorTs(m3u8Data, host, tempPath, pathname)
+    }
+    if (fourthError.length > 0) {
         // 告诉下载失败，请再次重试
         sendTips('m3u8-download-tip', '下载失败，请重新进行下载!')
     }
@@ -43,6 +48,22 @@ export async function downloadTsFiles(data, host, tempPath, pathname) {
 async function downloadAllContent(data, host, tempPath, pathname) {
     const urls = getPlayList(data)
     totalTs = urls.length
+
+    // const promises = urls.map(async (item, subIndex) => {
+    //     const number = 1 + subIndex
+    //     let url = null
+    //     if (item[0] !== '/') {
+    //         url = host + pathname.match(/\/.*\//)[0] + item
+    //     } else {
+    //         url = host + item
+    //     }
+    //     return await getFileAndStore(url, number, item, pathname, tempPath, firstError)
+    // })
+    // return Promise.all(promises)
+    //     .then(async () => {
+    //         return await replaceTsFileUrls(urls, data, tempPath)
+    //     })
+
     const twoUrls = splitArray(urls, 100)
     const length = twoUrls.length
     async function download(index) {
@@ -88,7 +109,8 @@ async function checkFirstErrorTs(data, host, tempPath, pathname) {
             firstError.forEach((item, index) => {
                 m3u8Data = m3u8Data.replace(item.item, `./${item.number}.ts`)
             })
-            return await fs.writeFileSync(`${tempPath}/index.m3u8`, m3u8Data, "utf-8")
+            await fs.writeFileSync(`${tempPath}/index.m3u8`, m3u8Data, "utf-8")
+            return m3u8Data
         })
 }
 
@@ -97,7 +119,10 @@ async function checkFirstErrorTs(data, host, tempPath, pathname) {
  * @returns {Promise<void>}
  */
 async function checkSecondErrorTs(data, host, tempPath, pathname) {
-    const promises = firstError.map(async (item, subIndex) => {
+    console.log('第二次请求失败了')
+    console.log(secondError)
+    console.log('对失败的进行第三次请求')
+    const promises = secondError.map(async (item, subIndex) => {
         return await getFileAndStore(item.url, item.number, host, pathname, tempPath, thirdError)
     })
     return Promise.all(promises)
@@ -106,7 +131,30 @@ async function checkSecondErrorTs(data, host, tempPath, pathname) {
             secondError.forEach((item, index) => {
                 m3u8Data = m3u8Data.replace(item.item, `./${item.number}.ts`)
             })
-            return await fs.writeFileSync(`${tempPath}/index.m3u8`, m3u8Data, "utf-8")
+            await fs.writeFileSync(`${tempPath}/index.m3u8`, m3u8Data, "utf-8")
+            return m3u8Data
+        })
+}
+
+/**
+ * 检测是否有错误ts下载，再次请求
+ * @returns {Promise<void>}
+ */
+async function checkThirdErrorTs(data, host, tempPath, pathname) {
+    console.log('第三次请求失败了')
+    console.log(thirdError)
+    console.log('对失败的进行第四次请求')
+    const promises = thirdError.map(async (item, subIndex) => {
+        return await getFileAndStore(item.url, item.number, host, pathname, tempPath, fourthError)
+    })
+    return Promise.all(promises)
+        .then(async () => {
+            let m3u8Data = data
+            thirdError.forEach((item, index) => {
+                m3u8Data = m3u8Data.replace(item.item, `./${item.number}.ts`)
+            })
+            await fs.writeFileSync(`${tempPath}/index.m3u8`, m3u8Data, "utf-8")
+            return m3u8Data
         })
 }
 
@@ -132,6 +180,7 @@ async function replaceTsFileUrls(urls, data, tempPath) {
  */
 async function getFileAndStore(url, number, item, pathname, tempPath, errorList) {
     const result = await axios.get(url, {
+        timeout: 10000,
         responseType: "arraybuffer",
         headers: {
             "Content-Type": "application/octet-stream",
