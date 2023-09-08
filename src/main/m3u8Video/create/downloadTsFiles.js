@@ -1,7 +1,7 @@
-import {getPlayList} from "../util/m3u8Parse";
+import {getPlayList} from "../../util/m3u8Parse";
 import fs from "fs";
-import {sendTips} from '../util/electronSendTips'
-import Throttle from '../util/throttle'
+import {sendTips} from '../../util/electronSendTips'
+import Throttle from '../../util/throttle'
 const axios = require('axios')
 
 // 请求出错的暂存

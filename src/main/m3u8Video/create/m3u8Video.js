@@ -1,9 +1,10 @@
 import {app, ipcMain} from "electron";
 import fs from "fs";
-import { getSecretKeys } from "../util/m3u8Parse"
-import { deleteDirectory, makeDir } from "../util/fs"
+import { getSecretKeys } from "../../util/m3u8Parse"
+import { deleteDirectory, makeDir } from "../../util/fs"
 import { downloadTsFiles } from './downloadTsFiles'
-import {sendTips} from '../util/electronSendTips'
+import {sendTips} from '../../util/electronSendTips'
+import { newFinishedRecord } from '../finishList/finishList'
 import childProcess from 'child_process'
 const ffmpegPath = __dirname + '/darwin-x64/ffmpeg'
 const axios = require('axios')
@@ -27,7 +28,7 @@ async function generateVideo(event, url, name, outPath) {
         const res = await axios.get(url)
         const m3u8Data = await downloadSecretKey(res.data, host, tempPath, urlObject.pathname)
         await downloadTsFiles(m3u8Data, host, tempPath, urlObject.pathname)
-        combineVideo(tempPath, outputPath)
+        combineVideo(tempPath, outputPath, name, url)
     }
 }
 
@@ -62,7 +63,7 @@ async function downloadSecretKey(data, host, tempPath, pathname) {
 /**
  * 合并，并生成视频
  */
-function combineVideo(tempPath, outputPath) {
+function combineVideo(tempPath, outputPath, name, url) {
     sendTips('m3u8-download-tip', `合成中...`)
     childProcess.exec(`cd "${tempPath}" && ${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -c copy "${outputPath}"`, (error, stdout, stderr) => {
         if(error) {
@@ -72,6 +73,11 @@ function combineVideo(tempPath, outputPath) {
         } else {
             sendTips('m3u8-download-tip', `合成完成`)
             deleteTempSource(tempPath)
+            newFinishedRecord({
+                name: name,
+                filePath: outputPath,
+                m3u8Url: url
+            })
         }
     })
 }

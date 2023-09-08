@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getDownloadSetting: () => ipcRenderer.invoke('get-download-setting'),
     setDownloadSetting: (data) => ipcRenderer.invoke('set-download-setting',  data),
     openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
+    getFinishList: () => ipcRenderer.invoke('get-m3u8-finish-list'),
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),
     updateMenus: () => ipcRenderer.send('update-menus'),
