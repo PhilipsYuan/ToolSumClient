@@ -46,7 +46,8 @@ export async function downloadTsFiles(data, host, tempPath, pathname) {
 }
 
 async function downloadAllContent(data, host, tempPath, pathname) {
-    const urls = getPlayList(data)
+    const {urls, httpsUrls } = getPlayList(data)
+    const m3u8Data = await deleteAdLinks(data, host, httpsUrls, tempPath)
     totalTs = urls.length
 
     // const promises = urls.map(async (item, subIndex) => {
@@ -85,7 +86,7 @@ async function downloadAllContent(data, host, tempPath, pathname) {
                     return await download(index)
                 })
         } else {
-            return await replaceTsFileUrls(urls, data, tempPath)
+            return await replaceTsFileUrls(urls, m3u8Data, tempPath)
         }
     }
 
@@ -97,7 +98,7 @@ async function downloadAllContent(data, host, tempPath, pathname) {
  * @returns {Promise<void>}
  */
 async function checkFirstErrorTs(data, host, tempPath, pathname) {
-    console.log('出现了请求失败的了')
+    console.log('出现了请求失败了')
     console.log(firstError)
     console.log('对失败的进行第二次请求')
     const promises = firstError.map(async (item, subIndex) => {
@@ -216,4 +217,17 @@ function splitArray(array, subGroupLength) {
         newArray.push(array.slice(index, index += subGroupLength));
     }
     return newArray;
+}
+
+/**
+ * 删除m3u8里的广告
+ */
+async function deleteAdLinks(data, host, httpsUrl, tempPath) {
+    let m3u8Data = data
+    httpsUrl.forEach((item) => {
+        const reg = new RegExp(`#EXTINF:.*,[\n\r]${item}`, 'g')
+        m3u8Data = m3u8Data.replace(reg, ``)
+    })
+    await fs.writeFileSync(`${tempPath}/index.m3u8`, m3u8Data, "utf-8")
+    return m3u8Data
 }
