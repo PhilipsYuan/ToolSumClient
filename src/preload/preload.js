@@ -6,6 +6,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // 渲染器进程到主进程（双向）
     generateVideo: ( url, name, outPath) => ipcRenderer.invoke('generate-video',  url, name, outPath),
     checkOutputFileNotExist: (outputPath) => ipcRenderer.invoke('check-output-file-not-exist',  outputPath),
+    getDownloadSetting: () => ipcRenderer.invoke('get-download-setting'),
+    setDownloadSetting: (data) => ipcRenderer.invoke('set-download-setting',  data),
+    openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),
     updateMenus: () => ipcRenderer.send('update-menus'),

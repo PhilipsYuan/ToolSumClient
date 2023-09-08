@@ -32,5 +32,5 @@ function getAppSettingsDB () {
     return settingsDB
 }
 
-export const getM3u8VideoDownloadListDB = getM3u8VideoDownloadListDB()
+export const m3u8VideoDownloadListDB = getM3u8VideoDownloadListDB()
 export const settingsDB = getAppSettingsDB()

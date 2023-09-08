@@ -5,6 +5,9 @@
         <el-menu-item index="1" @click="goPath('/')">
           <span>m3u8视频下载</span>
         </el-menu-item>
+        <el-menu-item index="2" @click="goPath('/setting')">
+          <span>设置</span>
+        </el-menu-item>
       </el-menu>
       <div class="w-full p-8">
         <router-view/>
