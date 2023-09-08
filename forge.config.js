@@ -1,6 +1,6 @@
 module.exports = {
   packagerConfig: {
-    icon: './icons/icons/'
+    icon: './icons/icons/',
   },
   rebuildConfig: {},
   makers: [

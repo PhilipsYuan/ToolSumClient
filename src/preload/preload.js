@@ -1,6 +1,6 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
-import {contextBridge, ipcMain, ipcRenderer} from 'electron'
+import {contextBridge, ipcRenderer} from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
     // 渲染器进程到主进程（双向）

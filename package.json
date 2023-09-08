@@ -5,7 +5,7 @@
   "description": "ToolSumClient",
   "main": ".vite/build/main.js",
   "scripts": {
-    "start": "electron-forge start --inspect-electron",
+    "start": "electron-forge start --inspect-electron ",
     "package": "electron-forge package",
     "package-win": "electron-forge package --arch x64 --platform win32",
     "make": "electron-forge make",
@@ -36,7 +36,6 @@
     "electron-icon-builder": "^2.0.1",
     "electron-reload": "^2.0.0-alpha.1",
     "element-plus": "^2.3.3",
-    "got": "^13.0.0",
     "lowdb": "^6.0.0",
     "modclean": "^3.0.0-beta.1",
     "nodemailer": "^6.9.3",
@@ -52,8 +51,6 @@
   "dependencies": {
     "axios": "^1.4.0",
     "child_process": "^1.0.2",
-    "electron-squirrel-startup": "^1.0.0",
-    "node-fetch": "2",
-    "python-shell": "^5.0.0"
+    "electron-squirrel-startup": "^1.0.0"
   }
 }
