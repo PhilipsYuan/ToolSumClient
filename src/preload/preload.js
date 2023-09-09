@@ -10,11 +10,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
     setDownloadSetting: (data) => ipcRenderer.invoke('set-download-setting',  data),
     openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
     getFinishList: () => ipcRenderer.invoke('get-m3u8-finish-list'),
+    deleteM3u8FinishedRecord: (id) => ipcRenderer.invoke('delete-m3u8-finished-record', id),
+    deleteFinishedRecordAndFile: (id) => ipcRenderer.invoke('delete-m3u8-record-and-file', id),
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),
     updateMenus: () => ipcRenderer.send('update-menus'),
+    goToDirectory: (path) => ipcRenderer.send('go-to-directory', path),
     // 主进程到渲染器进程
     getM3u8DownloadTips: (callback) => ipcRenderer.on('m3u8-download-tip', callback),
+    getM3u8DownloadSuccess: (callback) => ipcRenderer.on('m3u8-download-success', callback),
 })
 
 window.addEventListener('DOMContentLoaded', () => {

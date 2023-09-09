@@ -11,7 +11,7 @@ module.exports = {
         "lg": ["1.25rem", "1.75rem"],
         "base": ["1rem", "1.5rem"],
         "sm": ["0.875rem", "1.375rem"],
-        "xs": ["o.75rem", "1.25rem"],
+        "xs": ["0.75rem", "1.25rem"],
       },
       colors: {
         // global grey

@@ -6,6 +6,8 @@ import { downloadTsFiles } from './downloadTsFiles'
 import {sendTips} from '../../util/electronSendTips'
 import { newFinishedRecord } from '../finishList/finishList'
 import childProcess from 'child_process'
+import dayjs from 'dayjs'
+import shortId from 'shortid'
 const ffmpegPath = __dirname + '/darwin-x64/ffmpeg'
 const axios = require('axios')
 const basePath = app.getPath('userData')
@@ -73,11 +75,16 @@ function combineVideo(tempPath, outputPath, name, url) {
         } else {
             sendTips('m3u8-download-tip', `合成完成`)
             deleteTempSource(tempPath)
+            const id = shortId.generate()
+            const date = dayjs(new Date).format('YYYY-MM-DD HH:mm')
             newFinishedRecord({
                 name: name,
                 filePath: outputPath,
-                m3u8Url: url
+                m3u8Url: url,
+                id: id,
+                date: date
             })
+            sendTips('m3u8-download-success')
         }
     })
 }

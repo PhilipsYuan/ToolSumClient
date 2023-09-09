@@ -7,3 +7,7 @@ import { useService } from "../service/service";
 window.electronAPI.getM3u8DownloadTips(async (event, message) => {
     useService("showM3u8DownloadMessage", message)
 })
+
+window.electronAPI.getM3u8DownloadSuccess((event, message) => {
+    useService("getM3u8DownloadSuccess")
+})
