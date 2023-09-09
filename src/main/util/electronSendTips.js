@@ -29,6 +29,5 @@ export async function openDirectoryDialog() {
  * @returns {Promise<void>}
  */
 export async function goToDirectory(event, path) {
-    console.log('here')
     shell.openPath(path)
 }
