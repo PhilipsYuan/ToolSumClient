@@ -10,6 +10,7 @@ let firstError = []
 let secondError = []
 let thirdError = []
 let fourthError = []
+let fiveError = []
 let successTs = 0
 let totalTs = 0
 
@@ -26,6 +27,7 @@ export async function downloadTsFiles(data, host, tempPath, pathname) {
     secondError = [];
     thirdError = [];
     fourthError = [];
+    fiveError = [];
     successTs = 0;
     totalTs = 0;
     let m3u8Data = await downloadAllContent(data, host, tempPath, pathname)
@@ -39,6 +41,9 @@ export async function downloadTsFiles(data, host, tempPath, pathname) {
         m3u8Data = await checkThirdErrorTs(m3u8Data, host, tempPath, pathname)
     }
     if (fourthError.length > 0) {
+        m3u8Data = await checkFourthErrorTs(m3u8Data, host, tempPath, pathname)
+    }
+    if (fiveError.length > 0) {
         // 告诉下载失败，请再次重试
         sendTips('m3u8-download-tip', '下载失败，请重新进行下载!')
     }
@@ -152,6 +157,28 @@ async function checkThirdErrorTs(data, host, tempPath, pathname) {
         .then(async () => {
             let m3u8Data = data
             thirdError.forEach((item, index) => {
+                m3u8Data = m3u8Data.replace(item.item, `./${item.number}.ts`)
+            })
+            await fs.writeFileSync(`${tempPath}/index.m3u8`, m3u8Data, "utf-8")
+            return m3u8Data
+        })
+}
+
+/**
+ * 检测是否有错误ts下载，再次请求
+ * @returns {Promise<void>}
+ */
+async function checkFourthErrorTs(data, host, tempPath, pathname) {
+    console.log('第四次请求失败了')
+    console.log(fourthError)
+    console.log('对失败的进行第五次请求')
+    const promises = fourthError.map(async (item, subIndex) => {
+        return await getFileAndStore(item.url, item.number, host, pathname, tempPath, fiveError)
+    })
+    return Promise.all(promises)
+        .then(async () => {
+            let m3u8Data = data
+            fourthError.forEach((item, index) => {
                 m3u8Data = m3u8Data.replace(item.item, `./${item.number}.ts`)
             })
             await fs.writeFileSync(`${tempPath}/index.m3u8`, m3u8Data, "utf-8")
