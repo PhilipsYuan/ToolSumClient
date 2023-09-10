@@ -67,7 +67,9 @@ async function downloadSecretKey(data, host, tempPath, pathname) {
  */
 function combineVideo(tempPath, outputPath, name, url) {
     sendTips('m3u8-download-tip', `合成中...`)
-    childProcess.exec(`cd "${tempPath}" && ${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -c copy "${outputPath}"`, (error, stdout, stderr) => {
+    childProcess.exec(`cd "${tempPath}" && ${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -c copy "${outputPath}"`, {
+        maxBuffer: 5 * 1024 * 1024,
+    },(error, stdout, stderr) => {
         if(error) {
             console.error(error)
             sendTips('m3u8-download-tip', `合成失败`)
