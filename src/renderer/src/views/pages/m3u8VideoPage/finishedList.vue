@@ -52,11 +52,10 @@ export default {
   },
   methods: {
     openFolder(filePath) {
-      const path = filePath.substring(0, filePath.lastIndexOf('/'))
-      window.electronAPI.goToDirectory(path)
+      window.electronAPI.goToDirectory(filePath)
     },
     openVideoFile(filePath) {
-      window.electronAPI.goToDirectory(filePath)
+      window.electronAPI.openDirectoryAndFile(filePath)
     },
     async deleteRecord(id) {
       await window.electronAPI.deleteM3u8FinishedRecord(id)

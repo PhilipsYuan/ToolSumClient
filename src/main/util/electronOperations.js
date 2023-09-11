@@ -2,6 +2,7 @@ import {dialog, ipcMain, shell} from 'electron'
 
 ipcMain.handle('open-directory-dialog', openDirectoryDialog)
 ipcMain.on('go-to-directory', goToDirectory)
+ipcMain.on('open-directory-and-file', openDirectoryAndFile)
 /**
  * 后端向前端推送信息
  * @param name
@@ -25,9 +26,19 @@ export async function openDirectoryDialog() {
 }
 
 /**
- * 跳转到某个文件目录
+ * 跳转到某个文件
  * @returns {Promise<void>}
  */
 export async function goToDirectory(event, path) {
-    shell.openPath(path)
+    shell.showItemInFolder(path)
+}
+
+/**
+ * 打开某个文件
+ * @param event
+ * @param path
+ * @returns {Promise<void>}
+ */
+export async function openDirectoryAndFile(event, path) {
+    await shell.openPath(path)
 }

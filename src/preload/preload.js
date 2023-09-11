@@ -16,9 +16,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     quitApp: () => ipcRenderer.send('quit-app'),
     updateMenus: () => ipcRenderer.send('update-menus'),
     goToDirectory: (path) => ipcRenderer.send('go-to-directory', path),
+    openDirectoryAndFile: (path) => ipcRenderer.send('open-directory-and-file', path),
     // 主进程到渲染器进程
     getM3u8DownloadTips: (callback) => ipcRenderer.on('m3u8-download-tip', callback),
     getM3u8DownloadSuccess: (callback) => ipcRenderer.on('m3u8-download-success', callback),
+    getM3u8DownloadFailure: (callback) => ipcRenderer.on('m3u8-download-url-failure', callback)
 })
 
 window.addEventListener('DOMContentLoaded', () => {

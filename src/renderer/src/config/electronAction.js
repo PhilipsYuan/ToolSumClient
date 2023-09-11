@@ -11,3 +11,7 @@ window.electronAPI.getM3u8DownloadTips(async (event, message) => {
 window.electronAPI.getM3u8DownloadSuccess((event, message) => {
     useService("getM3u8DownloadSuccess")
 })
+
+window.electronAPI.getM3u8DownloadFailure((event, message) => {
+    useService("getM3u8DownloadFailure", message)
+})

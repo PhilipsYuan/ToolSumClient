@@ -1,6 +1,6 @@
 import {getPlayList} from "../../util/m3u8Parse";
 import fs from "fs";
-import {sendTips} from '../../util/electronSendTips'
+import {sendTips} from '../../util/electronOperations'
 import Throttle from '../../util/throttle'
 const axios = require('axios')
 

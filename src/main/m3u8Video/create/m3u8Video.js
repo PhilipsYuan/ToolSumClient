@@ -3,7 +3,7 @@ import fs from "fs";
 import { getSecretKeys } from "../../util/m3u8Parse"
 import { deleteDirectory, makeDir } from "../../util/fs"
 import { downloadTsFiles } from './downloadTsFiles'
-import {sendTips} from '../../util/electronSendTips'
+import {sendTips} from '../../util/electronOperations'
 import { newFinishedRecord } from '../finishList/finishList'
 import childProcess from 'child_process'
 import dayjs from 'dayjs'
@@ -27,10 +27,15 @@ async function generateVideo(event, url, name, outPath) {
         makeDir(tempPath)
         const urlObject = new URL(url);
         const host = `${urlObject.protocol}//${urlObject.host}`
-        const res = await axios.get(url)
-        const m3u8Data = await downloadSecretKey(res.data, host, tempPath, urlObject.pathname)
-        await downloadTsFiles(m3u8Data, host, tempPath, urlObject.pathname)
-        combineVideo(tempPath, outputPath, name, url)
+        axios.get(url)
+            .then(async (res) => {
+                const m3u8Data = await downloadSecretKey(res.data, host, tempPath, urlObject.pathname)
+                await downloadTsFiles(m3u8Data, host, tempPath, urlObject.pathname)
+                combineVideo(tempPath, outputPath, name, url)
+            })
+            .catch((res) => {
+                sendTips('m3u8-download-url-failure', '下载资源失败，请重新尝试或者更换个下载资源')
+            })
     }
 }
 
@@ -71,9 +76,7 @@ function combineVideo(tempPath, outputPath, name, url) {
         maxBuffer: 5 * 1024 * 1024,
     },(error, stdout, stderr) => {
         if(error) {
-            console.error(error)
-            sendTips('m3u8-download-tip', `合成失败`)
-            sendTips('m3u8-download-tip', error)
+            sendTips('m3u8-download-url-failure', error)
         } else {
             sendTips('m3u8-download-tip', `合成完成`)
             deleteTempSource(tempPath)

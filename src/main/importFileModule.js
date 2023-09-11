@@ -1,5 +1,5 @@
 import './pdf2word/pdf2word'
 import './m3u8Video/create/m3u8Video'
 import './settings/settings'
-import './util/electronSendTips'
+import './util/electronOperations'
 import './m3u8Video/finishList/finishList'

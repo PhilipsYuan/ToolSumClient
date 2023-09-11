@@ -28,5 +28,5 @@ body {
 }
 
 .icon-button {
-    @apply p-0.5 rounded-md hover:bg-gray-200 !w-6 !h-6 hover:text-blue-500
+    @apply p-0.5 rounded-md hover:bg-gray-200 !w-6 !h-6 hover:!text-blue-500
 }
