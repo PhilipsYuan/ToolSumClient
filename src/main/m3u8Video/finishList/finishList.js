@@ -23,9 +23,25 @@ export async function newFinishedRecord (data) {
  * 获取历史记录。
  * @returns {Promise<*|[]|*[]>}
  */
-async function getFinishList () {
-    const list = m3u8VideoDownloadListDB.data.downloadList
-    return checkListStatus(list) || []
+async function getFinishList (event, query) {
+    if(query) {
+        const regex = new RegExp(query)
+        if(isUrl(query)) {
+            const list  = m3u8VideoDownloadListDB.data.downloadList.filter((item) => {
+                return regex.test(item.m3u8Url)
+            })
+            return list || []
+        } else {
+
+            const list  = m3u8VideoDownloadListDB.data.downloadList.filter((item) => {
+                return regex.test(item.name)
+            })
+            return list || []
+        }
+    } else {
+        const list = m3u8VideoDownloadListDB.data.downloadList
+        return checkListStatus(list) || []
+    }
 }
 
 /**
@@ -85,4 +101,8 @@ export function checkListStatus (list) {
         }
     })
     return list
+}
+
+function isUrl(str) {
+    return /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(str)
 }

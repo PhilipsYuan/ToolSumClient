@@ -31,6 +31,7 @@
         </el-form-item>
         <el-form-item label="">
           <el-button :disabled="downloadButtonStatus" type="primary" @click="getInfo">下载</el-button>
+          <el-button :disabled="downloadButtonStatus" @click="clearInput">清空</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -49,14 +50,16 @@ export default {
         name: ""
       },
       downloadButtonStatus: false,
-      downloadPath: "",
+      downloadPath: "11",
       message: "未进行下载",
       errorStatus: false
     }
   },
-  async mounted() {
+  async beforeCreate() {
     const downloadSetting = await window.electronAPI.getDownloadSetting()
     this.downloadPath = downloadSetting.downloadPath || ""
+  },
+  async mounted() {
     addService('showM3u8DownloadMessage', this.showMessage.bind(this))
     addService('getM3u8DownloadSuccess', this.getDownloadSuccess.bind(this))
     addService('getM3u8DownloadFailure', this.getDownloadFailure.bind(this))
@@ -95,6 +98,10 @@ export default {
         return true
       }
     },
+    clearInput() {
+      this.form.name = ''
+      this.form.m3u8Url = ''
+    },
     showMessage(message) {
       this.errorStatus = false
       this.message = message
@@ -112,7 +119,7 @@ export default {
     },
     isUrl(str) {
       return /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(str)
-    }
+    },
   }
 }
 </script>

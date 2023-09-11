@@ -1,6 +1,6 @@
 <template>
   <el-config-provider :locale="zhCn">
-    <div class="flex">
+    <div class="flex h-calc(100vh-48px)" style="height: calc(100vh - 48px)">
       <el-menu default-active="1">
         <el-menu-item index="1" @click="goPath('/')">
           <span>m3u8视频下载</span>
@@ -9,7 +9,7 @@
           <span>设置</span>
         </el-menu-item>
       </el-menu>
-      <div class="w-full p-8">
+      <div class="w-full pl-9">
         <router-view/>
       </div>
     </div>

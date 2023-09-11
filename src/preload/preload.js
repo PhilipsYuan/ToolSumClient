@@ -9,7 +9,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getDownloadSetting: () => ipcRenderer.invoke('get-download-setting'),
     setDownloadSetting: (data) => ipcRenderer.invoke('set-download-setting',  data),
     openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
-    getFinishList: () => ipcRenderer.invoke('get-m3u8-finish-list'),
+    getFinishList: (query) => ipcRenderer.invoke('get-m3u8-finish-list', query),
     deleteM3u8FinishedRecord: (id) => ipcRenderer.invoke('delete-m3u8-finished-record', id),
     deleteFinishedRecordAndFile: (id) => ipcRenderer.invoke('delete-m3u8-record-and-file', id),
     checkDownloadUrlNotExist: (url) => ipcRenderer.invoke('check-download-url-not-exist', url),
