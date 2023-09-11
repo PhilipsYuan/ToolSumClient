@@ -63,26 +63,36 @@ export default {
   },
   methods: {
     async getInfo() {
-      if (this.downloadPath) {
-        if (this.form.name && this.form.m3u8Url) {
-          if(this.isUrl(this.form.m3u8Url)) {
-            this.downloadButtonStatus = true
-            const path = `${this.downloadPath}/${this.form.name}.mp4`
-            const isNotExist = await window.electronAPI.checkOutputFileNotExist(path)
-            if (isNotExist) {
-              window.electronAPI.generateVideo(this.form.m3u8Url, this.form.name, this.downloadPath)
-            } else {
-              this.$message.error("输出的文件名称已经存在，请更换一个名称")
-            }
-          } else {
-            this.$message.error("链接格式不正确, 请确认链接正确后，再进行下载！")
-          }
-
-        } else {
-          this.$message.error("请先输入链接和文件名称，再进行下载")
-        }
-      } else {
+      if(await this.checkDownloadCondition()) {
+        this.downloadButtonStatus = true
+        window.electronAPI.generateVideo(this.form.m3u8Url, this.form.name, this.downloadPath)
+      }
+    },
+    // 检验下载的条件
+    async checkDownloadCondition() {
+      if (!this.downloadPath) {
         this.$message.error('您还没有设置存储地址，请先去设置里设置存储地址，再回来下载！')
+         return false
+      } else if(!(this.form.name && this.form.m3u8Url)) {
+        this.$message.error("请先输入链接和文件名称，再进行下载")
+        return false
+      } else if(!this.isUrl(this.form.m3u8Url)){
+        this.$message.error("链接格式不正确, 请确认链接正确后，再进行下载！")
+        return false
+      } else {
+        const m3u8UrlIsNotDownloaded = await window.electronAPI.checkDownloadUrlNotExist(this.form.m3u8Url)
+        console.log(m3u8UrlIsNotDownloaded)
+        if(!m3u8UrlIsNotDownloaded) {
+          this.$message.error("当前资源已经下载过了，请到已完成里进行查看！")
+          return false
+        }
+        const path = `${this.downloadPath}/${this.form.name}.mp4`
+        const isNotExist = await window.electronAPI.checkOutputFileNotExist(path)
+        if(!isNotExist) {
+          this.$message.error("输出的文件名称已经存在，请更换一个名称")
+          return false
+        }
+        return true
       }
     },
     showMessage(message) {

@@ -25,6 +25,7 @@
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item v-if="item.isExist" @click="openVideoFile(item.filePath)">播放</el-dropdown-item>
+                <el-dropdown-item @click="copyLink(item.m3u8Url)">复制资源链接</el-dropdown-item>
                 <el-dropdown-item @click="deleteRecord(item.id)">删除记录</el-dropdown-item>
                 <el-dropdown-item @click="deleteRecordAndFile(item.id)" v-if="item.isExist">删除记录和文件</el-dropdown-item>
               </el-dropdown-menu>
@@ -69,6 +70,9 @@ export default {
     },
     async getFinishList() {
       this.list = await window.electronAPI.getFinishList()
+    },
+    copyLink(url) {
+      navigator.clipboard.writeText(url)
     }
   }
 }

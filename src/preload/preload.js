@@ -1,6 +1,6 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
-import {contextBridge, ipcRenderer} from 'electron'
+import {contextBridge, ipcMain, ipcRenderer} from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
     // 渲染器进程到主进程（双向）
@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getFinishList: () => ipcRenderer.invoke('get-m3u8-finish-list'),
     deleteM3u8FinishedRecord: (id) => ipcRenderer.invoke('delete-m3u8-finished-record', id),
     deleteFinishedRecordAndFile: (id) => ipcRenderer.invoke('delete-m3u8-record-and-file', id),
+    checkDownloadUrlNotExist: (url) => ipcRenderer.invoke('check-download-url-not-exist', url),
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),
     updateMenus: () => ipcRenderer.send('update-menus'),

@@ -5,6 +5,7 @@ import fs from "fs";
 ipcMain.handle('get-m3u8-finish-list', getFinishList)
 ipcMain.handle('delete-m3u8-finished-record', deleteFinishedRecord)
 ipcMain.handle('delete-m3u8-record-and-file', deleteFinishedRecordAndFile)
+ipcMain.handle('check-download-url-not-exist', checkDownloadUrlNotExist)
 
 /**
  * 新增一条历史记录
@@ -58,6 +59,21 @@ export async function deleteFinishedRecordAndFile(event, id) {
         m3u8VideoDownloadListDB.data.downloadList.splice(index, 1)
         await m3u8VideoDownloadListDB.write()
     }
+}
+
+/**
+ * 校验下载链接是否已经下载过
+ * @returns {Promise<boolean>}
+ */
+export async function checkDownloadUrlNotExist(event, url) {
+    const list = m3u8VideoDownloadListDB.data.downloadList
+    const index = list.findIndex((item) => item.m3u8Url === url)
+    if(index > -1) {
+        return false
+    } else {
+        return true
+    }
+
 }
 
 export function checkListStatus (list) {
