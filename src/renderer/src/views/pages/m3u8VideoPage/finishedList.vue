@@ -12,7 +12,7 @@
       </el-input>
     </div>
     <div class="overflow-auto h-[calc(100vh-189px)] px-6 py-4 border rounded-md">
-      <el-card v-for="item in list" class="hover:bg-gray-50 !rounded-md mb-4 last:mb-0" :body-style="{'padding': '8px 20px'}">
+      <el-card v-for="item in list" class="hover:bg-gray-50 !rounded-md mb-4 last:mb-0" :id="item.id" :body-style="{'padding': '8px 20px'}">
         <div class="flex justify-between items-center">
           <div class="font-medium text-base">
             {{ item.name }}

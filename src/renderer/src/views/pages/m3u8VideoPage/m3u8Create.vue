@@ -35,14 +35,17 @@
         </el-form-item>
       </el-form>
     </div>
+    <already-existed-modal ref="alreadyExistedModal" @changeTab="changeTab" />
   </div>
 </template>
 
 <script>
 import {addService, useService} from "../../../service/service";
+import alreadyExistedModal from "./alreadyExistedModal.vue";
 
 export default {
   name: "m3u8Create",
+  components: { alreadyExistedModal },
   data() {
     return {
       form: {
@@ -84,9 +87,8 @@ export default {
         return false
       } else {
         const m3u8UrlIsNotDownloaded = await window.electronAPI.checkDownloadUrlNotExist(this.form.m3u8Url)
-        console.log(m3u8UrlIsNotDownloaded)
-        if(!m3u8UrlIsNotDownloaded) {
-          this.$message.error("当前资源已经下载过了，请到已完成里进行查看！")
+        if(m3u8UrlIsNotDownloaded.id) {
+          this.$refs.alreadyExistedModal.openModal(m3u8UrlIsNotDownloaded)
           return false
         }
         const path = `${this.downloadPath}/${this.form.name}.mp4`
@@ -110,6 +112,8 @@ export default {
       this.errorStatus = false
       this.downloadButtonStatus = false
       useService('getM3u8FinishedList')
+    },
+    changeTab() {
       this.$emit('changeTab', 'finish')
     },
     getDownloadFailure(message) {

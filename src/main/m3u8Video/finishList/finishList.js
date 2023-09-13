@@ -85,9 +85,9 @@ export async function checkDownloadUrlNotExist(event, url) {
     const list = m3u8VideoDownloadListDB.data.downloadList
     const index = list.findIndex((item) => item.m3u8Url === url)
     if(index > -1) {
-        return false
+        return list[index]
     } else {
-        return true
+        return {}
     }
 
 }
