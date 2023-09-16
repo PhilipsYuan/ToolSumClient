@@ -20,13 +20,19 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
             page.removeListener('request', logRequest);
         }
     }
-    await page.on('request', logRequest);
+    page.on('request', logRequest);
     await window.loadURL(htmlUrl);
     const promise = new Promise((resolve) => {
-        page.once('load', () => {
-            window.destroy();
-            resolve(m3u8Url)
-        });
+        let index = 0
+        const interval = setInterval(() => {
+            if(m3u8Url || index > 9) {
+                clearInterval(interval)
+                window.destroy()
+                resolve(m3u8Url)
+            } else {
+                index ++
+            }
+        }, 500)
     })
     return promise
 }
