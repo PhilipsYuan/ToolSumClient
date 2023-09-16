@@ -1,3 +1,43 @@
+import {sendTips} from './electronOperations'
+const axios = require('axios')
+
+export function getCorrectM3u8File(url) {
+    return axios.get(url)
+        .then(async (res) => {
+            const result = checkM3u8FileHasAnotherM3u8(res.data, url)
+             if(result) {
+                 return axios.get(result)
+                     .then(async (res) => {
+                         return res.data
+                     })
+                     .catch((res) => {
+                         sendTips('m3u8-download-url-failure', '下载资源失败，请重新尝试或者更换个下载资源')
+                         return null
+                     })
+             } else {
+                 return res.data
+             }
+        })
+        .catch((res) => {
+            sendTips('m3u8-download-url-failure', '下载资源失败，请重新尝试或者更换个下载资源')
+            return null
+        })
+}
+
+/**
+ * 判断文件里是否还是个m3u8文件的路径
+ */
+function checkM3u8FileHasAnotherM3u8(data, url) {
+    if(/\.m3u8/.test(data)) {
+        const path = data.match(/\/[^.]*.m3u8/)[0]
+        const urlObject = new URL(url);
+        const host = `${urlObject.protocol}//${urlObject.host}`
+        return host + path
+    } else {
+        return false
+    }
+}
+
 export function getSecretKeys(data) {
     const maps = data.match(/#EXT-X-KEY[^\n]*\n/g)
      if(maps && maps.length > 0) {

@@ -23,8 +23,14 @@
         </div>
       </div>
       <el-form :model="form" label-width="85px" label-position="left">
+        <el-form-item label="网址">
+          <div class="flex items-center gap-4">
+            <el-input v-model="form.htmlUrl" class="!w-[600px]"/>
+            <el-button @click="startAnalysis">解析</el-button>
+          </div>
+        </el-form-item>
         <el-form-item label="m3u8链接:">
-          <el-input v-model="form.m3u8Url" class="!w-160"/>
+          <el-input v-model="form.m3u8Url" class="!w-[600px]"/>
         </el-form-item>
         <el-form-item label="文件名称:">
           <el-input v-model="form.name" class="!w-80"/>
@@ -49,13 +55,15 @@ export default {
   data() {
     return {
       form: {
+        htmlUrl: "",
         m3u8Url: "",
         name: ""
       },
       downloadButtonStatus: false,
       downloadPath: "11",
       message: "未进行下载",
-      errorStatus: false
+      errorStatus: false,
+      analysing: false
     }
   },
   async beforeCreate() {
@@ -124,6 +132,14 @@ export default {
     isUrl(str) {
       return /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(str)
     },
+    startAnalysis() {
+      if(this.form.htmlUrl) {
+        // window.electronAPI.createChildBrowserWindow(this.form.htmlUrl)
+        this.analysing = true
+      } else {
+        this.$message.error("请先输入个网址再进行解析")
+      }
+    }
   }
 }
 </script>
