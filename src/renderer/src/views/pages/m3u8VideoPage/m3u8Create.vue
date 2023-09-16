@@ -8,16 +8,16 @@
         </el-icon>
         您还没有设置存储地址，请先去设置栏里设置存储地址，再回来下载！
       </div>
-      <div v-if="message"
+      <div v-if="message.content"
            class="px-4 py-2 border text-sm rounded-md mb-8 bg-gray-50 flex items-center justify-between">
-        <div class="text-green-500 flex items-center" :class="{'!text-red-500': errorStatus}">
-          <el-icon class="!text-green-500 mr-2" :class="{'!text-red-500': errorStatus}">
+        <div class="text-green-500 flex items-center" :class="{'!text-red-500': message.status === 'error'}">
+          <el-icon class="!text-green-500 mr-2" :class="{'!text-red-500': message.status === 'error'}">
             <InfoFilled/>
           </el-icon>
-          {{ message }}
+          {{ message.content }}
         </div>
         <div>
-          <el-icon class="icon-button" @click="message = ''">
+          <el-icon class="icon-button" @click="message.content = ''">
             <CloseBold/>
           </el-icon>
         </div>
@@ -26,7 +26,7 @@
         <el-form-item label="网址">
           <div class="flex items-center gap-4">
             <el-input v-model="form.htmlUrl" class="!w-[600px]"/>
-            <el-button @click="startAnalysis">解析</el-button>
+            <el-button @click="startAnalysis">解析下载链接</el-button>
           </div>
         </el-form-item>
         <el-form-item label="m3u8链接:">
@@ -61,8 +61,10 @@ export default {
       },
       downloadButtonStatus: false,
       downloadPath: "11",
-      message: "未进行下载",
-      errorStatus: false,
+      message: {
+        status: 'success',
+        content: '未进行下载'
+      },
       analysing: false
     }
   },
@@ -72,8 +74,6 @@ export default {
   },
   async mounted() {
     addService('showM3u8DownloadMessage', this.showMessage.bind(this))
-    addService('getM3u8DownloadSuccess', this.getDownloadSuccess.bind(this))
-    addService('getM3u8DownloadFailure', this.getDownloadFailure.bind(this))
   },
   methods: {
     async getInfo() {
@@ -112,31 +112,56 @@ export default {
       this.form.name = ''
       this.form.m3u8Url = ''
     },
-    showMessage(message) {
-      this.errorStatus = false
-      this.message = message
-    },
-    getDownloadSuccess() {
-      this.errorStatus = false
-      this.downloadButtonStatus = false
-      useService('getM3u8FinishedList')
+    showMessage(status, content) {
+      if(status === 'success' && content) {
+        this.message = {
+          status,
+          content
+        }
+      } else {
+        if(status === 'success') {
+          this.downloadButtonStatus = false
+          useService('getM3u8FinishedList')
+        } else {
+          this.message = {
+            status,
+            content
+          }
+          this.downloadButtonStatus = false
+        }
+      }
     },
     changeTab() {
       this.$emit('changeTab', 'finish')
     },
-    getDownloadFailure(message) {
-      this.errorStatus = true
-      this.downloadButtonStatus = false
-      this.message = message
-    },
     isUrl(str) {
       return /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(str)
     },
-    startAnalysis() {
+    async startAnalysis() {
       if(this.form.htmlUrl) {
-        // window.electronAPI.createChildBrowserWindow(this.form.htmlUrl)
-        this.analysing = true
+        this.message = {
+          content: "网页解析中...",
+          status: 'success'
+        }
+        const m3u8Url = await window.electronAPI.getDownloadLinkFromUrl(this.form.htmlUrl)
+        if(m3u8Url) {
+          this.form.m3u8Url = m3u8Url
+          this.message = {
+            content: "网页解析完成，发现可下载的链接。",
+            status: 'success'
+          }
+        } else {
+          this.message = {
+            content: "未发现可以下载的链接！",
+            status: 'error'
+          }
+        }
+        console.log(m3u8Url)
       } else {
+        this.message = {
+          content: "请先输入个网址再进行解析！",
+          status: 'error'
+        }
         this.$message.error("请先输入个网址再进行解析")
       }
     }

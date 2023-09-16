@@ -24,7 +24,7 @@ ipcMain.handle('check-output-file-not-exist', checkOutputFileNotExist)
 async function generateVideo(event, url, name, outPath) {
     const outputPath = `${outPath}/${name}.mp4`
     if (checkOutputFileNotExist(null, outputPath)) {
-        sendTips('m3u8-download-tip', `开始下载`)
+        sendTips('m3u8-download-tip', 'success', `开始下载`)
         const tempPath = `${tempSourcePath}/${name}`
         makeDir(tempPath)
         getCorrectM3u8File(url)
@@ -72,21 +72,21 @@ async function downloadSecretKey(data, host, tempPath, pathname) {
  * 合并，并生成视频
  */
 function combineVideo(tempPath, outputPath, name, url) {
-    sendTips('m3u8-download-tip', `合成中...`)
+    sendTips('m3u8-download-tip', 'success', `合成中...`)
     childProcess.exec(`cd "${tempPath}" && ${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -c copy "${outputPath}"`, {
         maxBuffer: 5 * 1024 * 1024,
     }, (error, stdout, stderr) => {
         if (error) {
-            sendTips('m3u8-download-url-failure', error)
+            sendTips('m3u8-download-tip', 'error', error)
         } else {
-            sendTips('m3u8-download-tip', `合成完成`)
+            sendTips('m3u8-download-tip', 'success',`合成完成`)
             deleteTempSource(tempPath)
             const id = shortId.generate()
             const date = dayjs(new Date).format('YYYY-MM-DD HH:mm')
             newFinishedRecord({
                 name: name, filePath: outputPath, m3u8Url: url, id: id, date: date
             })
-            sendTips('m3u8-download-success')
+            sendTips('m3u8-download-tip', 'success')
         }
     })
 }

@@ -18,11 +18,11 @@ let totalTs = 0
  * 发送下载进度
  */
 const sendProcess = Throttle(() => {
-    sendTips('m3u8-download-tip', `下载完成${Number((successTs / totalTs) * 100).toFixed(2)}%`)
+    sendTips('m3u8-download-tip', 'success', `下载完成${Number((successTs / totalTs) * 100).toFixed(2)}%`)
 }, 1000)
 
 export async function downloadTsFiles(data, host, tempPath, pathname) {
-    sendTips('m3u8-download-tip', '下载0%')
+    sendTips('m3u8-download-tip', 'success', '下载0%')
     firstError = [];
     secondError = [];
     thirdError = [];
@@ -45,7 +45,7 @@ export async function downloadTsFiles(data, host, tempPath, pathname) {
     }
     if (fiveError.length > 0) {
         // 告诉下载失败，请再次重试
-        sendTips('m3u8-download-tip', '下载失败，请重新进行下载!')
+        sendTips('m3u8-download-tip', 'error','下载失败，请重新进行下载!')
     }
     return m3u8Data
 }

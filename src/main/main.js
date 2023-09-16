@@ -2,6 +2,14 @@ import { app, BrowserWindow } from 'electron'
 import path from 'path'
 import './importFileModule'
 
+// 安装puppeteer 方便使用
+const pie = require("puppeteer-in-electron")
+
+async function initialize(){
+  await pie.initialize(app);
+}
+initialize();
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -28,6 +36,7 @@ const createWindow = () => {
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();
   global.mainWindow = mainWindow
+  global.pie = pie
 };
 
 // This method will be called when Electron has finished
