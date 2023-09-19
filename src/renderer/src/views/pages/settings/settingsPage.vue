@@ -11,6 +11,7 @@
         </div>
         <div>
           <el-button type="primary" @click="change">更改</el-button>
+          <el-button type="primary" @click="test">test</el-button>
         </div>
       </div>
     </div>
@@ -27,7 +28,6 @@ export default {
   },
   async mounted() {
     const downloadSetting = await window.electronAPI.getDownloadSetting()
-    console.log(this.downloadPath)
     this.downloadPath = downloadSetting.downloadPath || ""
   },
   methods: {

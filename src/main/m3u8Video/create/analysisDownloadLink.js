@@ -25,6 +25,7 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
     const promise = new Promise((resolve) => {
         let index = 0
         const interval = setInterval(() => {
+            console.log(`检测次数：${index + 1}`)
             if(m3u8Url || index > 9) {
                 clearInterval(interval)
                 window.destroy()
