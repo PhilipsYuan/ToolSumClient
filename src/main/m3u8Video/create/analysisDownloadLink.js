@@ -1,5 +1,5 @@
 import {ipcMain, app, BrowserWindow} from "electron";
-const puppeteer = require("puppeteer-core");
+import puppeteer from '../../util/puppeteer-core'
 ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
 
 /**

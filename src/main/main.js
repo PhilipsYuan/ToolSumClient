@@ -1,11 +1,10 @@
 import { app, BrowserWindow } from 'electron'
 import path from 'path'
 import './importFileModule'
-
-// 安装puppeteer 方便使用
-const pie = require("puppeteer-in-electron")
+import pie from "./util/puppeteer-in-electron";
 
 async function initialize(){
+  global.pie = pie
   await pie.initialize(app);
 }
 initialize();
@@ -36,7 +35,6 @@ const createWindow = () => {
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();
   global.mainWindow = mainWindow
-  global.pie = pie
 };
 
 // This method will be called when Electron has finished
