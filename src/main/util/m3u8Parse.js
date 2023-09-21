@@ -61,17 +61,5 @@ export function getPlayList(text) {
     const array = text.split("#EXTINF")
     const allUrls = array.map((item) => item.match(/\n.*\n/)[0].replace(/\n/g, ''))
     allUrls.splice(0,1)
-    const urls = []
-    const httpsUrls = []
-    allUrls.forEach((item) => {
-        if(!/http/.test(item)) {
-            urls.push(item)
-        } else {
-            httpsUrls.push(item)
-        }
-    })
-    return {
-        urls,
-        httpsUrls
-    }
+    return allUrls
 }

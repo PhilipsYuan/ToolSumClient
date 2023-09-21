@@ -51,25 +51,9 @@ export async function downloadTsFiles(data, host, tempPath, pathname) {
 }
 
 async function downloadAllContent(data, host, tempPath, pathname) {
-    const {urls, httpsUrls } = getPlayList(data)
-    const m3u8Data = await deleteAdLinks(data, host, httpsUrls, tempPath)
+    const urls = getPlayList(data)
+    const m3u8Data = data
     totalTs = urls.length
-
-    // const promises = urls.map(async (item, subIndex) => {
-    //     const number = 1 + subIndex
-    //     let url = null
-    //     if (item[0] !== '/') {
-    //         url = host + pathname.match(/\/.*\//)[0] + item
-    //     } else {
-    //         url = host + item
-    //     }
-    //     return await getFileAndStore(url, number, item, pathname, tempPath, firstError)
-    // })
-    // return Promise.all(promises)
-    //     .then(async () => {
-    //         return await replaceTsFileUrls(urls, data, tempPath)
-    //     })
-
     const twoUrls = splitArray(urls, 100)
     const length = twoUrls.length
     async function download(index) {
@@ -78,12 +62,14 @@ async function downloadAllContent(data, host, tempPath, pathname) {
             const promises = pros.map(async (item, subIndex) => {
                 const number = index * 100 + 1 + subIndex
                 let url = null
-                if (item[0] !== '/') {
+                if (item[0] !== '/' && !/^http/.test(item)) {
                     url = host + pathname.match(/\/.*\//)[0] + item
+                } else if(/^http/.test(item)) {
+                     url = item
                 } else {
                     url = host + item
                 }
-               return await getFileAndStore(url, number, item, pathname, tempPath, firstError)
+               return await getFileAndStore(url, number, item, pathname, tempPath, firstError);
             })
             return Promise.all(promises)
                 .then(async (results) => {
@@ -247,7 +233,7 @@ function splitArray(array, subGroupLength) {
 }
 
 /**
- * 删除m3u8里的广告
+ * 删除m3u8里的广告，暂不用，没法判断出链接请求是否是广告
  */
 async function deleteAdLinks(data, host, httpsUrl, tempPath) {
     let m3u8Data = data

@@ -144,7 +144,12 @@ export default {
           status: 'success'
         }
         const m3u8Url = await window.electronAPI.getDownloadLinkFromUrl(this.form.htmlUrl)
-        if(m3u8Url) {
+        if(m3u8Url === 'error') {
+          this.message = {
+            content: "网页加载不成功，请先确定网页在浏览器上是否正常打开！",
+            status: 'error'
+          }
+        } else if(m3u8Url) {
           this.form.m3u8Url = m3u8Url
           this.message = {
             content: "网页解析完成，发现可下载的链接。",

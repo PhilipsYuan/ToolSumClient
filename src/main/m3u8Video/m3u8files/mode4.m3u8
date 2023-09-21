@@ -1,0 +1,14 @@
+#EXTM3U
+#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=128,RESOLUTION=1754x720
+1000k_0X720_64k_25/hls/index.m3u8
+
+
+
+
+
+
+// 备注，它本身的链接是
+https://top.1080pzy.co/202308/05/AVYSu4iaTw3/video/index.m3u8
+
+生成新的链接是
+https://top.1080pzy.co/202308/05/AVYSu4iaTw3/video/1000k_0X720_64k_25/hls/index.m3u8

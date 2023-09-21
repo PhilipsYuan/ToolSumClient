@@ -1,3 +1,14 @@
 #EXTM3U
-#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=2000000,RESOLUTION=1280x2226
-/20210120/ZrEw25iA//2000kb/hls/index.m3u8
+#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=600000,RESOLUTION=1920x1080
+/20230913/iqlIg2jb/600kb/hls/index.m3u8
+
+
+
+
+
+
+// 备注，它本身的链接是
+https://vip8.3sybf.com/20230913/iqlIg2jb/index.m3u8
+
+生成新的链接是
+https://vip8.3sybf.com/20230913/iqlIg2jb/600kb/hls/index.m3u8
