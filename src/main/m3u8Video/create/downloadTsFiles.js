@@ -26,6 +26,7 @@ export async function downloadTsFiles(data, host, tempPath, pathname) {
     }
     if(batchTs.errorList.length > 0) {
         sendTips('m3u8-download-tip', 'error','下载失败，请重新进行下载!')
+        return null
     }
     return m3u8Data
 }

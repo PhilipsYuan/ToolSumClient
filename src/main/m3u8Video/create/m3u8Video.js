@@ -33,8 +33,10 @@ async function generateVideo(event, url, name, outPath) {
                     const urlObject = new URL(url);
                     const host = `${urlObject.protocol}//${urlObject.host}`
                     const m3u8Data = await downloadSecretKey(data, host, tempPath, urlObject.pathname)
-                    await downloadTsFiles(m3u8Data, host, tempPath, urlObject.pathname)
-                    combineVideo(tempPath, outputPath, name, url)
+                    const convert = await downloadTsFiles(m3u8Data, host, tempPath, urlObject.pathname)
+                    if(convert) {
+                        combineVideo(tempPath, outputPath, name, url)
+                    }
                 }
             })
     }
