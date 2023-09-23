@@ -78,6 +78,11 @@ function getCorrectAnotherM3u8(sourceUrl, targetUrl) {
     }
 }
 
+/**
+ * 获取m3u8Key
+ * @param data
+ * @returns {*[]|*}
+ */
 export function getSecretKeys(data) {
     const maps = data.match(/#EXT-X-KEY[^\n]*\n/g)
      if(maps && maps.length > 0) {

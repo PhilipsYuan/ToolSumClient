@@ -33,8 +33,10 @@ async function generateVideo(event, url, name, outPath) {
                     const urlObject = new URL(url);
                     const host = `${urlObject.protocol}//${urlObject.host}`
                     const m3u8Data = await downloadSecretKey(data, host, tempPath, urlObject.pathname)
-                    await downloadTsFiles(m3u8Data, host, tempPath, urlObject.pathname)
-                    combineVideo(tempPath, outputPath, name, url)
+                    const convert = await downloadTsFiles(m3u8Data, host, tempPath, urlObject.pathname)
+                    if(convert) {
+                        combineVideo(tempPath, outputPath, name, url)
+                    }
                 }
             })
     }
@@ -56,8 +58,14 @@ async function downloadSecretKey(data, host, tempPath, pathname) {
             } else {
                 url = host + keys[i]
             }
-            const res = await axios.get(url)
-            await fs.writeFileSync(`${tempPath}/key${i + 1}.key`, res.data, "utf-8")
+            const res = await axios.get(url, {
+                responseType: "arraybuffer",
+                headers: {
+                    "Content-Type": "application/octet-stream",
+                }
+            })
+            const dyData = new Uint8Array(res.data);
+            await fs.writeFileSync(`${tempPath}/key${i + 1}.key`, dyData, "utf-8")
             i++
         }
         keys.forEach((item, index) => {
