@@ -26,7 +26,9 @@ body {
     border-radius: 1em;
     background-color: rgba(50, 50, 50, .1);
 }
-
+:focus-visible {
+    outline: 0;
+}
 .icon-button {
     @apply p-0.5 rounded-md hover:bg-gray-200 !w-6 !h-6 hover:!text-blue-500
 }

@@ -21,6 +21,17 @@ function getM3u8VideoDownloadListDB () {
 }
 
 /**
+ * m3u8视频下载中的列表
+ */
+function getM3u8VideoDownloadingDB () {
+    const jsonString = getFileInfo(`${path}/m3u8DownloadingList.json`)
+    const json = jsonString ? JSON.parse(jsonString) : ''
+    const loadingList = new JSONFile(`${path}/m3u8DownloadingList.json`)
+    const M3u8VideoDownloadingListDB = new Low(loadingList, json ? json : {loadingList: []})
+    return M3u8VideoDownloadingListDB
+}
+
+/**
  * 软件的全局设置
  * @type {*}
  */
@@ -34,3 +45,4 @@ function getAppSettingsDB () {
 
 export const m3u8VideoDownloadListDB = getM3u8VideoDownloadListDB()
 export const settingsDB = getAppSettingsDB()
+export const m3u8VideoDownloadingListDB = getM3u8VideoDownloadingDB()

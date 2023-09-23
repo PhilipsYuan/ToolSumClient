@@ -91,27 +91,6 @@ function combineVideo(tempPath, outputPath, name, url) {
     })
 }
 
-// function combineVideo2(tempPath, outputPath) {
-//     ffmpeg(`${tempPath}/index.m3u8`)
-//         .on("error", error => {
-//             console.log(error)
-//             sendTips('m3u8-download-tip', error)
-//         })
-//         .on('progress', function(progress) {
-//             console.log(progress)
-//             sendTips('m3u8-download-tip', `合成进度: 已完成${Number(progress.percent * 100).toFixed(2)}%`)
-//         })
-//         .on("end", () => {
-//             sendTips('m3u8-download-tip', `合成完成`)
-//             deleteTempSource(tempPath)
-//             console.log('=========================');
-//         })
-//         .outputOptions("-c copy")
-//         .outputOptions("-bsf:a aac_adtstoasc")
-//         .output(outputPath)
-//         .run();
-// }
-
 /**
  * 检测要输出的文件是否已经存在，如果已经存在，提示更换名称
  */
