@@ -25,7 +25,7 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
     const page = await pie.getPage(browser, window)
     function logRequest(request) {
         const url = request.url()
-        if(/m3u8/.test(url)) {
+        if(/\.m3u8$/.test(url)) {
             m3u8Url = url
         }
     }
