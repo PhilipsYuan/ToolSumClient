@@ -14,6 +14,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     deleteFinishedRecordAndFile: (id) => ipcRenderer.invoke('delete-m3u8-record-and-file', id),
     checkDownloadUrlNotExist: (url) => ipcRenderer.invoke('check-download-url-not-exist', url),
     getDownloadLinkFromUrl: (url) => ipcRenderer.invoke('get-download-link-from-url', url),
+    createM3u8DownloadTask: (url, name, outPath) => ipcRenderer.invoke('create-m3u8-download-task',  url, name, outPath),
+    getM3u8LoadingList: () => ipcRenderer.invoke('get-m3u8-loading-list'),
+    deleteM3u8LoadingList: (id) => ipcRenderer.invoke('delete-m3u8-loading-list', id),
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),
     updateMenus: () => ipcRenderer.send('update-menus'),

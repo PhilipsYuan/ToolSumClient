@@ -3,11 +3,11 @@
     <div v-for="item in list" class="border rounded-md px-4 py-2">
       <div class="flex items-center justify-between">
         <div>
-          <div>奥本海默</div>
+          <div>{{item.name}}</div>
           <div class="flex">
            <div class="text-green-500 text-xs">已完成50%</div>
-            <div class="text-green-500 flex items-center text-xs ml-8" :class="{'!text-red-500': message.status === 'error'}">
-              {{ message.content }}
+            <div class="text-green-500 flex items-center text-xs ml-8" :class="{'!text-red-500': item.message.status === 'error'}">
+              {{ item.message.content }}
             </div>
           </div>
         </div>
@@ -48,9 +48,23 @@ export default {
       }
     }
   },
+  async mounted() {
+    await this.getLoadingList()
+  },
   methods: {
     startDownload() {
 
+    },
+    copyLink(url) {
+      navigator.clipboard.writeText(url)
+    },
+    async deleteRecord(id) {
+      await window.electronAPI.deleteM3u8LoadingList(id)
+      this.$message.success("删除成功")
+      await this.getLoadingList()
+    },
+    async getLoadingList() {
+      this.list = await window.electronAPI.getM3u8LoadingList() || []
     }
   }
 }

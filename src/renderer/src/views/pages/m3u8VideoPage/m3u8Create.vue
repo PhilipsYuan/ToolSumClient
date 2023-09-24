@@ -79,7 +79,8 @@ export default {
     async getInfo() {
       if(await this.checkDownloadCondition()) {
         this.downloadButtonStatus = true
-        window.electronAPI.generateVideo(this.form.m3u8Url, this.form.name, this.downloadPath)
+        window.electronAPI.createM3u8DownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
+        // window.electronAPI.generateVideo(this.form.m3u8Url, this.form.name, this.downloadPath)
       }
     },
     // 检验下载的条件

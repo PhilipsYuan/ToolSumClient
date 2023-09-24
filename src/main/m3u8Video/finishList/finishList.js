@@ -45,7 +45,7 @@ async function getFinishList (event, query) {
 }
 
 /**
- * 新增一条历史记录
+ * 删除记录
  * @param event
  * @param stockCode
  * @param data

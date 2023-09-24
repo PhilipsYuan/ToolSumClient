@@ -1,6 +1,6 @@
 import {app, ipcMain} from "electron";
 import fs from "fs";
-import {getSecretKeys, getCorrectM3u8File} from "../../util/m3u8Parse"
+import {getSecretKeys, getCorrectM3u8File, getPlayList} from "../../util/m3u8Parse"
 import {deleteDirectory, makeDir} from "../../util/fs"
 import {downloadTsFiles} from './downloadTsFiles'
 import {sendTips} from '../../util/electronOperations'
@@ -8,6 +8,8 @@ import {newFinishedRecord} from '../finishList/finishList'
 import childProcess from 'child_process'
 import dayjs from 'dayjs'
 import shortId from 'shortid'
+import { splitArray } from '../../util/array'
+import { newLoadingRecord } from '../processList/processList'
 
 const ffmpegPath = __dirname + '/darwin-x64/ffmpeg'
 const axios = require('axios')
@@ -17,6 +19,7 @@ const tempSourcePath = `${basePath}/m3u8Video/tempSource`
 
 ipcMain.handle('generate-video', generateVideo)
 ipcMain.handle('check-output-file-not-exist', checkOutputFileNotExist)
+ipcMain.handle('create-m3u8-download-task', createM3u8DownloadTask)
 
 /**
  * 生成视频
@@ -37,6 +40,48 @@ async function generateVideo(event, url, name, outPath) {
                     if(convert) {
                         combineVideo(tempPath, outputPath, name, url)
                     }
+                }
+            })
+    }
+}
+
+/**
+ * 创建m3u8下载任务
+ */
+async function createM3u8DownloadTask(event, url, name, outPath) {
+    const outputPath = `${outPath}/${name}.mp4`
+    if (checkOutputFileNotExist(null, outputPath)) {
+        const tempPath = `${tempSourcePath}/${name}`
+        makeDir(tempPath)
+        getCorrectM3u8File(url)
+            .then(async (data) => {
+                if (data) {
+                    const urlObject = new URL(url);
+                    const host = `${urlObject.protocol}//${urlObject.host}`
+                    const m3u8Data = await downloadSecretKey(data, host, tempPath, urlObject.pathname)
+                    const urls = getPlayList(data)
+                    const formatUrls = urls.map((item, index) => {
+                        let url = ''
+                        if (item[0] !== '/' && !/^http/.test(item)) {
+                            url = host + urlObject.pathname.match(/\/.*\//)[0] + item
+                        } else if(/^http/.test(item)) {
+                            url = item
+                        } else {
+                            url = host + item
+                        }
+                        return {
+                            item, url, number: index + 1
+                        }
+                    })
+                    const twoUrls = splitArray(formatUrls, 100)
+                    await newLoadingRecord({
+                        name: name,
+                        m3u8Url: url,
+                        m3u8Data: m3u8Data,
+                        batchIndex: 0,
+                        totalIndex: twoUrls.length,
+                        totalUrls: formatUrls
+                    })
                 }
             })
     }
