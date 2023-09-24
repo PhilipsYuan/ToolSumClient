@@ -3,7 +3,7 @@ const axios = require('axios')
 
 export function getCorrectM3u8File(url) {
     return axios.get(url, {
-        timeout: 30000
+        timeout: 60000
     })
         .then(async (res) => {
             const result = checkM3u8FileHasAnotherM3u8(res.data, url)
