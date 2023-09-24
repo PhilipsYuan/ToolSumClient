@@ -98,8 +98,10 @@ async function downloadSecretKey(data, host, tempPath, pathname) {
     if (keys.length > 0) {
         while (i < keys.length) {
             let url = null
-            if (keys[i][0] !== '/') {
+            if (keys[i][0] !== '/' && !/^http/.test(keys[i])) {
                 url = host + pathname.match(/\/.*\//)[0] + keys[i]
+            } else if(/^http/.test(keys[i])) {
+                url = keys[i]
             } else {
                 url = host + keys[i]
             }
