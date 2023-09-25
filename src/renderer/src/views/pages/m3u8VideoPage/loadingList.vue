@@ -1,6 +1,6 @@
 <template>
   <div class="grid gap-4 min-h-[300px]">
-    <div v-for="item in list" class="border rounded-md px-4 py-2" :id="item.id">
+    <div v-for="item in list" class="border rounded-md px-4 py-2 h-fit" :id="item.id">
       <div class="flex items-center justify-between">
         <div>
           <div>{{item.name}}</div>
