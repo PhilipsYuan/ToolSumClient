@@ -5,7 +5,7 @@
     <el-tab-pane label="已完成" name="finish" />
     <m3u8-create v-show="activeName === 'create'" @changeTab="changeTab" />
     <finished-list ref="finishList" v-show="activeName === 'finish'" />
-    <loading-list v-show="activeName === 'loading'"/>
+    <loading-list ref="loadingList" v-show="activeName === 'loading'"/>
   </el-tabs>
 
 </template>
@@ -26,6 +26,8 @@ export default {
     tabChanged() {
       if(this.activeName === 'finish') {
         this.$refs.finishList.getFinishList()
+      } else if(this.activeName === 'loading') {
+        this.$refs.loadingList.getLoadingList()
       }
     },
     changeTab(tab) {

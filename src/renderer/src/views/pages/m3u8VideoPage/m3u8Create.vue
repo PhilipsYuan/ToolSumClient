@@ -132,8 +132,8 @@ export default {
         }
       }
     },
-    changeTab() {
-      this.$emit('changeTab', 'finish')
+    changeTab(tab) {
+      this.$emit('changeTab', tab)
     },
     isUrl(str) {
       return /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(str)
@@ -162,7 +162,6 @@ export default {
             status: 'error'
           }
         }
-        console.log(m3u8Url)
       } else {
         this.message = {
           content: "请先输入个网址再进行解析！",

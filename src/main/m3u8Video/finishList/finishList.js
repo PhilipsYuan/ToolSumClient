@@ -1,5 +1,5 @@
 import {ipcMain} from "electron";
-import { m3u8VideoDownloadListDB } from "../../db/db";
+import { m3u8VideoDownloadListDB, m3u8VideoDownloadingListDB } from "../../db/db";
 import fs from "fs";
 
 ipcMain.handle('get-m3u8-finish-list', getFinishList)
@@ -83,13 +83,16 @@ export async function deleteFinishedRecordAndFile(event, id) {
  */
 export async function checkDownloadUrlNotExist(event, url) {
     const list = m3u8VideoDownloadListDB.data.downloadList
+    const loadingList = m3u8VideoDownloadingListDB.data.loadingList
     const index = list.findIndex((item) => item.m3u8Url === url)
+    const loadingIndex = loadingList.findIndex((item) => item.m3u8Url === url)
     if(index > -1) {
         return list[index]
+    } else if(loadingIndex > -1) {
+        return loadingList[loadingIndex]
     } else {
         return {}
     }
-
 }
 
 export function checkListStatus (list) {

@@ -33,7 +33,11 @@ export default {
       this.item = item
     },
     goToExist() {
-      this.$emit('changeTab', 'finish')
+      if(this.item.totalIndex) {
+        this.$emit('changeTab', 'loading')
+      } else {
+        this.$emit('changeTab', 'finish')
+      }
       this.cancelFun()
       setTimeout(() => {
         document.getElementById(this.item.id).scrollIntoView()

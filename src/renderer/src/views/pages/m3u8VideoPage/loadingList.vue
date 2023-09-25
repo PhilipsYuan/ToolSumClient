@@ -1,6 +1,6 @@
 <template>
   <div class="grid gap-4">
-    <div v-for="item in list" class="border rounded-md px-4 py-2">
+    <div v-for="item in list" class="border rounded-md px-4 py-2" :id="item.id">
       <div class="flex items-center justify-between">
         <div>
           <div>{{item.name}}</div>
@@ -12,7 +12,7 @@
           </div>
         </div>
         <div class="flex gap-3">
-          <el-icon class="icon-button !text-lg !text-gray-300 !p-1 cursor-pointer"
+          <el-icon class="icon-button !text-lg !p-1 cursor-pointer"
                    style="width: 28px !important;height:28px !important;"
                    @click="startDownload()">
             <VideoPlay/>
@@ -41,7 +41,7 @@ export default {
   components: {VideoPlay},
   data() {
     return {
-      list: [{}, {}, {}, {}],
+      list: [],
       message: {
         status: 'success',
         content: '网页解析完成，发现可下载的链接。'

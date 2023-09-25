@@ -57,7 +57,6 @@ export async function createProcessFile (path, totalUrls, m3u8Data, missLinks) {
         m3u8Data,
         missLinks
     }
-    console.log(totalUrls)
     await fs.writeFileSync(path, global.JSON.stringify(json), "utf-8")
 }
 
