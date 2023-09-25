@@ -81,11 +81,11 @@ export async function deleteFinishedRecordAndFile(event, id) {
  * 校验下载链接是否已经下载过
  * @returns {Promise<boolean>}
  */
-export async function checkDownloadUrlNotExist(event, url) {
+export async function checkDownloadUrlNotExist(event, url, name) {
     const list = m3u8VideoDownloadListDB.data.downloadList
     const loadingList = m3u8VideoDownloadingListDB.data.loadingList
-    const index = list.findIndex((item) => item.m3u8Url === url)
-    const loadingIndex = loadingList.findIndex((item) => item.m3u8Url === url)
+    const index = list.findIndex((item) => item.m3u8Url === url || item.name === name)
+    const loadingIndex = loadingList.findIndex((item) => item.m3u8Url === url || item.name === name)
     if(index > -1) {
         return list[index]
     } else if(loadingIndex > -1) {

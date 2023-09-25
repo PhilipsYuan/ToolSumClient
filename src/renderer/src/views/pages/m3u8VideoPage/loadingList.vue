@@ -1,5 +1,5 @@
 <template>
-  <div class="grid gap-4">
+  <div class="grid gap-4 min-h-[300px]">
     <div v-for="item in list" class="border rounded-md px-4 py-2" :id="item.id">
       <div class="flex items-center justify-between">
         <div>

@@ -26,7 +26,7 @@
         <el-form-item label="网址">
           <div class="flex items-center gap-4">
             <el-input v-model="form.htmlUrl" class="!w-[600px]"/>
-            <el-button @click="startAnalysis">解析下载链接</el-button>
+            <el-button @click="startAnalysis" :disabled="analysing">解析下载链接</el-button>
           </div>
         </el-form-item>
         <el-form-item label="m3u8链接:">
@@ -95,15 +95,9 @@ export default {
         this.$message.error("链接格式不正确, 请确认链接正确后，再进行下载！")
         return false
       } else {
-        const m3u8UrlIsNotDownloaded = await window.electronAPI.checkDownloadUrlNotExist(this.form.m3u8Url)
+        const m3u8UrlIsNotDownloaded = await window.electronAPI.checkDownloadUrlNotExist(this.form.m3u8Url, this.form.name)
         if(m3u8UrlIsNotDownloaded.id) {
-          this.$refs.alreadyExistedModal.openModal(m3u8UrlIsNotDownloaded)
-          return false
-        }
-        const path = `${this.downloadPath}/${this.form.name}.mp4`
-        const isNotExist = await window.electronAPI.checkOutputFileNotExist(path)
-        if(!isNotExist) {
-          this.$message.error("输出的文件名称已经存在，请更换一个名称")
+          this.$refs.alreadyExistedModal.openModal(m3u8UrlIsNotDownloaded, this.form.m3u8Url, this.form.name)
           return false
         }
         return true
@@ -112,6 +106,7 @@ export default {
     clearInput() {
       this.form.name = ''
       this.form.m3u8Url = ''
+      this.form.htmlUrl = ''
     },
     showMessage(status, content) {
       if(status === 'success' && content) {
@@ -139,7 +134,9 @@ export default {
       return /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(str)
     },
     async startAnalysis() {
+
       if(this.form.htmlUrl) {
+        this.analysing = true
         this.message = {
           content: "网页解析中...",
           status: 'success'
@@ -162,6 +159,7 @@ export default {
             status: 'error'
           }
         }
+        this.analysing = false
       } else {
         this.message = {
           content: "请先输入个网址再进行解析！",

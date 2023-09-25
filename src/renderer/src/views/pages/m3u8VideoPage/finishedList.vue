@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="min-h-[300px]">
     <div class="px-20 my-5">
       <el-input class="" v-model="query" placeholder="请输入名称和链接检索" @keyup.enter.native="getFinishList(query)">
         <template #append>
