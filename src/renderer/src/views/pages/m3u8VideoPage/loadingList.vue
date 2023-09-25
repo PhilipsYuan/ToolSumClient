@@ -6,7 +6,6 @@
           <div>
             <div>{{item.name}}</div>
             <div class="flex">
-              <div class="text-green-500 text-xs">已完成50%</div>
               <div class="text-green-500 flex items-center text-xs ml-8" :class="{'!text-red-500': item.message.status === 'error'}">
                 {{ item.message.content }}
               </div>
@@ -15,7 +14,7 @@
           <div class="flex gap-3">
             <el-icon class="icon-button !text-lg !p-1 cursor-pointer"
                      style="width: 28px !important;height:28px !important;"
-                     @click="startDownload()">
+                     @click="startDownload(item.id)">
               <VideoPlay/>
             </el-icon>
             <el-dropdown>
@@ -54,10 +53,14 @@ export default {
   async mounted() {
     await this.getLoadingList()
     addService("getM3u8LoadingList", this.getLoadingList.bind(this))
+    addService("m3u8VideoDownloadSuccess", this.m3u8VideoDownloadSuccess.bind(this))
+    setInterval(async () => {
+      await this.getLoadingList()
+    }, 1000)
   },
   methods: {
-    startDownload() {
-
+    async startDownload(id) {
+      await window.electronAPI.startDownloadM3u8Video(id)
     },
     copyLink(url) {
       navigator.clipboard.writeText(url)
@@ -69,6 +72,10 @@ export default {
     },
     async getLoadingList() {
       this.list = await window.electronAPI.getM3u8LoadingList() || []
+    },
+    async m3u8VideoDownloadSuccess(loadingId) {
+      await this.getLoadingList()
+      this.$emit('changeTab', 'finish')
     }
   }
 }

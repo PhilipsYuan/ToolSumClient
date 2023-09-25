@@ -1,8 +1,9 @@
-import {m3u8VideoDownloadingListDB, m3u8VideoDownloadListDB} from "../../db/db";
+import { m3u8VideoDownloadingListDB } from "../../db/db";
 import {app, ipcMain} from "electron";
 import {makeDir} from "../../util/fs";
 import fs from "fs";
 import shortId from "shortid";
+import { startDownloadVideo } from '../create/m3u8Video'
 
 const basePath = app.getPath('userData')
 const processUrlsPath = `${basePath}/m3u8Video/processUrls`
@@ -10,6 +11,7 @@ makeDir(processUrlsPath)
 
 ipcMain.handle('get-m3u8-loading-list', getLoadingList)
 ipcMain.handle('delete-m3u8-loading-list', deleteLoadingRecordAndFile)
+ipcMain.handle('start-download-one-loading', startDownloadLoading)
 /**
  * 获取下载中的记录
  */
@@ -37,9 +39,11 @@ export async function newLoadingRecord (data) {
             content: ''
         },
         urlPath: path,
+        successTsNum: 0,
         // 下次执行的位置
         batchIndex: data.batchIndex,
         totalIndex: data.totalIndex,
+        outputPath: data.outputPath
     }
     await createProcessFile(path, data.totalUrls, data.m3u8Data, [])
     // 暂停时存储的json太大了。需要分文件存储
@@ -75,5 +79,25 @@ export async function deleteLoadingRecordAndFile(event, id) {
         }
         m3u8VideoDownloadingListDB.data.loadingList.splice(index, 1)
         await m3u8VideoDownloadingListDB.write()
+    }
+}
+
+/**
+ * 开始下载资源
+ * @param event
+ * @param id
+ * @returns {Promise<void>}
+ */
+export async function startDownloadLoading(event, id) {
+    const list = m3u8VideoDownloadingListDB.data.loadingList
+    const index = list.findIndex((item) => item.id === id)
+    if(index > -1) {
+        const item = m3u8VideoDownloadingListDB.data.loadingList[index];
+        const string = fs.readFileSync(item.urlPath, 'utf-8')
+        const json = global.JSON.parse(string)
+        item.totalUrls = json.totalUrls
+        item.m3u8Data = json.m3u8Data
+        item.missLinks = json.missLinks
+        await startDownloadVideo(item)
     }
 }

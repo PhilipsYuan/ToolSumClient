@@ -74,18 +74,16 @@ export default {
     this.downloadPath = downloadSetting.downloadPath || ""
   },
   async mounted() {
-    addService('showM3u8DownloadMessage', this.showMessage.bind(this))
+    addService('getM3u8FileFailureTips', this.getM3u8FileFailureMessage.bind(this))
   },
   methods: {
     async getInfo() {
-      console.log('33333')
       if(await this.checkDownloadCondition()) {
         this.createLoading = true
         await window.electronAPI.createM3u8DownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
         useService('getM3u8LoadingList')
         this.changeTab('loading')
         this.createLoading = false
-        // window.electronAPI.generateVideo(this.form.m3u8Url, this.form.name, this.downloadPath)
       }
     },
     // 检验下载的条件
@@ -113,23 +111,10 @@ export default {
       this.form.m3u8Url = ''
       this.form.htmlUrl = ''
     },
-    showMessage(status, content) {
-      if(status === 'success' && content) {
-        this.message = {
-          status,
-          content
-        }
-      } else {
-        if(status === 'success') {
-          this.downloadButtonStatus = false
-          useService('getM3u8FinishedList')
-        } else {
-          this.message = {
-            status,
-            content
-          }
-          this.downloadButtonStatus = false
-        }
+    getM3u8FileFailureMessage(status, content) {
+      this.message = {
+        status,
+        content
       }
     },
     changeTab(tab) {

@@ -4,7 +4,6 @@ import {contextBridge, ipcMain, ipcRenderer} from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
     // 渲染器进程到主进程（双向）
-    generateVideo: ( url, name, outPath) => ipcRenderer.invoke('generate-video',  url, name, outPath),
     checkOutputFileNotExist: (outputPath) => ipcRenderer.invoke('check-output-file-not-exist',  outputPath),
     getDownloadSetting: () => ipcRenderer.invoke('get-download-setting'),
     setDownloadSetting: (data) => ipcRenderer.invoke('set-download-setting',  data),
@@ -17,13 +16,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
     createM3u8DownloadTask: (url, name, outPath) => ipcRenderer.invoke('create-m3u8-download-task',  url, name, outPath),
     getM3u8LoadingList: () => ipcRenderer.invoke('get-m3u8-loading-list'),
     deleteM3u8LoadingList: (id) => ipcRenderer.invoke('delete-m3u8-loading-list', id),
+    startDownloadM3u8Video: (id) => ipcRenderer.invoke('start-download-one-loading', id),
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),
     updateMenus: () => ipcRenderer.send('update-menus'),
     goToDirectory: (path) => ipcRenderer.send('go-to-directory', path),
     openDirectoryAndFile: (path) => ipcRenderer.send('open-directory-and-file', path),
     // 主进程到渲染器进程
-    getM3u8DownloadTips: (callback) => ipcRenderer.on('m3u8-download-tip', callback),
+    getM3u8FileFailureTips: (callback) => ipcRenderer.on('m3u8-file-get-failure', callback),
+    m3u8VideoDownloadSuccess: (callback) => ipcRenderer.on('m3u8-download-video-success', callback)
 })
 
 window.addEventListener('DOMContentLoaded', () => {

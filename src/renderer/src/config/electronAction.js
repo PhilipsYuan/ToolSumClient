@@ -4,6 +4,10 @@
 import { useService } from "../service/service";
 
 
-window.electronAPI.getM3u8DownloadTips(async (event, status, content) => {
-    useService("showM3u8DownloadMessage", status, content)
+window.electronAPI.getM3u8FileFailureTips(async (event, status, content) => {
+    useService("getM3u8FileFailureTips", status, content)
+})
+
+window.electronAPI.m3u8VideoDownloadSuccess(async(event, loadingId) => {
+    useService("m3u8VideoDownloadSuccess", loadingId)
 })
