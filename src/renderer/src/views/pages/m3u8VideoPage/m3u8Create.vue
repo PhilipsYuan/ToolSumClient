@@ -26,7 +26,7 @@
         <el-form-item label="网址">
           <div class="flex items-center gap-4">
             <el-input v-model="form.htmlUrl" class="!w-[600px]"/>
-            <el-button @click="startAnalysis" :disabled="analysing">解析下载链接</el-button>
+            <el-button @click="startAnalysis" :loading="analysisLoading">解析下载链接</el-button>
           </div>
         </el-form-item>
         <el-form-item label="m3u8链接:">
@@ -36,8 +36,8 @@
           <el-input v-model="form.name" class="!w-80"/>
         </el-form-item>
         <el-form-item label="">
-          <el-button :disabled="downloadButtonStatus" type="primary" @click="getInfo">下载</el-button>
-          <el-button :disabled="downloadButtonStatus" @click="clearInput">清空</el-button>
+          <el-button :loading="createLoading" type="primary" @click="getInfo">创建</el-button>
+          <el-button :loading="createLoading" @click="clearInput">清空</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -65,7 +65,8 @@ export default {
         status: 'success',
         content: '未进行下载'
       },
-      analysing: false
+      analysisLoading: false,
+      createLoading: false
     }
   },
   async beforeCreate() {
@@ -77,9 +78,13 @@ export default {
   },
   methods: {
     async getInfo() {
+      console.log('33333')
       if(await this.checkDownloadCondition()) {
-        this.downloadButtonStatus = true
-        window.electronAPI.createM3u8DownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
+        this.createLoading = true
+        await window.electronAPI.createM3u8DownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
+        useService('getM3u8LoadingList')
+        this.changeTab('loading')
+        this.createLoading = false
         // window.electronAPI.generateVideo(this.form.m3u8Url, this.form.name, this.downloadPath)
       }
     },
@@ -134,9 +139,8 @@ export default {
       return /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(str)
     },
     async startAnalysis() {
-
       if(this.form.htmlUrl) {
-        this.analysing = true
+        this.analysisLoading = true
         this.message = {
           content: "网页解析中...",
           status: 'success'
@@ -159,7 +163,7 @@ export default {
             status: 'error'
           }
         }
-        this.analysing = false
+        this.analysisLoading = false
       } else {
         this.message = {
           content: "请先输入个网址再进行解析！",

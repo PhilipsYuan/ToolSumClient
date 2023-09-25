@@ -53,7 +53,7 @@ async function createM3u8DownloadTask(event, url, name, outPath) {
     if (checkOutputFileNotExist(null, outputPath)) {
         const tempPath = `${tempSourcePath}/${name}`
         makeDir(tempPath)
-        getCorrectM3u8File(url)
+        return getCorrectM3u8File(url)
             .then(async (data) => {
                 if (data) {
                     const urlObject = new URL(url);

@@ -1,41 +1,44 @@
 <template>
-  <div class="grid gap-4 min-h-[300px]">
-    <div v-for="item in list" class="border rounded-md px-4 py-2 h-fit" :id="item.id">
-      <div class="flex items-center justify-between">
-        <div>
-          <div>{{item.name}}</div>
-          <div class="flex">
-           <div class="text-green-500 text-xs">已完成50%</div>
-            <div class="text-green-500 flex items-center text-xs ml-8" :class="{'!text-red-500': item.message.status === 'error'}">
-              {{ item.message.content }}
+  <diV class="min-h-[300px]">
+    <div class="grid gap-4">
+      <div v-for="item in list" class="border rounded-md px-4 py-2 h-fit" :id="item.id">
+        <div class="flex items-center justify-between">
+          <div>
+            <div>{{item.name}}</div>
+            <div class="flex">
+              <div class="text-green-500 text-xs">已完成50%</div>
+              <div class="text-green-500 flex items-center text-xs ml-8" :class="{'!text-red-500': item.message.status === 'error'}">
+                {{ item.message.content }}
+              </div>
             </div>
           </div>
-        </div>
-        <div class="flex gap-3">
-          <el-icon class="icon-button !text-lg !p-1 cursor-pointer"
-                   style="width: 28px !important;height:28px !important;"
-                   @click="startDownload()">
-            <VideoPlay/>
-          </el-icon>
-          <el-dropdown>
-            <el-icon class="icon-button !text-lg" style="width: 28px !important;height:28px !important;">
-              <MoreFilled/>
+          <div class="flex gap-3">
+            <el-icon class="icon-button !text-lg !p-1 cursor-pointer"
+                     style="width: 28px !important;height:28px !important;"
+                     @click="startDownload()">
+              <VideoPlay/>
             </el-icon>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click="copyLink(item.m3u8Url)">复制资源链接</el-dropdown-item>
-                <el-dropdown-item @click="deleteRecord(item.id)">删除</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+            <el-dropdown>
+              <el-icon class="icon-button !text-lg" style="width: 28px !important;height:28px !important;">
+                <MoreFilled/>
+              </el-icon>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="copyLink(item.m3u8Url)">复制资源链接</el-dropdown-item>
+                  <el-dropdown-item @click="deleteRecord(item.id)">删除</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </diV>
 </template>
 
 <script>
 import {VideoPlay} from "@element-plus/icons-vue";
+import {addService} from "../../../service/service";
 export default {
   name: "loadingList",
   components: {VideoPlay},
@@ -50,6 +53,7 @@ export default {
   },
   async mounted() {
     await this.getLoadingList()
+    addService("getM3u8LoadingList", this.getLoadingList.bind(this))
   },
   methods: {
     startDownload() {
