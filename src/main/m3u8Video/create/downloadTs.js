@@ -110,8 +110,8 @@ async function getFileAndStore(url, number, item, tempPath, errorList, loadingRe
 
 async function replaceTsFileUrls(urls, data, tempPath) {
     let m3u8Data = data
-    urls.forEach((item, index) => {
-        m3u8Data = m3u8Data.replace(item, `./${index + 1}.ts`)
+    urls.forEach((item) => {
+        m3u8Data = m3u8Data.replace(item.item, `./${item.number}.ts`)
     })
     await fs.writeFileSync(`${tempPath}/index.m3u8`, m3u8Data, "utf-8")
     return m3u8Data

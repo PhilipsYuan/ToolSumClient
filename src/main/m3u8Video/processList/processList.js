@@ -35,10 +35,12 @@ export async function newLoadingRecord (data) {
         name: data.name,
         m3u8Url: data.m3u8Url,
         message: {
-            status: '',
-            content: ''
+            status: 'success',
+            content: '未开始进行下载'
         },
         urlPath: path,
+        pause: false,
+        isStart: false,
         successTsNum: 0,
         // 下次执行的位置
         batchIndex: data.batchIndex,

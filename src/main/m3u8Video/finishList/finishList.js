@@ -1,6 +1,8 @@
 import {ipcMain} from "electron";
 import { m3u8VideoDownloadListDB, m3u8VideoDownloadingListDB } from "../../db/db";
 import fs from "fs";
+import shortId from "shortid";
+import dayjs from "dayjs";
 
 ipcMain.handle('get-m3u8-finish-list', getFinishList)
 ipcMain.handle('delete-m3u8-finished-record', deleteFinishedRecord)
@@ -15,7 +17,16 @@ ipcMain.handle('check-download-url-not-exist', checkDownloadUrlNotExist)
  * @returns {string|*}
  */
 export async function newFinishedRecord (data) {
-    m3u8VideoDownloadListDB.data.downloadList.unshift(data)
+    const id = shortId.generate()
+    const date = dayjs(new Date).format('YYYY-MM-DD HH:mm')
+    const json = {
+        name: data.name,
+        filePath: data.filePath,
+        m3u8Url: data.m3u8Url,
+        id: id,
+        date: date
+    }
+    m3u8VideoDownloadListDB.data.downloadList.unshift(json)
     await m3u8VideoDownloadListDB.write()
 }
 

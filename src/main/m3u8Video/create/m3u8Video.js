@@ -6,8 +6,6 @@ import {downloadTss} from './downloadTs';
 import {sendTips} from '../../util/electronOperations';
 import {newFinishedRecord} from '../finishList/finishList';
 import childProcess from 'child_process';
-import dayjs from 'dayjs';
-import shortId from 'shortid';
 import {splitArray} from '../../util/array';
 import {newLoadingRecord, deleteLoadingRecordAndFile} from '../processList/processList';
 
@@ -57,6 +55,9 @@ async function createM3u8DownloadTask(event, url, name, outPath) {
                         totalUrls: formatUrls,
                         outputPath: outputPath
                     })
+                    return 'success'
+                } else {
+                    return 'failure'
                 }
             })
     }
@@ -67,12 +68,17 @@ async function createM3u8DownloadTask(event, url, name, outPath) {
  * @returns {Promise<void>}
  */
 export async function startDownloadVideo(loadingRecord) {
+    loadingRecord.isStart = true
+    loadingRecord.message = {
+        status: 'success',
+        content: `开始下载中...`
+    }
     const tempPath = `${tempSourcePath}/${loadingRecord.name}`;
     const outputPath = loadingRecord.outputPath;
     let m3u8Data = loadingRecord.m3u8Data
     const convert = await downloadTss(loadingRecord.totalUrls, m3u8Data, tempPath, loadingRecord.totalIndex, loadingRecord)
     if (convert) {
-        combineVideo(tempPath, outputPath, loadingRecord)
+        testSpawnCombine(tempPath, outputPath, loadingRecord)
     }
 }
 
@@ -123,6 +129,7 @@ function combineVideo(tempPath, outputPath, loadingRecord) {
     childProcess.exec(`cd "${tempPath}" && ${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -c copy "${outputPath}"`, {
         maxBuffer: 5 * 1024 * 1024,
     }, async (error, stdout, stderr) => {
+        console.log(stderr)
         if (error) {
             loadingRecord.message = {
                 status: 'error',
@@ -134,15 +141,43 @@ function combineVideo(tempPath, outputPath, loadingRecord) {
                 content: '合成完成'
             }
             deleteTempSource(tempPath)
-            const id = shortId.generate()
-            const date = dayjs(new Date).format('YYYY-MM-DD HH:mm')
             await newFinishedRecord({
-                name: loadingRecord.name, filePath: outputPath, m3u8Url: loadingRecord.url, id: id, date: date
+                name: loadingRecord.name,
+                filePath: outputPath,
+                m3u8Url: loadingRecord.m3u8Url
             })
             await deleteLoadingRecordAndFile(null, loadingRecord.id)
             sendTips('m3u8-download-video-success', loadingRecord.id)
         }
     })
+}
+
+function testSpawnCombine(tempPath, outputPath, loadingRecord) {
+    loadingRecord.message = {
+        status: 'success',
+        content: `合成中...`
+    }
+    const exec_1 = childProcess.spawn(`cd "${tempPath}" && ${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -progress - -c copy "${outputPath}"`, {
+        maxBuffer: 5 * 1024 * 1024,
+        shell: true
+    });
+    // exec_1.stdout.on('data', (info) => {
+    //     console.log('stdout:' + info)
+    // });
+    exec_1.stderr.on('data', (info) => {
+        console.log('2222222：' + info)
+    });
+    exec_1.stderr.on('close', async () => {
+        deleteTempSource(tempPath)
+        await newFinishedRecord({
+            name: loadingRecord.name,
+            filePath: outputPath,
+            m3u8Url: loadingRecord.m3u8Url
+        })
+        await deleteLoadingRecordAndFile(null, loadingRecord.id)
+        sendTips('m3u8-download-video-success', loadingRecord.id)
+
+    });
 }
 
 /**

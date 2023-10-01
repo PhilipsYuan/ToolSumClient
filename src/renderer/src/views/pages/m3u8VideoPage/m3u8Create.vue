@@ -80,10 +80,12 @@ export default {
     async getInfo() {
       if(await this.checkDownloadCondition()) {
         this.createLoading = true
-        await window.electronAPI.createM3u8DownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
-        useService('getM3u8LoadingList')
-        this.changeTab('loading')
-        this.createLoading = false
+        const result = await window.electronAPI.createM3u8DownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
+        if(result === 'success') {
+          useService('getM3u8LoadingList')
+          this.changeTab('loading')
+          this.createLoading = false
+        }
       }
     },
     // 检验下载的条件

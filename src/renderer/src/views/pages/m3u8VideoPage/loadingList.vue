@@ -5,17 +5,24 @@
         <div class="flex items-center justify-between">
           <div>
             <div>{{item.name}}</div>
-            <div class="flex">
-              <div class="text-green-500 flex items-center text-xs ml-8" :class="{'!text-red-500': item.message.status === 'error'}">
-                {{ item.message.content }}
-              </div>
+            <div class="text-green-500 flex items-center text-xs mt-1"
+                 :class="{'!text-red-500': item.message.status === 'error'}">
+              <el-icon class="!text-green-500 mr-2" :class="{'!text-red-500': item.message.status === 'error'}">
+                <InfoFilled/>
+              </el-icon>
+              {{ item.message.content }}
             </div>
           </div>
           <div class="flex gap-3">
-            <el-icon class="icon-button !text-lg !p-1 cursor-pointer"
+            <el-icon v-if="item.isStart === item.pause" class="icon-button !text-lg !p-1 cursor-pointer"
                      style="width: 28px !important;height:28px !important;"
                      @click="startDownload(item.id)">
               <VideoPlay/>
+            </el-icon>
+            <el-icon v-if="item.isStart !== item.pause" class="icon-button !text-lg !p-1 cursor-pointer"
+                     style="width: 28px !important;height:28px !important;"
+                     @click="startDownload(item.id)">
+              <VideoPause/>
             </el-icon>
             <el-dropdown>
               <el-icon class="icon-button !text-lg" style="width: 28px !important;height:28px !important;">
@@ -76,6 +83,7 @@ export default {
     async m3u8VideoDownloadSuccess(loadingId) {
       await this.getLoadingList()
       this.$emit('changeTab', 'finish')
+      document.getElementById('m3u8-finish-list-frame').scroll(0, 0)
     }
   }
 }
