@@ -1,12 +1,14 @@
 import { m3u8VideoDownloadingListDB } from "../../db/db";
 import {app, ipcMain} from "electron";
-import {makeDir} from "../../util/fs";
+import {deleteDirectory, makeDir} from "../../util/fs";
 import fs from "fs";
 import shortId from "shortid";
 import { startDownloadVideo, continueDownload } from '../create/m3u8Video'
+import {sendTips} from "../../util/electronOperations";
 
 const basePath = app.getPath('userData')
 const processUrlsPath = `${basePath}/m3u8Video/processUrls`
+const tempSourcePath = `${basePath}/m3u8Video/tempSource`;
 makeDir(processUrlsPath)
 
 ipcMain.handle('get-m3u8-loading-list', getLoadingList)
@@ -79,13 +81,34 @@ export async function deleteLoadingRecordAndFile(event, id) {
     const list = m3u8VideoDownloadingListDB.data.loadingList
     const index = list.findIndex((item) => item.id === id)
     if(index > -1) {
-        const path = m3u8VideoDownloadingListDB.data.loadingList[index].urlPath;
-        if(path && fs.existsSync(path)) {
-            fs.unlinkSync(path)
+        const item = m3u8VideoDownloadingListDB.data.loadingList[index]
+        if(item.isStart && !item.pause) {
+            await pauseDownloadVideo(null, id)
+            const interval = setInterval(async () => {
+                if(item.isStart && item.pause && !item.pausing) {
+                    clearInterval(interval);
+                    await deleteRecordAndFile(item, index)
+                }
+            },500)
+        } else {
+            await deleteRecordAndFile(item, index)
         }
-        m3u8VideoDownloadingListDB.data.loadingList.splice(index, 1)
-        await m3u8VideoDownloadingListDB.write()
     }
+}
+
+/**
+ * 删除记录和列表
+ */
+async function deleteRecordAndFile(item, index) {
+    const path = item.urlPath;
+    const tempPath = `${tempSourcePath}/${item.name}`;
+    deleteDirectory(tempPath)
+    if(path && fs.existsSync(path)) {
+        fs.unlinkSync(path)
+    }
+    m3u8VideoDownloadingListDB.data.loadingList.splice(index, 1)
+    await m3u8VideoDownloadingListDB.write()
+    sendTips("delete-m3u8-loading-success")
 }
 
 /**

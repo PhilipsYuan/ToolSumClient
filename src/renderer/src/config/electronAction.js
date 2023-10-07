@@ -15,3 +15,7 @@ window.electronAPI.m3u8VideoDownloadSuccess(async(event, loadingId) => {
 window.electronAPI.showPauseTipBeforeClose(async(event, content) => {
     useService("showScreenLoadingMessage", content)
 })
+
+window.electronAPI.deleteM3u8LoadingSuccess(async (event) => {
+    useService("deleteM3u8LoadingSuccess")
+})

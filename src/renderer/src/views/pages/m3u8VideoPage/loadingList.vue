@@ -58,6 +58,7 @@ export default {
     await this.getLoadingList()
     addService("getM3u8LoadingList", this.getLoadingList.bind(this))
     addService("m3u8VideoDownloadSuccess", this.m3u8VideoDownloadSuccess.bind(this))
+    addService('deleteM3u8LoadingSuccess', this.deleteSuccess.bind(this))
     setInterval(async () => {
       await this.getLoadingList()
     }, 1000)
@@ -82,6 +83,8 @@ export default {
     },
     async deleteRecord(id) {
       await window.electronAPI.deleteM3u8LoadingList(id)
+    },
+    async deleteSuccess() {
       this.$message.success("删除成功")
       await this.getLoadingList()
     },
