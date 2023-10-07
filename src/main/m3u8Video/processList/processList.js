@@ -3,7 +3,7 @@ import {app, ipcMain} from "electron";
 import {makeDir} from "../../util/fs";
 import fs from "fs";
 import shortId from "shortid";
-import { startDownloadVideo } from '../create/m3u8Video'
+import { startDownloadVideo, continueDownload } from '../create/m3u8Video'
 
 const basePath = app.getPath('userData')
 const processUrlsPath = `${basePath}/m3u8Video/processUrls`
@@ -12,6 +12,8 @@ makeDir(processUrlsPath)
 ipcMain.handle('get-m3u8-loading-list', getLoadingList)
 ipcMain.handle('delete-m3u8-loading-list', deleteLoadingRecordAndFile)
 ipcMain.handle('start-download-one-loading', startDownloadLoading)
+ipcMain.handle('pause-m3u8-download-Video', pauseDownloadVideo)
+ipcMain.handle('continue-m3u8-download-Video', continueDownloadVideo)
 /**
  * 获取下载中的记录
  */
@@ -102,4 +104,45 @@ export async function startDownloadLoading(event, id) {
         item.missLinks = json.missLinks
         await startDownloadVideo(item)
     }
+}
+
+/**
+ * 暂停下载视频
+ * @returns {Promise<void>}
+ */
+export async function pauseDownloadVideo(event, id) {
+    const list = m3u8VideoDownloadingListDB.data.loadingList
+    const index = list.findIndex((item) => item.id === id)
+    if(index > -1) {
+        const item = m3u8VideoDownloadingListDB.data.loadingList[index];
+        item.pause = true
+    }
+}
+
+/**
+ * 暂停后继续下载视频
+ * @returns {Promise<void>}
+ */
+export async function continueDownloadVideo(event, id) {
+    const list = m3u8VideoDownloadingListDB.data.loadingList
+    const index = list.findIndex((item) => item.id === id)
+    if(index > -1) {
+        const item = m3u8VideoDownloadingListDB.data.loadingList[index];
+        item.pause = false
+        await continueDownload(item)
+    }
+}
+
+/**
+ * 保存暂停时数据
+ * @returns {Promise<void>}
+ */
+export async function savePauseDownloadInfo(record) {
+    const list = m3u8VideoDownloadingListDB.data.loadingList
+    const index = list.findIndex((item) => item.id === record.id)
+    if(index > -1) {
+        list[index].batchIndex = record.batchIndex
+        await createProcessFile(record.urlPath, record.totalUrls, record.m3u8Data, record.missLinks)
+    }
+    await m3u8VideoDownloadingListDB.write()
 }

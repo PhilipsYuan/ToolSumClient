@@ -1,6 +1,7 @@
 import {splitArray} from '../../util/array';
 import fs from "fs";
 import Throttle from "../../util/throttle";
+import {savePauseDownloadInfo} from "../processList/processList";
 const axios = require('axios')
 
 /**
@@ -19,29 +20,39 @@ const sendProcess = Throttle((loadingRecord) => {
  */
 export async function downloadTss(totalUrls, m3u8Data, tempPath, totalIndex, loadingRecord) {
     let m3u8DataString = await loopDownloadTs(totalUrls, m3u8Data, tempPath, totalIndex, loadingRecord)
-    let reloadNumber = 0
-    while(loadingRecord.missLinks.length > 0 && reloadNumber < 100) {
-        reloadNumber ++
-        m3u8DataString = await checkErrorTs(m3u8DataString, loadingRecord, reloadNumber, tempPath)
-    }
-    if(loadingRecord.missLinks.length > 0) {
-        loadingRecord.message = {
-            status: 'error',
-            content: `下载失败，请重新进行下载!`
+    if(m3u8DataString !== 'pause') {
+        let reloadNumber = 0
+        while(loadingRecord.missLinks.length > 0 && reloadNumber < 100 && loadingRecord.pause === false) {
+            reloadNumber ++
+            m3u8DataString = await checkErrorTs(m3u8DataString, loadingRecord, reloadNumber, tempPath)
         }
-        return null
+        if(loadingRecord.pause) {
+            loadingRecord.batchIndex = totalIndex
+            await savePauseDownloadInfo(loadingRecord)
+            return 'pause'
+        } else {
+            if(loadingRecord.missLinks.length > 0) {
+                loadingRecord.message = {
+                    status: 'error',
+                    content: `下载失败，请重新进行下载!`
+                }
+                return null
+            }
+            return m3u8Data
+        }
+    } else {
+        return 'pause'
     }
-    return m3u8Data
 }
 
 /**
  * 顺序下载Ts文件
  */
 async function loopDownloadTs(totalUrls, m3u8Data, tempPath, totalIndex, loadingRecord) {
-    const newErrors = []
+    const newErrors = loadingRecord.missLinks || []
     const twoUrls = splitArray(totalUrls, 100)
     async function download(index) {
-        if (index < totalIndex) {
+        if (index < totalIndex && loadingRecord.pause === false) {
             const pros = twoUrls[index]
             const promises = pros.map(async (item, subIndex) => {
                 return await getFileAndStore(item.url, item.number, item.item, tempPath, newErrors, loadingRecord)
@@ -51,12 +62,17 @@ async function loopDownloadTs(totalUrls, m3u8Data, tempPath, totalIndex, loading
                     index = index + 1
                     return await download(index)
                 })
+        } else if(loadingRecord.pause) {
+            loadingRecord.batchIndex = index
+            loadingRecord.missLinks = newErrors
+            await savePauseDownloadInfo(loadingRecord)
+            return 'pause'
         } else {
             loadingRecord.missLinks = newErrors
             return await replaceTsFileUrls(totalUrls, m3u8Data, tempPath)
         }
     }
-    return await download(0)
+    return await download(loadingRecord.batchIndex || 0)
 }
 
 /**

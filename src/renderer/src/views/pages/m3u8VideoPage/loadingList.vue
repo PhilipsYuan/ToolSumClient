@@ -16,12 +16,12 @@
           <div class="flex gap-3">
             <el-icon v-if="item.isStart === item.pause" class="icon-button !text-lg !p-1 cursor-pointer"
                      style="width: 28px !important;height:28px !important;"
-                     @click="startDownload(item.id)">
+                     @click="startDownload(item)">
               <VideoPlay/>
             </el-icon>
             <el-icon v-if="item.isStart !== item.pause" class="icon-button !text-lg !p-1 cursor-pointer"
                      style="width: 28px !important;height:28px !important;"
-                     @click="startDownload(item.id)">
+                     @click="pauseDownload(item)">
               <VideoPause/>
             </el-icon>
             <el-dropdown>
@@ -66,8 +66,17 @@ export default {
     }, 1000)
   },
   methods: {
-    async startDownload(id) {
-      await window.electronAPI.startDownloadM3u8Video(id)
+    async startDownload(item) {
+      if(item.pause === false && item.isStart === false) {
+        await window.electronAPI.startDownloadM3u8Video(item.id)
+      }  else {
+        await window.window.electronAPI.continueM3u8DownloadVideo(item.id)
+        await this.getLoadingList()
+      }
+    },
+    async pauseDownload(item) {
+      await window.window.electronAPI.pauseM3u8DownloadVideo(item.id)
+      await this.getLoadingList()
     },
     copyLink(url) {
       navigator.clipboard.writeText(url)
@@ -78,9 +87,10 @@ export default {
       await this.getLoadingList()
     },
     async getLoadingList() {
+      console.log('getList')
       this.list = await window.electronAPI.getM3u8LoadingList() || []
     },
-    async m3u8VideoDownloadSuccess(loadingId) {
+    async m3u8VideoDownloadSuccess() {
       await this.getLoadingList()
       this.$emit('changeTab', 'finish')
       document.getElementById('m3u8-finish-list-frame').scroll(0, 0)

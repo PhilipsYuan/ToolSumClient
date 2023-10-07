@@ -77,7 +77,21 @@ export async function startDownloadVideo(loadingRecord) {
     const outputPath = loadingRecord.outputPath;
     let m3u8Data = loadingRecord.m3u8Data
     const convert = await downloadTss(loadingRecord.totalUrls, m3u8Data, tempPath, loadingRecord.totalIndex, loadingRecord)
-    if (convert) {
+    if (convert && convert !== 'pause') {
+        testSpawnCombine(tempPath, outputPath, loadingRecord)
+    }
+}
+
+/**
+ * 继续下载内容
+ * @returns {Promise<void>}
+ */
+export async function continueDownload(loadingRecord) {
+    const outputPath = loadingRecord.outputPath;
+    let m3u8Data = loadingRecord.m3u8Data;
+    const tempPath = `${tempSourcePath}/${loadingRecord.name}`;
+    const convert = await downloadTss(loadingRecord.totalUrls, m3u8Data, tempPath, loadingRecord.totalIndex, loadingRecord)
+    if (convert && convert !== 'pause') {
         testSpawnCombine(tempPath, outputPath, loadingRecord)
     }
 }
