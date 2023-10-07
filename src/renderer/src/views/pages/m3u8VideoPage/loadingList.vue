@@ -13,13 +13,14 @@
               {{ item.message.content }}
             </div>
           </div>
-          <div class="flex gap-3">
-            <el-icon v-if="item.isStart === item.pause" class="icon-button !text-lg !p-1 cursor-pointer"
+          <div class="flex gap-3 items-center">
+            <div v-if="item.pausing === true" class="text-xs text-gray-500">暂停进行中...</div>
+            <el-icon v-if="item.isStart === item.pause && item.pausing === false" class="icon-button !text-lg !p-1 cursor-pointer"
                      style="width: 28px !important;height:28px !important;"
                      @click="startDownload(item)">
               <VideoPlay/>
             </el-icon>
-            <el-icon v-if="item.isStart !== item.pause" class="icon-button !text-lg !p-1 cursor-pointer"
+            <el-icon v-if="item.isStart !== item.pause || item.pausing === true" class="icon-button !text-lg !p-1 cursor-pointer"
                      style="width: 28px !important;height:28px !important;"
                      @click="pauseDownload(item)">
               <VideoPause/>
@@ -51,10 +52,6 @@ export default {
   data() {
     return {
       list: [],
-      message: {
-        status: 'success',
-        content: '网页解析完成，发现可下载的链接。'
-      }
     }
   },
   async mounted() {
@@ -75,8 +72,10 @@ export default {
       }
     },
     async pauseDownload(item) {
-      await window.window.electronAPI.pauseM3u8DownloadVideo(item.id)
-      await this.getLoadingList()
+      if(!item.pausing) {
+        await window.window.electronAPI.pauseM3u8DownloadVideo(item.id)
+        await this.getLoadingList()
+      }
     },
     copyLink(url) {
       navigator.clipboard.writeText(url)
@@ -87,7 +86,6 @@ export default {
       await this.getLoadingList()
     },
     async getLoadingList() {
-      console.log('getList')
       this.list = await window.electronAPI.getM3u8LoadingList() || []
     },
     async m3u8VideoDownloadSuccess() {

@@ -41,6 +41,8 @@ export async function newLoadingRecord (data) {
             content: '未开始进行下载'
         },
         urlPath: path,
+        // 判断是否在进行中
+        pausing: false,
         pause: false,
         isStart: false,
         successTsNum: 0,
@@ -116,6 +118,7 @@ export async function pauseDownloadVideo(event, id) {
     if(index > -1) {
         const item = m3u8VideoDownloadingListDB.data.loadingList[index];
         item.pause = true
+        item.pausing = true
     }
 }
 
@@ -143,6 +146,7 @@ export async function savePauseDownloadInfo(record) {
     if(index > -1) {
         list[index].batchIndex = record.batchIndex
         await createProcessFile(record.urlPath, record.totalUrls, record.m3u8Data, record.missLinks)
+        list[index].pausing = false
     }
     await m3u8VideoDownloadingListDB.write()
 }
