@@ -11,3 +11,7 @@ window.electronAPI.getM3u8FileFailureTips(async (event, status, content) => {
 window.electronAPI.m3u8VideoDownloadSuccess(async(event, loadingId) => {
     useService("m3u8VideoDownloadSuccess", loadingId)
 })
+
+window.electronAPI.showPauseTipBeforeClose(async(event, content) => {
+    useService("showScreenLoadingMessage", content)
+})

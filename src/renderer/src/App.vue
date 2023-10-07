@@ -19,7 +19,8 @@
 <script>
 import './style/global.css'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
-
+import { ElLoading } from 'element-plus'
+import {addService} from "./service/service";
 export default {
   data() {
     return {
@@ -31,11 +32,20 @@ export default {
   created() {
   },
   mounted() {
+    addService('showScreenLoadingMessage', this.showScreenLoadingMessage.bind(this))
   },
   methods: {
     goPath(path) {
       this.$router.push({path: path})
     },
+    showScreenLoadingMessage(message) {
+      const loading = ElLoading.service({
+        lock: true,
+        text: message,
+        background: 'rgba(0, 0, 0, 0.5)',
+      })
+      return loading
+    }
   }
 }
 </script>

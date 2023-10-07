@@ -14,7 +14,7 @@
             </div>
           </div>
           <div class="flex gap-3 items-center">
-            <div v-if="item.pausing === true" class="text-xs text-gray-500">暂停进行中...</div>
+            <div v-if="item.pausing === true" class="text-xs text-gray-500">暂停中...</div>
             <el-icon v-if="item.isStart === item.pause && item.pausing === false" class="icon-button !text-lg !p-1 cursor-pointer"
                      style="width: 28px !important;height:28px !important;"
                      @click="startDownload(item)">

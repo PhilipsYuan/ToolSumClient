@@ -26,7 +26,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     openDirectoryAndFile: (path) => ipcRenderer.send('open-directory-and-file', path),
     // 主进程到渲染器进程
     getM3u8FileFailureTips: (callback) => ipcRenderer.on('m3u8-file-get-failure', callback),
-    m3u8VideoDownloadSuccess: (callback) => ipcRenderer.on('m3u8-download-video-success', callback)
+    m3u8VideoDownloadSuccess: (callback) => ipcRenderer.on('m3u8-download-video-success', callback),
+    showPauseTipBeforeClose: (callback) => ipcRenderer.on('close-app-before-task-tip', callback)
 })
 
 window.addEventListener('DOMContentLoaded', () => {
