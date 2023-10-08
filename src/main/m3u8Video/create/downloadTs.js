@@ -31,6 +31,7 @@ export async function downloadTss(totalUrls, m3u8Data, tempPath, totalIndex, loa
             await savePauseDownloadInfo(loadingRecord)
             return 'pause'
         } else {
+            loadingRecord.isStart = false
             if(loadingRecord.missLinks.length > 0) {
                 loadingRecord.message = {
                     status: 'error',

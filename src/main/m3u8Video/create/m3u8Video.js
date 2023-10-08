@@ -78,7 +78,7 @@ export async function startDownloadVideo(loadingRecord) {
     let m3u8Data = loadingRecord.m3u8Data
     const convert = await downloadTss(loadingRecord.totalUrls, m3u8Data, tempPath, loadingRecord.totalIndex, loadingRecord)
     if (convert && convert !== 'pause') {
-        testSpawnCombine(tempPath, outputPath, loadingRecord)
+        combineVideo(tempPath, outputPath, loadingRecord)
     }
 }
 
@@ -136,37 +136,7 @@ async function downloadSecretKey(data, host, tempPath, pathname) {
  * 合并，并生成视频
  */
 function combineVideo(tempPath, outputPath, loadingRecord) {
-    loadingRecord.message = {
-        status: 'success',
-        content: `合成中...`
-    }
-    childProcess.exec(`cd "${tempPath}" && ${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -c copy "${outputPath}"`, {
-        maxBuffer: 5 * 1024 * 1024,
-    }, async (error, stdout, stderr) => {
-        console.log(stderr)
-        if (error) {
-            loadingRecord.message = {
-                status: 'error',
-                content: error
-            }
-        } else {
-            loadingRecord.message = {
-                status: 'success',
-                content: '合成完成'
-            }
-            deleteTempSource(tempPath)
-            await newFinishedRecord({
-                name: loadingRecord.name,
-                filePath: outputPath,
-                m3u8Url: loadingRecord.m3u8Url
-            })
-            await deleteLoadingRecordAndFile(null, loadingRecord.id)
-            sendTips('m3u8-download-video-success', loadingRecord.id)
-        }
-    })
-}
-
-function testSpawnCombine(tempPath, outputPath, loadingRecord) {
+    loadingRecord.pause = true
     loadingRecord.message = {
         status: 'success',
         content: `合成中...`
