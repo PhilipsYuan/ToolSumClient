@@ -3,7 +3,7 @@ import {app, ipcMain} from "electron";
 import {deleteDirectory, makeDir} from "../../util/fs";
 import fs from "fs";
 import shortId from "shortid";
-import { downloadingM3u8Video } from '../create/downloadTs';
+import { createWork } from '../create/workManager';
 import {sendTips} from "../../util/electronOperations";
 
 const basePath = app.getPath('userData')
@@ -132,7 +132,7 @@ export async function startDownloadLoading(event, id) {
             status: 'success',
             content: `开始下载中...`
         }
-        await downloadingM3u8Video(item)
+        await createWork(item)
     }
 }
 
@@ -160,7 +160,7 @@ export async function continueDownloadVideo(event, id) {
     if(index > -1) {
         const item = m3u8VideoDownloadingListDB.data.loadingList[index];
         item.pause = false
-        await downloadingM3u8Video(item)
+        await createWork(item)
     }
 }
 

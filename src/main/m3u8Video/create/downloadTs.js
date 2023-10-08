@@ -1,30 +1,14 @@
 import {splitArray} from '../../util/array';
 import fs from "fs";
 import Throttle from "../../util/throttle";
-import {deleteLoadingRecordAndFile, savePauseDownloadInfo} from "../processList/processList";
 import childProcess from "child_process";
-import {newFinishedRecord} from "../finishList/finishList";
-import {sendTips} from "../../util/electronOperations";
 import {deleteDirectory} from "../../util/fs";
-import {app} from "electron";
+import {parentPort} from 'worker_threads'
+
 const axios = require('axios')
 const ffmpegPath = __dirname + '/darwin-x64/ffmpeg';
-const basePath = app.getPath('userData');
-const tempSourcePath = `${basePath}/m3u8Video/tempSource`;
+let tempSourcePath = null
 
-/**
- * 视频下载
- * @returns {Promise<void>}
- */
-export async function downloadingM3u8Video(loadingRecord) {
-    const tempPath = `${tempSourcePath}/${loadingRecord.name}`;
-    const outputPath = loadingRecord.outputPath;
-    let m3u8Data = loadingRecord.m3u8Data
-    const convert = await downloadTss(loadingRecord.totalUrls, m3u8Data, tempPath, loadingRecord.totalIndex, loadingRecord)
-    if (convert && convert !== 'pause') {
-        combineVideo(tempPath, outputPath, loadingRecord)
-    }
-}
 
 /**
  * 发送下载进度
@@ -34,13 +18,46 @@ const sendProcess = Throttle((loadingRecord) => {
         status: 'success',
         content: `下载完成${Number((loadingRecord.successTsNum / loadingRecord.totalUrls.length) * 100).toFixed(2)}%`
     }
+    parentPort.postMessage({
+        type: 'updateRecord',
+        key: 'message',
+        value: loadingRecord.message
+    })
 }, 1000)
+
+/**
+ * 唤起下载
+ * @param event
+ * @returns {Promise<void>}
+ */
+parentPort.onmessage = async (event) => {
+    const {loadingRecord, tempSourcePath: path } = event.data
+    tempSourcePath = path
+    await downloadingM3u8Video(loadingRecord)
+    // parentPort.postMessage(res)
+}
+
+
+/**
+ * 视频下载
+ * @returns {Promise<void>}
+ */
+async function downloadingM3u8Video(loadingRecord) {
+    const tempPath = `${tempSourcePath}/${loadingRecord.name}`;
+    const outputPath = loadingRecord.outputPath;
+    let m3u8Data = loadingRecord.m3u8Data
+    const convert = await downloadTss(loadingRecord.totalUrls, m3u8Data, tempPath, loadingRecord.totalIndex, loadingRecord)
+    if (convert && convert !== 'pause') {
+        combineVideo(tempPath, outputPath, loadingRecord)
+    }
+}
+
 
 /**
  * 下载Ts文件
  * @returns {Promise<void>}
  */
-export async function downloadTss(totalUrls, m3u8Data, tempPath, totalIndex, loadingRecord) {
+async function downloadTss(totalUrls, m3u8Data, tempPath, totalIndex, loadingRecord) {
     let m3u8DataString = await loopDownloadTs(totalUrls, m3u8Data, tempPath, totalIndex, loadingRecord)
     if(m3u8DataString !== 'pause') {
         let reloadNumber = 0
@@ -50,15 +67,32 @@ export async function downloadTss(totalUrls, m3u8Data, tempPath, totalIndex, loa
         }
         if(loadingRecord.pause) {
             loadingRecord.batchIndex = totalIndex
-            await savePauseDownloadInfo(loadingRecord)
+            parentPort.postMessage({
+                type: 'updateRecord',
+                key: 'batchIndex',
+                value: loadingRecord.batchIndex
+            })
+            parentPort.postMessage({
+                type: 'pauseSuccess'
+            })
             return 'pause'
         } else {
             loadingRecord.isStart = false
+            parentPort.postMessage({
+                type: 'updateRecord',
+                key: 'isStart',
+                value: false
+            })
             if(loadingRecord.missLinks.length > 0) {
                 loadingRecord.message = {
                     status: 'error',
                     content: `下载失败，请重新进行下载!`
                 }
+                parentPort.postMessage({
+                    type: 'updateRecord',
+                    key: 'message',
+                    value: loadingRecord.message
+                })
                 return null
             }
             return m3u8Data
@@ -87,11 +121,26 @@ async function loopDownloadTs(totalUrls, m3u8Data, tempPath, totalIndex, loading
                 })
         } else if(loadingRecord.pause) {
             loadingRecord.batchIndex = index
+            parentPort.postMessage({
+                type: 'updateRecord',
+                key: 'batchIndex',
+                value: loadingRecord.batchIndex
+            })
             loadingRecord.missLinks = newErrors
-            await savePauseDownloadInfo(loadingRecord)
+            parentPort.postMessage({
+                type: 'updateRecord',
+                key: 'missLinks',
+                value: loadingRecord.missLinks
+            })
+            parentPort.postMessage('pauseSuccess')
             return 'pause'
         } else {
             loadingRecord.missLinks = newErrors
+            parentPort.postMessage({
+                type: 'updateRecord',
+                key: 'missLinks',
+                value: loadingRecord.missLinks
+            })
             return await replaceTsFileUrls(totalUrls, m3u8Data, tempPath)
         }
     }
@@ -119,11 +168,14 @@ async function checkErrorTs(data, loadingRecord, reloadNumber, tempPath) {
             await fs.writeFile(`${tempPath}/index.m3u8`, m3u8Data, "utf-8", (err) => {
                 if(err) {
                     console.log('checkErrorTs failure')
-                } else {
-                    console.log('checkErrorTs success')
                 }
             })
             loadingRecord.missLinks = newErrors
+            parentPort.postMessage({
+                type: 'updateRecord',
+                key: 'missLinks',
+                value: loadingRecord.missLinks
+            })
             return m3u8Data
         })
 }
@@ -139,8 +191,6 @@ async function getFileAndStore(url, number, item, tempPath, errorList, loadingRe
         await fs.writeFile(`${tempPath}/${number}.ts`, res.data, 'binary', (err) => {
             if(err) {
                 console.log('ts file create failure')
-            } else {
-                console.log('ts file create success')
             }
         })
         return 'success'
@@ -179,10 +229,20 @@ async function replaceTsFileUrls(urls, data, tempPath) {
  */
 function combineVideo(tempPath, outputPath, loadingRecord) {
     loadingRecord.pause = true
+    parentPort.postMessage({
+        type: 'updateRecord',
+        key: 'pause',
+        value: true
+    })
     loadingRecord.message = {
         status: 'success',
         content: `合成中...`
     }
+    parentPort.postMessage({
+        type: 'updateRecord',
+        key: 'message',
+        value: loadingRecord.message
+    })
     const exec_1 = childProcess.spawn(`cd "${tempPath}" && ${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -progress - -c copy "${outputPath}"`, {
         maxBuffer: 5 * 1024 * 1024,
         shell: true
@@ -195,14 +255,9 @@ function combineVideo(tempPath, outputPath, loadingRecord) {
     });
     exec_1.stderr.on('close', async () => {
         deleteTempSource(tempPath)
-        await newFinishedRecord({
-            name: loadingRecord.name,
-            filePath: outputPath,
-            m3u8Url: loadingRecord.m3u8Url
+        parentPort.postMessage({
+            type: 'combineSuccess'
         })
-        await deleteLoadingRecordAndFile(null, loadingRecord.id)
-        sendTips('m3u8-download-video-success', loadingRecord.id)
-
     });
 }
 
