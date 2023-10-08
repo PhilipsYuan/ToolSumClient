@@ -1,15 +1,10 @@
 import {app, ipcMain} from "electron";
 import fs from "fs";
 import {getSecretKeys, getCorrectM3u8File, getPlayList} from "../../util/m3u8Parse"
-import {deleteDirectory, makeDir} from "../../util/fs"
-import {downloadTss} from './downloadTs';
-import {sendTips} from '../../util/electronOperations';
-import {newFinishedRecord} from '../finishList/finishList';
-import childProcess from 'child_process';
+import {makeDir} from "../../util/fs"
 import {splitArray} from '../../util/array';
-import {newLoadingRecord, deleteLoadingRecordAndFile} from '../processList/processList';
+import {newLoadingRecord} from '../processList/processList';
 
-const ffmpegPath = __dirname + '/darwin-x64/ffmpeg';
 const axios = require('axios');
 const basePath = app.getPath('userData');
 const tempSourcePath = `${basePath}/m3u8Video/tempSource`;
@@ -64,39 +59,6 @@ async function createM3u8DownloadTask(event, url, name, outPath) {
 }
 
 /**
- * 启动视频开始下载
- * @returns {Promise<void>}
- */
-export async function startDownloadVideo(loadingRecord) {
-    loadingRecord.isStart = true
-    loadingRecord.message = {
-        status: 'success',
-        content: `开始下载中...`
-    }
-    const tempPath = `${tempSourcePath}/${loadingRecord.name}`;
-    const outputPath = loadingRecord.outputPath;
-    let m3u8Data = loadingRecord.m3u8Data
-    const convert = await downloadTss(loadingRecord.totalUrls, m3u8Data, tempPath, loadingRecord.totalIndex, loadingRecord)
-    if (convert && convert !== 'pause') {
-        combineVideo(tempPath, outputPath, loadingRecord)
-    }
-}
-
-/**
- * 继续下载内容
- * @returns {Promise<void>}
- */
-export async function continueDownload(loadingRecord) {
-    const outputPath = loadingRecord.outputPath;
-    let m3u8Data = loadingRecord.m3u8Data;
-    const tempPath = `${tempSourcePath}/${loadingRecord.name}`;
-    const convert = await downloadTss(loadingRecord.totalUrls, m3u8Data, tempPath, loadingRecord.totalIndex, loadingRecord)
-    if (convert && convert !== 'pause') {
-        combineVideo(tempPath, outputPath, loadingRecord)
-    }
-}
-
-/**
  * 下载解码key，并进行替换,
  * 文件里可能会出现多个
  */
@@ -132,37 +94,7 @@ async function downloadSecretKey(data, host, tempPath, pathname) {
     return m3u8Data
 }
 
-/**
- * 合并，并生成视频
- */
-function combineVideo(tempPath, outputPath, loadingRecord) {
-    loadingRecord.pause = true
-    loadingRecord.message = {
-        status: 'success',
-        content: `合成中...`
-    }
-    const exec_1 = childProcess.spawn(`cd "${tempPath}" && ${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -progress - -c copy "${outputPath}"`, {
-        maxBuffer: 5 * 1024 * 1024,
-        shell: true
-    });
-    // exec_1.stdout.on('data', (info) => {
-    //     console.log('stdout:' + info)
-    // });
-    exec_1.stderr.on('data', (info) => {
-        console.log('2222222：' + info)
-    });
-    exec_1.stderr.on('close', async () => {
-        deleteTempSource(tempPath)
-        await newFinishedRecord({
-            name: loadingRecord.name,
-            filePath: outputPath,
-            m3u8Url: loadingRecord.m3u8Url
-        })
-        await deleteLoadingRecordAndFile(null, loadingRecord.id)
-        sendTips('m3u8-download-video-success', loadingRecord.id)
 
-    });
-}
 
 /**
  * 检测要输出的文件是否已经存在，如果已经存在，提示更换名称
@@ -174,11 +106,4 @@ function checkOutputFileNotExist(event, path) {
     } else {
         return true
     }
-}
-
-/**
- * 删除临时文件
- */
-function deleteTempSource(tempPath) {
-    deleteDirectory(tempPath)
 }
