@@ -92,7 +92,7 @@ export async function continueDownload(loadingRecord) {
     const tempPath = `${tempSourcePath}/${loadingRecord.name}`;
     const convert = await downloadTss(loadingRecord.totalUrls, m3u8Data, tempPath, loadingRecord.totalIndex, loadingRecord)
     if (convert && convert !== 'pause') {
-        testSpawnCombine(tempPath, outputPath, loadingRecord)
+        combineVideo(tempPath, outputPath, loadingRecord)
     }
 }
 
