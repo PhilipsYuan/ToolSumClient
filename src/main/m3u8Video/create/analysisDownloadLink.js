@@ -23,12 +23,17 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
         }
     });
     const page = await pie.getPage(browser, window)
+
     function logRequest(request) {
         const url = request.url()
         if(/\.m3u8$/.test(url)) {
             m3u8Url = url
         }
     }
+    // page.once('load', async() => {
+    //     const content = await page.content();
+    //     console.log(content)
+    // });
     page.on('request', logRequest);
     try {
         await window.loadURL(htmlUrl, {
@@ -38,7 +43,7 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
             let index = 0
             const interval = setInterval(() => {
                 console.log(`检测次数：${index + 1}`)
-                if(m3u8Url || index > 9) {
+                if(m3u8Url || index > 20) {
                     clearInterval(interval)
                      window.destroy()
                     resolve(m3u8Url)
