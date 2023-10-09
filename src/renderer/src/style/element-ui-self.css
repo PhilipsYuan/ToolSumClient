@@ -36,6 +36,7 @@
 .el-tabs__header {
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
+    overflow: hidden;
 }
 .el-tabs--border-card>.el-tabs__header {
     background: #ffffff !important;
