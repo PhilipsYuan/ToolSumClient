@@ -7,21 +7,15 @@
         </div>
         <div class="cursor-pointer inline-block text-xl font-medium align-middle ml-4" @click="goToPath('home')">小滑轮</div>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3">
         <div class="list">
           <a-col :span="4">
             <div class="button" @click="goToPath('vip')">会员购买</div>
           </a-col>
         </div>
-        <div class="inline-block" v-if="!isLogin">
-          <el-row :gutter="10">
-            <el-col :span="12">
-              <el-button type="primary" @click="openLogin">登录</el-button>
-            </el-col>
-            <el-col :span="12">
-              <el-button @click="openRegister">注册</el-button>
-            </el-col>
-          </el-row>
+        <div class="flex" v-if="!isLogin">
+          <el-button type="primary" @click="openLogin">登录</el-button>
+          <el-button @click="openRegister">注册</el-button>
         </div>
         <div class="login" v-if="isLogin">
           <el-dropdown @command="handleCommand">

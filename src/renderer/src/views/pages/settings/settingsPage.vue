@@ -11,7 +11,6 @@
         </div>
         <div>
           <el-button type="primary" @click="change">更改</el-button>
-          <el-button type="primary" @click="test">test</el-button>
         </div>
       </div>
     </div>
