@@ -17,10 +17,12 @@
             <div v-if="item.pausing === true" class="text-xs text-gray-500">暂停中...</div>
             <el-icon v-if="item.isStart === item.pause && item.pausing === false" class="icon-button !text-lg !p-1 cursor-pointer"
                      style="width: 28px !important;height:28px !important;"
+                     :class="{'pointer-events-none !text-gray-300': item.message.content === '合成中...'}"
                      @click="startDownload(item)">
               <VideoPlay/>
             </el-icon>
             <el-icon v-if="item.isStart !== item.pause || item.pausing === true" class="icon-button !text-lg !p-1 cursor-pointer"
+                     :class="{'pointer-events-none !text-gray-300': item.message.content === '合成中...'}"
                      style="width: 28px !important;height:28px !important;"
                      @click="pauseDownload(item)">
               <VideoPause/>
