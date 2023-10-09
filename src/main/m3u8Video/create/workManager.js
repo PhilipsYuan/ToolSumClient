@@ -20,6 +20,7 @@ export function createWork(loadingRecord) {
 
 function runWork(work, loadingRecord) {
     work.postMessage({
+        type: 'start',
         loadingRecord,
         tempSourcePath
     })
@@ -32,13 +33,32 @@ function runWork(work, loadingRecord) {
             })
             await deleteLoadingRecordAndFile(null, loadingRecord.id)
             sendTips('m3u8-download-video-success', loadingRecord.id)
+            work.terminate()
         }
         if (data.type === 'pauseSuccess') {
             await savePauseDownloadInfo(loadingRecord)
+            work.terminate()
         }
         if(data.type === 'updateRecord') {
             loadingRecord[data.key] = data.value
         }
+    })
+    work.on('exit', (code) => {
+        delete works[loadingRecord.id]
+        console.log('exit')
+        if (code !== 0) {
+            console.log(`Worker stopped with exit code ${code}`)
+        }
+    });
+}
+
+/**
+ * 更新work
+ */
+export function updateWork(loadingRecord) {
+    const work = works[loadingRecord.id]
+    work.postMessage({
+        type: 'pause'
     })
 }
 

@@ -8,6 +8,7 @@ import {parentPort} from 'worker_threads'
 const axios = require('axios')
 const ffmpegPath = __dirname + '/darwin-x64/ffmpeg';
 let tempSourcePath = null
+let loadingRecord = null
 
 
 /**
@@ -31,10 +32,15 @@ const sendProcess = Throttle((loadingRecord) => {
  * @returns {Promise<void>}
  */
 parentPort.onmessage = async (event) => {
-    const {loadingRecord, tempSourcePath: path } = event.data
-    tempSourcePath = path
-    await downloadingM3u8Video(loadingRecord)
-    // parentPort.postMessage(res)
+    const data = event.data
+    if(data.type === 'start') {
+        tempSourcePath = data.tempSourcePath
+        loadingRecord = data.loadingRecord
+        await downloadingM3u8Video(data.loadingRecord)
+    }
+    if(data.type === 'pause') {
+        loadingRecord.pause = true
+    }
 }
 
 
@@ -132,7 +138,7 @@ async function loopDownloadTs(totalUrls, m3u8Data, tempPath, totalIndex, loading
                 key: 'missLinks',
                 value: loadingRecord.missLinks
             })
-            parentPort.postMessage('pauseSuccess')
+            parentPort.postMessage({ type: 'pauseSuccess'})
             return 'pause'
         } else {
             loadingRecord.missLinks = newErrors
@@ -204,6 +210,11 @@ async function getFileAndStore(url, number, item, tempPath, errorList, loadingRe
     })
     if (result === 'success') {
         loadingRecord.successTsNum ++
+        parentPort.postMessage({
+            type: 'updateRecord',
+            key: 'successTsNum',
+            value: loadingRecord.successTsNum
+        })
         sendProcess(loadingRecord)
     }
     return result
