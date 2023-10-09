@@ -40,6 +40,8 @@ function runWork(work, loadingRecord) {
             work.terminate()
         }
         if(data.type === 'updateRecord') {
+            // console.log('updateRecord', loadingRecord.name)
+            // console.log('updateRecord', Object.keys(works))
             loadingRecord[data.key] = data.value
         }
     })

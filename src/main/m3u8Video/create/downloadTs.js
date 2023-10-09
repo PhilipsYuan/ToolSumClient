@@ -114,16 +114,16 @@ async function downloadTss(totalUrls, m3u8Data, tempPath, totalIndex, loadingRec
 async function loopDownloadTs(totalUrls, m3u8Data, tempPath, totalIndex, loadingRecord) {
     const newErrors = loadingRecord.missLinks || []
     const twoUrls = splitArray(totalUrls, 100)
-    async function download(index) {
+    function download(index) {
         if (index < totalIndex && loadingRecord.pause === false) {
             const pros = twoUrls[index]
-            const promises = pros.map(async (item, subIndex) => {
-                return await getFileAndStore(item.url, item.number, item.item, tempPath, newErrors, loadingRecord)
+            const promises = pros.map(async (item) => {
+                return getFileAndStore(item.url, item.number, item.item, tempPath, newErrors, loadingRecord)
             })
             return Promise.all(promises)
                 .then(async (results) => {
                     index = index + 1
-                    return await download(index)
+                    return download(index)
                 })
         } else if(loadingRecord.pause) {
             loadingRecord.batchIndex = index
@@ -147,31 +147,31 @@ async function loopDownloadTs(totalUrls, m3u8Data, tempPath, totalIndex, loading
                 key: 'missLinks',
                 value: loadingRecord.missLinks
             })
-            return await replaceTsFileUrls(totalUrls, m3u8Data, tempPath)
+            return replaceTsFileUrls(totalUrls, m3u8Data, tempPath)
         }
     }
-    return await download(loadingRecord.batchIndex || 0)
+    return download(loadingRecord.batchIndex || 0)
 }
 
 /**
  * 检测是否有错误ts下载，再次请求
  * @returns {Promise<void>}
  */
-async function checkErrorTs(data, loadingRecord, reloadNumber, tempPath) {
+function checkErrorTs(data, loadingRecord, reloadNumber, tempPath) {
     console.log('出现了请求失败了')
     console.log(loadingRecord.missLinks)
     console.log(`对失败的进行第${reloadNumber}次请求`)
     const newErrors = []
     const promises = loadingRecord.missLinks.map(async (item) => {
-        return await getFileAndStore(item.url, item.number, item.item, tempPath, newErrors, loadingRecord)
+        return getFileAndStore(item.url, item.number, item.item, tempPath, newErrors, loadingRecord)
     })
     return Promise.all(promises)
-        .then(async () => {
+        .then(() => {
             let m3u8Data = data
             loadingRecord.missLinks.forEach((item, index) => {
                 m3u8Data = m3u8Data.replace(item.item, `./${item.number}.ts`)
             })
-            await fs.writeFile(`${tempPath}/index.m3u8`, m3u8Data, "utf-8", (err) => {
+            fs.writeFile(`${tempPath}/index.m3u8`, m3u8Data, "utf-8", (err) => {
                 if(err) {
                     console.log('checkErrorTs failure')
                 }
@@ -187,18 +187,25 @@ async function checkErrorTs(data, loadingRecord, reloadNumber, tempPath) {
 }
 
 async function getFileAndStore(url, number, item, tempPath, errorList, loadingRecord) {
-    const result = await axios.get(url, {
+    return axios.get(url, {
         timeout: 10000,
         responseType: "arraybuffer",
         headers: {
             "Content-Type": "application/octet-stream",
         }
     }).then(async (res) => {
-        await fs.writeFile(`${tempPath}/${number}.ts`, res.data, 'binary', (err) => {
+         fs.writeFile(`${tempPath}/${number}.ts`, res.data, 'binary', (err) => {
             if(err) {
                 console.log('ts file create failure')
             }
         })
+        loadingRecord.successTsNum ++
+        parentPort.postMessage({
+            type: 'updateRecord',
+            key: 'successTsNum',
+            value: loadingRecord.successTsNum
+        })
+        sendProcess(loadingRecord)
         return 'success'
     }).catch((e) => {
         errorList.push({
@@ -208,24 +215,14 @@ async function getFileAndStore(url, number, item, tempPath, errorList, loadingRe
         })
         return 'failure'
     })
-    if (result === 'success') {
-        loadingRecord.successTsNum ++
-        parentPort.postMessage({
-            type: 'updateRecord',
-            key: 'successTsNum',
-            value: loadingRecord.successTsNum
-        })
-        sendProcess(loadingRecord)
-    }
-    return result
 }
 
-async function replaceTsFileUrls(urls, data, tempPath) {
+function replaceTsFileUrls(urls, data, tempPath) {
     let m3u8Data = data
     urls.forEach((item) => {
         m3u8Data = m3u8Data.replace(item.item, `./${item.number}.ts`)
     })
-    await fs.writeFile(`${tempPath}/index.m3u8`, m3u8Data, "utf-8", (err) => {
+    fs.writeFile(`${tempPath}/index.m3u8`, m3u8Data, "utf-8", (err) => {
         if(err) {
             console.log('replaceTsFileUrls failure')
         } else {
