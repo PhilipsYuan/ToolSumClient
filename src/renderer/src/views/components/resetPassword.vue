@@ -1,6 +1,7 @@
 <template>
-  <el-dialog v-if="visible" :visible="visible" :footer="null" :before-close="close" width="400px">
-      <div class="title">更换密码</div>
+  <p-dialog v-model="showModal" title="更换密码" :show-footer="false" :show-close="true"
+            :destroy-on-close="true" :close-on-click-modal="false"
+            :close-on-press-escape="false" width="600px">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" label-position="left">
         <el-form-item label="用户名" prop="userName">
           <el-input size="small" v-model="form.userName" placeholder="用户名" />
@@ -22,18 +23,19 @@
           <el-button type="primary" size="small" @click="handleSubmit($event)">更换密码</el-button>
         </el-form-item>
       </el-form>
-  </el-dialog>
+  </p-dialog>
 </template>
 
 <script>
-import connectService from '../service/connectService';
-import {checkUserName, changePassword, sendValidateCode} from '../common/API/user';
-
+import {addService} from '../../service/service';
+import {checkUserName, changePassword, sendValidateCode} from '../../api/user';
+import PDialog from "../UIComponents/PDialog.vue";
 export default {
   name: 'resetPassword',
+  components: {PDialog},
   data () {
     return {
-      visible: false,
+      showModal: false,
       codeButtonEnable: false,
       form: {
         userName: '',
@@ -93,14 +95,14 @@ export default {
     }
   },
   mounted () {
-    connectService.add('openResetPassword', this.open.bind(this));
+    addService('openResetPassword', this.open.bind(this));
   },
   methods: {
     open () {
-      this.visible = true
+      this.showModal = true
     },
     close () {
-      this.visible = false
+      this.showModal = false
     },
     handleSubmit (e) {
       e.preventDefault();
@@ -160,13 +162,3 @@ export default {
   }
 }
 </script>
-
-<style lang="less" scoped>
-  .title {
-    font-size: 22px;
-    line-height: 22px;
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-</style>

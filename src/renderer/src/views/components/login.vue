@@ -1,6 +1,7 @@
 <template>
-  <el-dialog v-if="visible" :visible="visible" :footer="null" :before-close="close" width="400px">
-      <div class="title">登录</div>
+  <p-dialog v-model="showModal" title="登录" :show-footer="false" :show-close="true"
+            :destroy-on-close="true" :close-on-click-modal="false"
+            :close-on-press-escape="false" width="600px">
       <el-form ref="form" :model="form" :rules="rules" label-position="left" label-width="70px">
         <el-form-item prop="userName" label="用户名">
           <el-input style="width: 250px" size="small" v-model="form.userName" placeholder="用户名"  prefix-icon="el-icon-user" />
@@ -15,19 +16,20 @@
           <el-button type="primary" @click="handleSubmit" size="small">登 录</el-button>
         </el-form-item>
       </el-form>
-  </el-dialog>
+  </p-dialog>
 </template>
 
 <script>
 import {addService, useService} from '../../service/service';
 import {login, getUserInfo} from '../../api/user';
 import { setUser } from "../../service/userService";
-
+import PDialog from "../UIComponents/PDialog.vue";
 export default {
   name: 'login',
+  components: {PDialog},
   data () {
     return {
-      visible: false,
+      showModal: false,
       form: {
         userName: '',
         password: ''
@@ -45,10 +47,10 @@ export default {
   },
   methods: {
     open () {
-      this.visible = true;
+      this.showModal = true;
     },
     close () {
-      this.visible = false;
+      this.showModal = false;
     },
     handleSubmit (e) {
       e.preventDefault();

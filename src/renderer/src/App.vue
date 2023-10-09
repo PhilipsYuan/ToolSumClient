@@ -18,6 +18,7 @@
     </div>
     <login/>
     <register/>
+    <reset-password />
   </el-config-provider>
 </template>
 
@@ -29,8 +30,9 @@ import {addService} from "./service/service";
 import headPart from './views/components/head.vue'
 import login from './views/components/login.vue';
 import register from "./views/components/register.vue";
+import resetPassword from "./views/components/resetPassword.vue";
 export default {
-  components: { headPart, login, register },
+  components: { headPart, login, register, resetPassword },
   data() {
     return {
       zhCn
