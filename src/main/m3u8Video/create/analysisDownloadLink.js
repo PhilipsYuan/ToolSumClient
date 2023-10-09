@@ -45,7 +45,7 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
                 } else {
                     index ++
                 }
-            }, 500)
+            }, 1000)
         })
         return promise
     } catch (e) {

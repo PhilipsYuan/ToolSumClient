@@ -63,7 +63,7 @@ export default {
       downloadPath: "11",
       message: {
         status: 'success',
-        content: '未进行下载'
+        content: ''
       },
       analysisLoading: false,
       createLoading: false
@@ -112,6 +112,10 @@ export default {
       this.form.name = ''
       this.form.m3u8Url = ''
       this.form.htmlUrl = ''
+      this.message = {
+        status: 'success',
+        content: ''
+      }
     },
     getM3u8FileFailureMessage(status, content) {
       this.message = {
@@ -126,7 +130,7 @@ export default {
       return /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(str)
     },
     async startAnalysis() {
-      if(this.form.htmlUrl) {
+      if(this.form.htmlUrl && this.isUrl(this.form.htmlUrl)) {
         this.analysisLoading = true
         this.message = {
           content: "网页解析中...",
@@ -151,12 +155,16 @@ export default {
           }
         }
         this.analysisLoading = false
+      } else if(this.form.htmlUrl) {
+        this.message = {
+          content: "网址不符合要求（必须带http或者https协议），请确认下！",
+          status: 'error'
+        }
       } else {
         this.message = {
           content: "请先输入个网址再进行解析！",
           status: 'error'
         }
-        this.$message.error("请先输入个网址再进行解析")
       }
     }
   }

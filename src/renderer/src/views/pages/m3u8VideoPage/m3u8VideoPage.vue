@@ -19,7 +19,7 @@ export default {
   components: { m3u8Create, finishedList, loadingList },
   data() {
     return {
-      activeName: 'loading'
+      activeName: 'create'
     }
   },
   methods: {
