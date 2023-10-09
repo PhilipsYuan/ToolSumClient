@@ -5,10 +5,6 @@ body {
     margin: 0
 }
 
-#app {
-    margin: 24px 36px;
-}
-
 /* 自动移滚动条样式*/
 ::-webkit-scrollbar {
     width: 5px;

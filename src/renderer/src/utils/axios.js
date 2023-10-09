@@ -1,15 +1,11 @@
-/*
 // 引入axios
 import axios from 'axios'
+import host from './const/host'
 
 axios.defaults.withCredentials = true;
-
-// const path = `http://localhost:8083/`
-// 服务器
-const path = `http://39.105.223.85:8083/`
 // 创建实例
 let instance = axios.create({
-    baseURL: path,
+    baseURL: host.server,
     timeout: 60000,  // 毫秒
     headers: {
         'Content-Type': 'application/json'
@@ -18,10 +14,9 @@ let instance = axios.create({
 
 // 响应拦截器
 instance.interceptors.response.use((response)=>{
-    return response.data;
+    return response;
 }, err=>{
     console.log(err)
 });
 
 export default instance
-*/
