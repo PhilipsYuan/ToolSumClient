@@ -23,21 +23,20 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
         }
     });
     const page = await pie.getPage(browser, window)
+    await page.setViewport({"width": 475, "height": 867, "isMobile": true})
 
-    function logRequest(request) {
+    async function logRequest(request) {
         const url = request.url()
         if(/\.m3u8$/.test(url)) {
             m3u8Url = url
         }
+        // const content = await page.content();
+        // console.log(content)
     }
-    // page.once('load', async() => {
-    //     const content = await page.content();
-    //     console.log(content)
-    // });
     page.on('request', logRequest);
     try {
         await window.loadURL(htmlUrl, {
-            userAgent: ' Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Safari/605.1.15'
+            userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1'
         });
         const promise = new Promise((resolve) => {
             let index = 0
