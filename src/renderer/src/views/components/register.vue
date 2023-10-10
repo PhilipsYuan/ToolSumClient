@@ -1,33 +1,35 @@
 <template>
   <p-dialog v-model="showModal" title="注册" :show-footer="false" :show-close="true"
             :destroy-on-close="true" :close-on-click-modal="false"
-            :close-on-press-escape="false" width="600px">
+            :close-on-press-escape="false" width="500px">
     <el-form ref="form" :model="form" :rules="rules" label-width="80px" label-position="left">
       <el-form-item label="用户名" prop="userName">
-        <el-input v-model="form.userName" size="small" placeholder="用户名"/>
+        <el-input v-model="form.userName" placeholder="用户名"/>
       </el-form-item>
       <el-form-item label="昵称" prop="nickName">
-        <el-input v-model="form.nickName" size="small" placeholder="昵称"/>
+        <el-input v-model="form.nickName" placeholder="昵称"/>
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input v-model="form.password" size="small" type="password" placeholder="密码"/>
+        <el-input v-model="form.password" type="password" placeholder="密码"/>
       </el-form-item>
       <el-form-item label="确认密码" prop="confirmPassword">
-        <el-input v-model="form.confirmPassword" size="small" type="password" placeholder="确认密码"/>
+        <el-input v-model="form.confirmPassword" type="password" placeholder="确认密码"/>
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
-        <el-input v-model="form.email" size="small" placeholder="邮箱"/>
+        <el-input v-model="form.email" placeholder="邮箱"/>
       </el-form-item>
       <el-form-item label="验证码" prop="validateCode">
-        <el-input v-model="form.validateCode" size="small" style="width: 150px; margin-right: 10px;"
-                  placeholder="验证码"/>
-        <el-button style="width: 116px;" size="small" :disabled="codeButtonEnable" @click="sendCode">{{
-            codeMessage
-          }}
-        </el-button>
+        <div class="flex items-center gap-4 justify-between w-full">
+          <el-input v-model="form.validateCode"
+                    placeholder="验证码"/>
+          <el-button class="w-32" :disabled="codeButtonEnable" @click="sendCode">{{
+              codeMessage
+            }}
+          </el-button>
+        </div>
       </el-form-item>
       <el-form-item>
-        <el-button size="small" type="primary" @click="handleSubmit($event)">注 册</el-button>
+        <el-button type="primary" @click="handleSubmit($event)">注 册</el-button>
       </el-form-item>
     </el-form>
   </p-dialog>

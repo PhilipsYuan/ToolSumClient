@@ -1,5 +1,5 @@
 <template>
-  <div class="px-20 py-6">
+  <div class="px-8 py-6">
     <div>
       <div v-if="!this.downloadPath"
            class="px-4 py-2 border text-sm rounded-md mb-8 bg-gray-50 text-center flex items-center">

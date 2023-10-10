@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="border px-8 py-4 rounded-md mt-8 bg-gray-100">
+    <div class="border px-8 py-4 rounded-md bg-gray-100">
       <div class="flex justify-between items-center">
         <div class="text-base font-medium">设置下载存储地址</div>
       </div>

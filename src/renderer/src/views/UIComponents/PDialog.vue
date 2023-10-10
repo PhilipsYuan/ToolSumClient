@@ -6,7 +6,7 @@
              :align-center="alignCenter" :destroy-on-close="destroyOnClose"
   >
     <template #header="{ close, titleId, titleClass }" >
-      <div class="h-14 leading-[56px] text-base font-medium">
+      <div class="">
         {{title}}
       </div>
     </template>
