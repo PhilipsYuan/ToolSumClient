@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-[300px]">
-    <div class="px-20 my-5">
+    <div class="px-20 mt-2 mb-4">
       <el-input class="" v-model="query" placeholder="请输入名称和链接检索" @keyup.enter.native="getFinishList(query)">
         <template #append>
           <el-button @click="getFinishList(query)">
@@ -11,7 +11,7 @@
         </template>
       </el-input>
     </div>
-    <div class="overflow-auto h-[calc(100vh-189px)] px-6 py-4 border rounded-md" id="m3u8-finish-list-frame">
+    <div class="overflow-auto h-[calc(100vh-243px)] px-4 py-4 rounded-md bg-[#f6f8fc]" id="m3u8-finish-list-frame">
       <el-card v-for="item in list" class="hover:bg-gray-50 !rounded-md mb-4 last:mb-0" :id="item.id" :body-style="{'padding': '8px 20px'}">
         <div class="flex justify-between items-center">
           <div class="font-medium text-base">

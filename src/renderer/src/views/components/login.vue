@@ -75,6 +75,9 @@ export default {
                 this.$message.error('用户名或密码错误, 请重新输入！')
               }
             })
+              .catch((error) => {
+                console.log(error)
+              })
         }
       });
     },

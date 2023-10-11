@@ -1,6 +1,6 @@
 export default {
     host: '//localhost/',
-    file: '//static.feiaci.com/',
+    file: 'https://static.feiaci.com/',
     // server: 'http://localhost:8083/'
-    server: '//www.feiaci.com/api/'
+    server: 'https://www.feiaci.com/api/'
 }
