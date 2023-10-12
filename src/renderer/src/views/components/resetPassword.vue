@@ -89,6 +89,12 @@ export default {
   methods: {
     open () {
       this.showModal = true
+      this.form = {
+        password: '',
+        confirmPassword: '',
+        email: '',
+        validateCode: ''
+      }
     },
     close () {
       this.showModal = false

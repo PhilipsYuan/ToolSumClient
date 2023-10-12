@@ -53,6 +53,10 @@ export default {
   methods: {
     open () {
       this.showModal = true;
+      this.form = {
+        userName: '',
+        password: ''
+      }
     },
     close () {
       this.showModal = false;

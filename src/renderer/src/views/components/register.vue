@@ -124,6 +124,14 @@ export default {
   methods: {
     open() {
       this.showModal = true
+      this.form = {
+        userName: '',
+        nickName: '',
+        password: '',
+        confirmPassword: '',
+        email: '',
+        validateCode: ''
+      }
     },
     close() {
       this.showModal = false
