@@ -3,11 +3,11 @@
             :destroy-on-close="true" :close-on-click-modal="false"
             :close-on-press-escape="false" width="500px">
       <el-form ref="form" :model="form" :rules="rules" label-position="left" label-width="70px">
-        <el-form-item prop="userName" label="用户名">
-          <el-input v-model="form.userName" placeholder="用户名"  :prefix-icon="UserIcon" />
+        <el-form-item prop="userName" label="用户">
+          <el-input v-model="form.userName" placeholder="请输入用户名或者邮箱"  :prefix-icon="UserIcon" />
         </el-form-item>
         <el-form-item prop="password" label="密码">
-          <el-input v-model="form.password" type="password" placeholder="密码"  :prefix-icon="LockIcon" />
+          <el-input v-model="form.password" type="password" placeholder="请输入密码"  :prefix-icon="LockIcon" />
         </el-form-item>
         <el-form-item >
           <div class="flex items-center justify-between w-full">

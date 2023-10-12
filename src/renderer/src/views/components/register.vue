@@ -4,24 +4,28 @@
             :close-on-press-escape="false" width="500px">
     <el-form ref="form" :model="form" :rules="rules" label-width="80px" label-position="left">
       <el-form-item label="用户名" prop="userName">
-        <el-input v-model="form.userName" placeholder="用户名"/>
+        <el-input v-model="form.userName" placeholder="请输入用户名"/>
       </el-form-item>
       <el-form-item label="昵称" prop="nickName">
-        <el-input v-model="form.nickName" placeholder="昵称"/>
+        <el-input v-model="form.nickName" placeholder="请输入昵称"/>
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input v-model="form.password" type="password" placeholder="密码"/>
+        <el-input v-model="form.password" :type="passwordShow ? 'text': 'password'" placeholder="请输入密码">
+          <template #append><el-button :icon="passwordShow ? View: Hide" @click="changePasswordShow" /></template>
+        </el-input>
       </el-form-item>
       <el-form-item label="确认密码" prop="confirmPassword">
-        <el-input v-model="form.confirmPassword" type="password" placeholder="确认密码"/>
+        <el-input v-model="form.confirmPassword" :type="confirmPasswordShow ? 'text': 'password'" placeholder="请再确认密码">
+          <template #append><el-button :icon="confirmPasswordShow ? View : Hide" @click="changeConfirmPasswordShow" /></template>
+        </el-input>
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
-        <el-input v-model="form.email" placeholder="邮箱"/>
+        <el-input v-model="form.email" placeholder="请输入邮箱地址"/>
       </el-form-item>
       <el-form-item label="验证码" prop="validateCode">
         <div class="flex items-center gap-4 justify-between w-full">
           <el-input v-model="form.validateCode"
-                    placeholder="验证码"/>
+                    placeholder="请输入验证码"/>
           <el-button class="w-32" :disabled="codeButtonEnable" @click="sendCode">{{
               codeMessage
             }}
@@ -37,13 +41,18 @@
 
 <script>
 import {addService} from '../../service/service';
-import {register, checkUserName, sendValidateCode, changePassword} from '../../api/user';
+import {register, checkUserName, sendValidateCode } from '../../api/user';
 import PDialog from "../UIComponents/PDialog.vue";
+import { View, Hide } from '@element-plus/icons-vue'
 export default {
   name: 'register',
   components: {PDialog},
   data() {
     return {
+      View,
+      Hide,
+      passwordShow: false,
+      confirmPasswordShow: false,
       showModal: false,
       codeButtonEnable: false,
       form: {
@@ -175,6 +184,12 @@ export default {
           this.codeMessage = `获取验证码`
         }
       }, 1000)
+    },
+    changePasswordShow() {
+      this.passwordShow = !this.passwordShow
+    },
+    changeConfirmPasswordShow() {
+      this.confirmPasswordShow = !this.confirmPasswordShow
     }
   }
 }

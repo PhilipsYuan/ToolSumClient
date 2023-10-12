@@ -18,13 +18,13 @@
           <el-button @click="openRegister">注册</el-button>
         </div>
         <div class="login" v-if="isLogin">
-          <el-dropdown @command="handleCommand">
-          <span class="el-dropdown-link">
-            {{ user.nickName }}<i class="el-icon-arrow-down el-icon--right"></i>
-          </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="a" @click="loginOut">退出</el-dropdown-item>
-            </el-dropdown-menu>
+          <el-dropdown trigger="click">
+            <div class="flex gap-2 px-2 py-1.5 hover:bg-[#ecf5ff] hover:text-[#409eff] rounded">{{ user.nickName }} <el-icon><ArrowDownBold /></el-icon></div>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="a" @click="loginOut">退出</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
           </el-dropdown>
         </div>
       </div>
@@ -87,17 +87,6 @@ export default {
     goToPath (name) {
       if (name !== this.$router.currentRoute.name) {
         this.$router.push({name: name})
-      }
-    },
-    goToEqx () {
-      window.open('https://forms.ebdan.net/ls/meXYisIo?bt=yxy', '_blank')
-    },
-    goToSg () {
-      window.open('https://segmentfault.com/a/1190000021201317', '_blank')
-    },
-    handleCommand (command) {
-      if (command === 'a') {
-        this.loginOut()
       }
     }
   }

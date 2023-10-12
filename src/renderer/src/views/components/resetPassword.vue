@@ -3,23 +3,24 @@
             :destroy-on-close="true" :close-on-click-modal="false"
             :close-on-press-escape="false" width="500px">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" label-position="left">
-        <el-form-item label="用户名" prop="userName">
-          <el-input v-model="form.userName" placeholder="用户名" />
-        </el-form-item>
-        <el-form-item label="新密码" prop="password">
-          <el-input v-model="form.password" type="password" placeholder="密码"/>
-        </el-form-item>
-        <el-form-item label="确认密码" prop="confirmPassword">
-          <el-input v-model="form.confirmPassword" type="password" placeholder="确认密码"/>
-        </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <el-input v-model="form.email" placeholder="邮箱" />
+          <el-input v-model="form.email" placeholder="请输入邮箱地址" />
         </el-form-item>
         <el-form-item label="验证码" prop="validateCode">
           <div class="flex items-center gap-4 justify-between w-full">
-            <el-input v-model="form.validateCode" placeholder="验证码"/>
+            <el-input v-model="form.validateCode" placeholder="请输入验证码"/>
             <el-button class="w-32" :disabled="codeButtonEnable" @click="sendCode">{{codeMessage}}</el-button>
           </div>
+        </el-form-item>
+        <el-form-item label="新密码" prop="password">
+          <el-input v-model="form.password" :type="passwordShow ? 'text': 'password'" placeholder="请输入密码">
+            <template #append><el-button :icon="passwordShow ? View: Hide" @click="changePasswordShow" /></template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirmPassword">
+          <el-input v-model="form.confirmPassword" :type="confirmPasswordShow ? 'text': 'password'" placeholder="请再确认密码">
+            <template #append><el-button :icon="confirmPasswordShow ? View : Hide" @click="changeConfirmPasswordShow" /></template>
+          </el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSubmit($event)">更换密码</el-button>
@@ -30,41 +31,27 @@
 
 <script>
 import {addService} from '../../service/service';
-import {checkUserName, changePassword, sendValidateCode} from '../../api/user';
+import {changePassword, sendValidateCode} from '../../api/user';
 import PDialog from "../UIComponents/PDialog.vue";
+import { View, Hide } from '@element-plus/icons-vue'
 export default {
   name: 'resetPassword',
   components: {PDialog},
   data () {
     return {
+      View,
+      Hide,
+      passwordShow: false,
+      confirmPasswordShow: false,
       showModal: false,
       codeButtonEnable: false,
       form: {
-        userName: '',
         password: '',
         confirmPassword: '',
         email: '',
         validateCode: ''
       },
       rules: {
-        userName: [{
-          required: true,
-          validator: (rule, value, callback) => {
-            let timer = null
-            timer = setTimeout(() => {
-              clearTimeout(timer)
-              checkUserName({userName: value})
-                .then((res) => {
-                  if (res.data.code === 200) {
-                    callback(new Error('用户名不存在!'))
-                  } else {
-                    callback()
-                  }
-                })
-            }, 500)
-          },
-          trigger: 'blur'
-        }],
         password: [
           {required: true, message: '请输入密码!', trigger: 'blur'},
           {pattern: /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[\W_]).{10,20}$/, message: '请输入长度为10-20位包含数字、字母、特殊字符的密码', trigger: 'blur'}
@@ -111,7 +98,6 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           let json = {
-            userName: this.form.userName,
             password: this.form.password,
             email: this.form.email,
             validateCode: this.form.validateCode
@@ -160,6 +146,12 @@ export default {
           this.codeMessage = `获取验证码`
         }
       }, 1000)
+    },
+    changePasswordShow() {
+      this.passwordShow = !this.passwordShow
+    },
+    changeConfirmPasswordShow() {
+      this.confirmPasswordShow = !this.confirmPasswordShow
     }
   }
 }
