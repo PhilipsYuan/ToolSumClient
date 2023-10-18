@@ -38,8 +38,6 @@ import './config/electronAction'
 import { ElMessage } from 'element-plus'
 import './style/element-ui-self.css'
 import './style/global.css'
-import { getUserInfo } from "./api/user";
-import { setUser } from "./service/userService";
 
 
 const app = createApp(App)
@@ -50,10 +48,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
 
-getUserInfo()
-    .then((res) => {
-        setUser(res.data.result);
-        app.mount('#app');
-    })
+app.mount('#app');
 
 

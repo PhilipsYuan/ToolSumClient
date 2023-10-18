@@ -1,6 +1,7 @@
 // 引入axios
 import axios from 'axios'
 import host from './const/host'
+import routeSetting from '../route/route';
 
 axios.defaults.withCredentials = true;
 // 创建实例
@@ -17,6 +18,7 @@ instance.interceptors.response.use((response)=>{
     return response;
 }, err=>{
     console.log(err)
+    routeSetting.push({path: '/error'})
 });
 
 export default instance

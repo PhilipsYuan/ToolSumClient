@@ -1,28 +1,6 @@
 <template>
   <el-config-provider :locale="zhCn">
-    <el-container>
-      <el-header>
-        <head-part/>
-      </el-header>
-      <el-container>
-        <el-aside>
-          <el-menu default-active="1">
-            <el-menu-item index="1" @click="goPath('/')">
-              <span>m3u8视频下载</span>
-            </el-menu-item>
-            <el-menu-item index="2" @click="goPath('/setting')">
-              <span>设置</span>
-            </el-menu-item>
-            <el-menu-item index="2" @click="goPath('/error')">
-              <span>错误</span>
-            </el-menu-item>
-          </el-menu>
-        </el-aside>
-        <el-main>
-          <router-view/>
-        </el-main>
-      </el-container>
-    </el-container>
+    <router-view />
     <login/>
     <register/>
     <reset-password/>
@@ -38,6 +16,8 @@ import headPart from './views/components/head.vue'
 import login from './views/components/login.vue';
 import register from "./views/components/register.vue";
 import resetPassword from "./views/components/resetPassword.vue";
+import {getUserInfo} from "./api/user";
+import {setUser} from "./service/userService";
 
 export default {
   components: {headPart, login, register, resetPassword},
@@ -49,6 +29,10 @@ export default {
   async beforeCreate() {
   },
   created() {
+    getUserInfo()
+        .then((res) => {
+          res && setUser(res.data.result);
+        })
   },
   mounted() {
     addService('showScreenLoadingMessage', this.showScreenLoadingMessage.bind(this))
@@ -64,7 +48,8 @@ export default {
         background: 'rgba(0, 0, 0, 0.5)',
       })
       return loading
-    }
+    },
+
   }
 }
 </script>

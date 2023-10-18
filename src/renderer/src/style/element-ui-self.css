@@ -1,6 +1,6 @@
 /* container */
 .el-header {
-    padding: 0px
+    padding: 0px !important;
 }
 .el-menu-item {
     margin-top: 4px;
@@ -15,12 +15,12 @@
 }
 .el-aside {
     padding: 16px;
-    width: fit-content;
+    width: fit-content !important;
     border-right: 1px solid #dcdfe6;
     height: calc(100vh - 60px);
 }
 .el-menu {
-    border-right: 0px;
+    border-right: 0px !important;
 }
 .el-menu-item.is-active {
     background: #ecf5ff;
