@@ -48,12 +48,14 @@
 <script>
 import {addService, useService} from "../../../service/service";
 import alreadyExistedModal from "./alreadyExistedModal.vue";
+import { checkLogin } from "../../../api/login";
 
 export default {
   name: "m3u8Create",
   components: { alreadyExistedModal },
   data() {
     return {
+      isLogin: false,
       form: {
         htmlUrl: "",
         m3u8Url: "",
@@ -75,17 +77,27 @@ export default {
   },
   async mounted() {
     addService('getM3u8FileFailureTips', this.getM3u8FileFailureMessage.bind(this))
+    checkLogin()
+        .then((res) => {
+          if (res) {
+            this.isLogin = true
+          }
+        })
   },
   methods: {
     async getInfo() {
-      if(await this.checkDownloadCondition()) {
-        this.createLoading = true
-        const result = await window.electronAPI.createM3u8DownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
-        if(result === 'success') {
-          useService('getM3u8LoadingList')
-          this.changeTab('loading')
-          this.createLoading = false
+      if(this.isLogin) {
+        if(await this.checkDownloadCondition()) {
+          this.createLoading = true
+          const result = await window.electronAPI.createM3u8DownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
+          if(result === 'success') {
+            useService('getM3u8LoadingList')
+            this.changeTab('loading')
+            this.createLoading = false
+          }
         }
+      } else {
+        useService('openLoginTip');
       }
     },
     // 检验下载的条件

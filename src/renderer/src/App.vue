@@ -4,6 +4,7 @@
     <login/>
     <register/>
     <reset-password/>
+    <login-tip />
   </el-config-provider>
 </template>
 
@@ -16,11 +17,12 @@ import headPart from './views/components/head.vue'
 import login from './views/components/login.vue';
 import register from "./views/components/register.vue";
 import resetPassword from "./views/components/resetPassword.vue";
+import loginTip from "./views/components/loginTip.vue";
 import {getUserInfo} from "./api/user";
 import {setUser} from "./service/userService";
 
 export default {
-  components: {headPart, login, register, resetPassword},
+  components: {headPart, login, register, resetPassword, loginTip},
   data() {
     return {
       zhCn
