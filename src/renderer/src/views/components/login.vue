@@ -7,7 +7,9 @@
           <el-input v-model="form.userName" placeholder="请输入用户名或者邮箱"  :prefix-icon="UserIcon" />
         </el-form-item>
         <el-form-item prop="password" label="密码">
-          <el-input v-model="form.password" type="password" placeholder="请输入密码"  :prefix-icon="LockIcon" />
+          <el-input v-model="form.password" :type="passwordShow ? 'text': 'password'" placeholder="请输入密码" :prefix-icon="LockIcon">
+            <template #append><el-button :icon="passwordShow ? View: Hide" @click="changePasswordShow" /></template>
+          </el-input>
         </el-form-item>
         <el-form-item >
           <div class="flex items-center justify-between w-full">
@@ -25,7 +27,7 @@
 import {addService, useService} from '../../service/service';
 import {login, getUserInfo} from '../../api/user';
 import { setUser } from "../../service/userService";
-import { User, Lock } from '@element-plus/icons-vue'
+import { User, Lock, View, Hide } from '@element-plus/icons-vue'
 import PDialog from "../UIComponents/PDialog.vue";
 export default {
   name: 'login',
@@ -34,6 +36,8 @@ export default {
     return {
       UserIcon: User,
       LockIcon: Lock,
+      View,
+      Hide,
       showModal: false,
       form: {
         userName: '',
@@ -44,7 +48,8 @@ export default {
         password: [
           {required: true, message: '请输入密码!', trigger: 'blur'}
         ]
-      }
+      },
+      passwordShow: false
     }
   },
   mounted () {
@@ -88,7 +93,10 @@ export default {
     forgetPassword () {
       this.close();
       useService('openResetPassword');
-    }
+    },
+    changePasswordShow() {
+      this.passwordShow = !this.passwordShow
+    },
   }
 }
 </script>
