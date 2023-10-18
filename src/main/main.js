@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, session } from 'electron'
 import path from 'path'
 import './importFileModule'
 import pie from "./util/puppeteer-in-electron";
@@ -22,6 +22,8 @@ const createWindow = () => {
     webPreferences: {
       nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js'),
+      webSecurity: false,
+      allowRunningInsecureContent: false
     },
   });
 
@@ -50,6 +52,19 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+// 解决跨域请求cookie的问题
+app.whenReady().then(() => {
+  const filter = {urls: ['https://*.feiaci.com/*']};
+  session.defaultSession.webRequest.onHeadersReceived(filter, (details,callback) => {
+    if(details.responseHeaders && details.responseHeaders['set-cookie']){
+      for(let i = 0;i < details.responseHeaders['set-cookie'].length;i++) {
+        details.responseHeaders['set-cookie'][i] += ";SameSite=None;Secure";
+      }
+    }
+    callback({ responseHeaders: details.responseHeaders});
+  })
+})
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
