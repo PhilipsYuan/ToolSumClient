@@ -69,6 +69,11 @@ function userLogOut() {
   return axios.get(url)
 }
 
+function getSystemUpdateNotice() {
+  const url = `${host.server}mini/system/getSystemUpdateNotice`;
+  return axios.get(url)
+}
+
 export {
   login,
   register,
@@ -76,5 +81,6 @@ export {
   sendValidateCode,
   changePassword,
   getUserInfo,
-  userLogOut
+  userLogOut,
+  getSystemUpdateNotice
 }

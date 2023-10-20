@@ -15,6 +15,10 @@
         </el-menu>
       </el-aside>
       <el-main>
+        <div v-if="notice"
+            class="-ml-5 -mt-5 mb-8 text-sm text-red-400 border-b text-center bg-white p-2 w-[calc(100%+40px)] shadow-[0px_8px_16px_rgba(147,151,159,0.16)]">
+          {{notice}}
+        </div>
         <router-view/>
       </el-main>
     </el-container>
@@ -23,9 +27,22 @@
 
 <script>
 import headPart from "./head.vue";
+import { getSystemUpdateNotice } from "../../api/user";
+
 export default {
   name: "layout",
   components: {headPart},
+  data() {
+    return {
+      notice: null
+    }
+  },
+  async mounted() {
+    getSystemUpdateNotice()
+        .then((res) => {
+          this.notice = res.data.result
+        })
+  },
   methods: {
     goPath(path) {
       this.$router.push({path: path})
