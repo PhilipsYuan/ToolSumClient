@@ -49,6 +49,7 @@
 import {addService, useService} from "../../../service/service";
 import alreadyExistedModal from "./alreadyExistedModal.vue";
 import { checkLogin } from "../../../api/login";
+import { getUserBenefit } from "../../../api/user";
 
 export default {
   name: "m3u8Create",
@@ -87,14 +88,19 @@ export default {
   methods: {
     async getInfo() {
       if(this.isLogin) {
-        if(await this.checkDownloadCondition()) {
-          this.createLoading = true
-          const result = await window.electronAPI.createM3u8DownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
-          if(result === 'success') {
-            useService('getM3u8LoadingList')
-            this.changeTab('loading')
-            this.createLoading = false
+        const hasBenefit = await this.checkUserBenefit()
+        if(hasBenefit) {
+          if(await this.checkDownloadCondition()) {
+            this.createLoading = true
+            const result = await window.electronAPI.createM3u8DownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
+            if(result === 'success') {
+              useService('getM3u8LoadingList')
+              this.changeTab('loading')
+              this.createLoading = false
+            }
           }
+        } else {
+         this.$message.error('您已经没有免费使用次数了，请购买会员后，再继续使用！')
         }
       } else {
         useService('openLoginTip');
@@ -140,6 +146,26 @@ export default {
     },
     isUrl(str) {
       return /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(str)
+    },
+    /**
+     * 查看用户的权益，看是否满足下载
+     */
+    checkUserBenefit() {
+      return getUserBenefit()
+          .then((res) => {
+            if(res.data.result) {
+              const result = res.data.result
+              if(result.isVip) {
+                return true
+              } else if(result.freeCount > 0) {
+                return true
+              } else {
+                return false
+              }
+            } else {
+              return false
+            }
+          })
     },
     async startAnalysis() {
       if(this.form.htmlUrl && this.isUrl(this.form.htmlUrl)) {

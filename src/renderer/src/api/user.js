@@ -74,6 +74,19 @@ function getSystemUpdateNotice() {
   return axios.get(url)
 }
 
+/**
+ * 获取用户免费次数和vip的相关信息
+ */
+function getUserBenefit() {
+  const url = `${host.server}mini/user/getUserBenefit`;
+  return axios.get(url)
+}
+
+function reduceBenefit() {
+  const url = `${host.server}mini/user/reduceUserFreeCount`;
+  return axios.get(url)
+}
+
 export {
   login,
   register,
@@ -82,5 +95,7 @@ export {
   changePassword,
   getUserInfo,
   userLogOut,
-  getSystemUpdateNotice
+  getSystemUpdateNotice,
+  getUserBenefit,
+  reduceBenefit
 }

@@ -48,6 +48,7 @@
 <script>
 import {VideoPlay} from "@element-plus/icons-vue";
 import {addService} from "../../../service/service";
+import {getUserBenefit, reduceBenefit} from "../../../api/user";
 export default {
   name: "loadingList",
   components: {VideoPlay},
@@ -67,11 +68,13 @@ export default {
   },
   methods: {
     async startDownload(item) {
-      if(item.pause === false && item.isStart === false) {
-        await window.electronAPI.startDownloadM3u8Video(item.id)
-      }  else {
-        await window.window.electronAPI.continueM3u8DownloadVideo(item.id)
-        await this.getLoadingList()
+      if(this.checkoutDownloadingLimit()) {
+        if(item.pause === false && item.isStart === false) {
+          await window.electronAPI.startDownloadM3u8Video(item.id)
+        }  else {
+          await window.window.electronAPI.continueM3u8DownloadVideo(item.id)
+          await this.getLoadingList()
+        }
       }
     },
     async pauseDownload(item) {
@@ -97,6 +100,35 @@ export default {
       await this.getLoadingList()
       this.$emit('changeTab', 'finish')
       document.getElementById('m3u8-finish-list-frame').scroll(0, 0)
+      await this.costUserBenefit()
+    },
+    /**
+     * 下载成功后，消耗用户的权益
+     */
+    costUserBenefit() {
+      return getUserBenefit()
+          .then((res) => {
+            if(res.data.result) {
+              const result = res.data.result
+              if(result.isVip) {
+                // nothing to do
+              } else if(result.freeCount > 0) {
+                reduceBenefit()
+              }
+            }
+          })
+    },
+    /**
+     * 校验现在下载的次数，如果达到3个，就不可以再进行下载。
+     */
+    checkoutDownloadingLimit() {
+      const loadingItems = this.list.filter((item) => item.isStart !== item.pause || item.pausing === true)
+      if(loadingItems.length >= 3) {
+        this.$message.error("只能同时下载3个文件，如果想下其他文件，请先暂停一个下载。")
+        return false
+      } else {
+        return true
+      }
     }
   }
 }

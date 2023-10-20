@@ -1,6 +1,8 @@
 <template>
   <el-config-provider :locale="zhCn">
-    <router-view />
+    <div v-if="loadingSuccess">
+      <router-view />
+    </div>
     <login/>
     <register/>
     <reset-password/>
@@ -25,16 +27,18 @@ export default {
   components: {headPart, login, register, resetPassword, loginTip},
   data() {
     return {
-      zhCn
+      zhCn,
+      loadingSuccess: false
     }
   },
   async beforeCreate() {
-  },
-  created() {
-    getUserInfo()
+    await getUserInfo()
         .then((res) => {
           res && setUser(res.data.result);
+          this.loadingSuccess = true
         })
+  },
+  created() {
   },
   mounted() {
     addService('showScreenLoadingMessage', this.showScreenLoadingMessage.bind(this))
