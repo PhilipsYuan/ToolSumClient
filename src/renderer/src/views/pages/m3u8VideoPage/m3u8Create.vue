@@ -36,8 +36,20 @@
           <el-input v-model="form.name"/>
         </el-form-item>
         <el-form-item label="">
-          <el-button :loading="createLoading" type="primary" @click="getInfo">创建</el-button>
+          <el-button :loading="createLoading" type="primary" @click="getInfo">
+            创建
+          </el-button>
           <el-button :loading="createLoading" @click="clearInput">清空</el-button>
+          <el-popover
+              placement="bottom"
+              :width="'fit-content'"
+              trigger="hover"
+              content="如果不是会员，视频下载完成后会消耗您的免费次数。"
+          >
+            <template #reference>
+              <el-icon class="ml-4"><QuestionFilled class="text-gray-400" /></el-icon>
+            </template>
+          </el-popover>
         </el-form-item>
       </el-form>
     </div>
