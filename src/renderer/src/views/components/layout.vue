@@ -5,14 +5,17 @@
     </el-header>
     <el-container>
       <el-aside>
-        <el-menu default-active="1">
+        <el-menu :default-active="active">
           <el-menu-item index="1" @click="goPath('/')">
             <span>m3u8视频下载</span>
           </el-menu-item>
           <el-menu-item index="2" @click="goPath('/personal')">
             <span>个人信息</span>
           </el-menu-item>
-          <el-menu-item index="3" @click="goPath('/setting')">
+          <el-menu-item index="3" @click="goPath('/vipBuy')">
+            <span>会员购买</span>
+          </el-menu-item>
+          <el-menu-item index="4" @click="goPath('/setting')">
             <span>设置</span>
           </el-menu-item>
         </el-menu>
@@ -37,10 +40,28 @@ export default {
   components: {headPart},
   data() {
     return {
-      notice: null
+      notice: null,
+      active: '1'
     }
   },
   async mounted() {
+    switch (this.$route.name) {
+      case 'home':
+        this.active = '1';
+        break;
+      case 'm3u8':
+        this.active = '1';
+        break;
+      case 'personal':
+        this.active = '2';
+        break;
+      case 'vipBuy':
+        this.active = '3';
+        break;
+      case 'setting':
+        this.active = '4';
+        break;
+    }
     getSystemUpdateNotice()
         .then((res) => {
           this.notice = res.data.result

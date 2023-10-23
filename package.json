@@ -12,7 +12,7 @@
     "make-win": "electron-forge make --arch x64 --platform win32",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
-    "build-icon": "electron-icon-builder --input=./src/renderer/src/assets/img.png --output=icons --flatten"
+    "build-icon": "electron-icon-builder --input=./src/renderer/src/assets/xiaohualunIcon.png --output=icons --flatten"
   },
   "keywords": [],
   "author": {

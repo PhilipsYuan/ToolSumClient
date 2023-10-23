@@ -1,6 +1,8 @@
 module.exports = {
   packagerConfig: {
-    icon: './icons/icons/',
+    icon: './icons/icons/icon',
+    name: '小滑轮',
+    productName: '小滑轮'
   },
   rebuildConfig: {},
   makers: [
