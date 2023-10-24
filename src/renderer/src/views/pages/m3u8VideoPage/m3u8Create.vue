@@ -25,15 +25,15 @@
       <el-form :model="form" label-width="85px" label-position="left">
         <el-form-item label="网址">
           <div class="flex items-center gap-4 w-full">
-            <el-input v-model="form.htmlUrl" class="w-full"/>
+            <el-input v-model="form.htmlUrl" class="w-full" @change="()=> this.form.htmlUrl = this.form.htmlUrl.trim()"/>
             <el-button @click="startAnalysis" :loading="analysisLoading">解析下载链接</el-button>
           </div>
         </el-form-item>
         <el-form-item label="m3u8链接:">
-          <el-input v-model="form.m3u8Url"/>
+          <el-input v-model="form.m3u8Url" @change="()=> this.form.m3u8Url = this.form.m3u8Url.trim()"/>
         </el-form-item>
         <el-form-item label="文件名称:">
-          <el-input v-model="form.name"/>
+          <el-input v-model="form.name" @change="()=> this.form.name = this.form.name.trim()"/>
         </el-form-item>
         <el-form-item label="">
           <el-button :loading="createLoading" type="primary" @click="getInfo">
