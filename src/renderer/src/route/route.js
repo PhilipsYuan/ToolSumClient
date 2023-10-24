@@ -6,6 +6,7 @@ const errorPage = () => import('../views/pages/errorPage/errorPage.vue')
 const layout = () => import('../views/components/layout.vue')
 const personalPage = () => import('../views/pages/personalPage/personalPage.vue')
 const vipBuy = () => import('../views/pages/vipBuy/vipBuy.vue')
+const helpPage = () => import('../views/pages/helpPage/helpPage.vue')
 
 const routerMap = [
     {
@@ -15,6 +16,7 @@ const routerMap = [
             {path: '/personal', component: personalPage, title: '个人信息', name: 'personal'},
             {path: '/setting', component: SettingsPage, title: '设置', name: 'setting'},
             {path: '/vipBuy', component: vipBuy, title: '会员购买', name: 'vipBuy'},
+            {path: '/help', component: helpPage, title: '使用指南', name: 'help'}
         ]
     },
     {path: '/error', component: errorPage, title: '错误', name: 'error'}

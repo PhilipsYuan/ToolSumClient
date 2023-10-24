@@ -18,6 +18,9 @@
           <el-menu-item index="4" @click="goPath('/setting')">
             <span>设置</span>
           </el-menu-item>
+          <el-menu-item index="5" @click="goPath('/help')">
+            <span>使用指南</span>
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-main>
@@ -61,6 +64,8 @@ export default {
       case 'setting':
         this.active = '4';
         break;
+      case 'help':
+        this.active = '5';
     }
     getSystemUpdateNotice()
         .then((res) => {
