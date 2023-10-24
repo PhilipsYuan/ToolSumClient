@@ -4,7 +4,7 @@ import {deleteDirectory, makeDir} from "../../util/fs";
 import fs from "fs";
 import shortId from "shortid";
 import {createWork, updateWork} from '../create/workManager';
-import {sendTips} from "../../util/electronOperations";
+import {sendTips} from "../../util/source/electronOperations";
 
 const basePath = app.getPath('userData')
 const processUrlsPath = `${basePath}/m3u8Video/processUrls`

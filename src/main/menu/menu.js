@@ -1,6 +1,6 @@
 import {Menu, app} from "electron";
 import {m3u8VideoDownloadingListDB} from "../db/db";
-import { sendTips } from "../util/electronOperations";
+import { sendTips } from "../util/source/electronOperations";
 
 const template = [
     {

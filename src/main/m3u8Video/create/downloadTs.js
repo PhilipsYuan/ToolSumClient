@@ -1,11 +1,11 @@
 import {splitArray} from '../../util/array';
 import fs from "fs";
-import Throttle from "../../util/throttle";
+import Throttle from "../../util/source/throttle";
 import childProcess from "child_process";
 import {deleteDirectory} from "../../util/fs";
-import {parentPort} from 'worker_threads'
+import {parentPort} from 'worker_threads';
+import axios from '../../util/source/axios'
 
-const axios = require('axios')
 const ffmpegPath = __dirname + '/darwin-x64/ffmpeg';
 let tempSourcePath = null
 let loadingRecord = null

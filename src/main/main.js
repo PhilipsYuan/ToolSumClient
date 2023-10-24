@@ -1,7 +1,7 @@
 import { app, BrowserWindow, session } from 'electron'
 import path from 'path'
 import './importFileModule'
-import pie from "./util/puppeteer-in-electron";
+import pie from "./util/source/puppeteer-in-electron";
 
 async function initialize(){
   global.pie = pie

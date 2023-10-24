@@ -2,7 +2,8 @@ module.exports = {
   packagerConfig: {
     icon: './icons/icons/icon',
     name: '小滑轮',
-    productName: '小滑轮'
+    productName: '小滑轮',
+    ignore: [/\.yarn/, /\.idea/, /temp/, /src\/render/]
   },
   rebuildConfig: {},
   makers: [

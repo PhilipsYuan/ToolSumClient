@@ -1,5 +1,5 @@
-import {sendTips} from './electronOperations'
-const axios = require('axios')
+import {sendTips} from './source/electronOperations'
+import axios from './source/axios'
 
 export function getCorrectM3u8File(url) {
     return axios.get(url, {

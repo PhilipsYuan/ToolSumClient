@@ -4,8 +4,8 @@ import {getSecretKeys, getCorrectM3u8File, getPlayList} from "../../util/m3u8Par
 import {makeDir} from "../../util/fs"
 import {splitArray} from '../../util/array';
 import {newLoadingRecord} from '../processList/processList';
+import axios from '../../util/source/axios'
 
-const axios = require('axios');
 const basePath = app.getPath('userData');
 const tempSourcePath = `${basePath}/m3u8Video/tempSource`;
 
