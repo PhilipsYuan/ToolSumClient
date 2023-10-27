@@ -12,7 +12,7 @@
 
 <script>
 import './style/global.css'
-import zhCn from 'element-plus/lib/locale/lang/zh-cn'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import {ElLoading} from 'element-plus'
 import {addService} from "./service/service";
 import headPart from './views/components/head.vue'
