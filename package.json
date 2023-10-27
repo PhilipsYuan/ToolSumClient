@@ -5,10 +5,10 @@
   "description": "ToolSumClient",
   "main": ".vite/build/main.js",
   "scripts": {
-    "start": "electron-forge start --inspect-electron ",
+    "start": "node config/ffmpeg.js && electron-forge start",
     "package": "electron-forge package",
     "package-win": "electron-forge package --arch x64 --platform win32",
-    "make": "electron-forge make",
+    "make": "node config/ffmpeg.js darwin-x64 && electron-forge make --arch x64 --platform darwin",
     "make-win": "electron-forge make --arch x64 --platform win32",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",

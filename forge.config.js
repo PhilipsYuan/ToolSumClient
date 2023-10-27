@@ -3,7 +3,8 @@ module.exports = {
     icon: './icons/icons/icon',
     name: '小滑轮',
     productName: '小滑轮',
-    ignore: [/\.yarn/, /\.idea/, /temp/, /doc/, /src\/render/]
+    ignore: [/\.yarn/, /\.idea/, /temp/, /doc/, /src\/render/, /ffmpegPlatforms/, /config/,
+      /yarn-error.log/, /\.lock/, /.gitignore/]
   },
   rebuildConfig: {},
   makers: [

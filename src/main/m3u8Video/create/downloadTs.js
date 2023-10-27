@@ -5,8 +5,12 @@ import childProcess from "child_process";
 import {deleteDirectory} from "../../util/fs";
 import {parentPort} from 'worker_threads';
 import axios from '../../util/source/axios'
+import os from "os";
 
-const ffmpegPath = __dirname + '/darwin-x64/ffmpeg';
+const binary = os.platform() === 'win32' ? 'ffmpeg.exe' : 'ffmpeg';
+const platform = os.platform() + '-' + os.arch();
+console.log('22222', platform)
+const ffmpegPath = __dirname + `/${platform}/${binary}`;
 let tempSourcePath = null
 let loadingRecord = null
 
