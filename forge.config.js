@@ -15,8 +15,8 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        authors: 'My Name',
-        description: 'My Description',
+        // authors: 'My Name',
+        // description: 'My Description',
       },
     },
     {

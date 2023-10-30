@@ -47,7 +47,7 @@
 
 <script>
 import {VideoPlay} from "@element-plus/icons-vue";
-import {addService} from "../../../service/service";
+import {addService, useService} from "../../../service/service";
 import {getUserBenefit, reduceBenefit} from "../../../api/user";
 export default {
   name: "loadingList",
@@ -97,9 +97,12 @@ export default {
       this.list = await window.electronAPI.getM3u8LoadingList() || []
     },
     async m3u8VideoDownloadSuccess() {
+      useService("getM3u8FinishedList")
       await this.getLoadingList()
       this.$emit('changeTab', 'finish')
-      document.getElementById('m3u8-finish-list-frame').scroll(0, 0)
+      setTimeout(() => {
+        document.getElementById('m3u8-finish-list-frame').scroll(0, 0)
+      }, 200)
       await this.costUserBenefit()
     },
     /**
