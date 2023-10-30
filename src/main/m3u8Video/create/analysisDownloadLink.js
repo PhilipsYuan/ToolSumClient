@@ -43,8 +43,9 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
             const interval = setInterval(() => {
                 console.log(`检测次数：${index + 1}`)
                 if(m3u8Url || index > 20) {
-                    clearInterval(interval)
-                     window.destroy()
+                    clearInterval(interval);
+                    page.close();
+                    window.destroy();
                     resolve(m3u8Url)
                 } else {
                     index ++
