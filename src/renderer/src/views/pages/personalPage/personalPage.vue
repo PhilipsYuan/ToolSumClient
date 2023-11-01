@@ -22,7 +22,7 @@
           class="font-medium text-red-500">{{ userBenefit.vipEnd || '----'}}</span> 到期
       </div>
       <div v-if="!userBenefit.isVip" class="flex gap-2 text-gray-400">未是
-        <span class="text-amber-400 hover:text-amber-500 cursor-pointer ml-2">去购买</span>
+        <span class="text-yellow-500 hover:text-yellow-300 cursor-pointer ml-2" @click="goToPath('vipBuy')">去购买</span>
       </div>
     </div>
   </div>
@@ -50,6 +50,13 @@ export default {
             this.userBenefit = res.data.result
           }
         })
+  },
+  methods: {
+    goToPath (name) {
+      if (name !== this.$router.currentRoute.name) {
+        this.$router.push({name: name})
+      }
+    }
   }
 }
 </script>
