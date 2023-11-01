@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="h-[60px] pl-6 pr-8 py-2.5 shadow-[] flex items-center justify-between border-b">
+    <div class="h-[60px] pl-6 pr-8 py-2.5 shadow-[] flex items-center justify-between border-y border-gray-300">
       <div>
         <div class="inline-block align-middle h-10 cursor-pointer" @click="goToPath('home')">
           <img class="h-10" src="../../assets/favicon.ico">

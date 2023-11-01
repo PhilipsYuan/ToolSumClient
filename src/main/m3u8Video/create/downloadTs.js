@@ -6,9 +6,10 @@ import {deleteDirectory} from "../../util/fs";
 import {parentPort} from 'worker_threads';
 import axios from '../../util/source/axios'
 import os from "os";
+import path from "path";
 
 const binary = os.platform() === 'win32' ? 'ffmpeg.exe' : 'ffmpeg';
-const ffmpegPath = __dirname + `/${binary}`;
+const ffmpegPath = path.resolve(__dirname, binary);
 let tempSourcePath = null
 let loadingRecord = null
 
@@ -51,7 +52,7 @@ parentPort.onmessage = async (event) => {
  * @returns {Promise<void>}
  */
 async function downloadingM3u8Video(loadingRecord) {
-    const tempPath = `${tempSourcePath}/${loadingRecord.name}`;
+    const tempPath = path.resolve(tempSourcePath, loadingRecord.name);
     const outputPath = loadingRecord.outputPath;
     let m3u8Data = loadingRecord.m3u8Data
     const convert = await downloadTss(loadingRecord.totalUrls, m3u8Data, tempPath, loadingRecord.totalIndex, loadingRecord)
@@ -253,6 +254,7 @@ function combineVideo(tempPath, outputPath, loadingRecord) {
         key: 'message',
         value: loadingRecord.message
     })
+    console.log(`cd "${tempPath}" && ${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -progress - -c copy "${outputPath}"`)
     const exec_1 = childProcess.spawn(`cd "${tempPath}" && ${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -progress - -c copy "${outputPath}"`, {
         maxBuffer: 5 * 1024 * 1024,
         shell: true

@@ -5,9 +5,10 @@ import {makeDir} from "../../util/fs"
 import {splitArray} from '../../util/array';
 import {newLoadingRecord} from '../processList/processList';
 import axios from '../../util/source/axios'
+import path from "path";
 
 const basePath = app.getPath('userData');
-const tempSourcePath = `${basePath}/m3u8Video/tempSource`;
+const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
 
 ipcMain.handle('check-output-file-not-exist', checkOutputFileNotExist);
 ipcMain.handle('create-m3u8-download-task', createM3u8DownloadTask);
@@ -16,9 +17,9 @@ ipcMain.handle('create-m3u8-download-task', createM3u8DownloadTask);
  * 创建m3u8下载任务
  */
 async function createM3u8DownloadTask(event, url, name, outPath) {
-    const outputPath = `${outPath}/${name}.mp4`
+    const outputPath = path.resolve(outPath, `${name}.mp4`);
     if (checkOutputFileNotExist(null, outputPath)) {
-        const tempPath = `${tempSourcePath}/${name}`
+        const tempPath = path.resolve(tempSourcePath, name);
         makeDir(tempPath)
         return getCorrectM3u8File(url)
             .then(async (data) => {
@@ -83,13 +84,14 @@ async function downloadSecretKey(data, host, tempPath, pathname) {
                 }
             })
             const dyData = new Uint8Array(res.data);
-            await fs.writeFileSync(`${tempPath}/key${i + 1}.key`, dyData, "utf-8")
+            await fs.writeFileSync(path.resolve(tempPath, `key${i + 1}.key`), dyData, "utf-8")
             i++
         }
         keys.forEach((item, index) => {
             m3u8Data = m3u8Data.replace(item, `./key${index + 1}.key`)
         })
-        await fs.writeFileSync(`${tempPath}/index.m3u8`, m3u8Data, "utf-8")
+        console.log('here', path.resolve(tempPath, `index.m3u8`))
+        await fs.writeFileSync(path.resolve(tempPath, `index.m3u8`), m3u8Data, "utf-8")
     }
     return m3u8Data
 }

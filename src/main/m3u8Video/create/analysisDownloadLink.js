@@ -35,7 +35,7 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
     }
     page.on('request', logRequest);
     try {
-        await window.loadURL(htmlUrl, {
+        window.loadURL(htmlUrl, {
             userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1'
         });
         const promise = new Promise((resolve) => {
@@ -44,8 +44,8 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
                 console.log(`检测次数：${index + 1}`)
                 if(m3u8Url || index > 20) {
                     clearInterval(interval);
-                    page.close();
-                    window.destroy();
+                    page && page.close();
+                    window && window.destroy();
                     resolve(m3u8Url)
                 } else {
                     index ++

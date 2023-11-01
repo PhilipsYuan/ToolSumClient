@@ -3,9 +3,10 @@ import {app} from "electron";
 import {sendTips} from "../../util/source/electronOperations";
 import {deleteLoadingRecordAndFile, savePauseDownloadInfo} from "../processList/processList";
 import {newFinishedRecord} from "../finishList/finishList";
+import path from 'path';
 
 const basePath = app.getPath('userData');
-const tempSourcePath = `${basePath}/m3u8Video/tempSource`;
+const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
 
 const works = {}
 
@@ -13,7 +14,7 @@ const works = {}
  * 开启一个work
  */
 export function createWork(loadingRecord) {
-    const work = new Worker(__dirname + '/downloadTs.js')
+    const work = new Worker(path.resolve(__dirname, 'downloadTs.js'))
     works[loadingRecord.id] = work
     runWork(work, loadingRecord)
 }
