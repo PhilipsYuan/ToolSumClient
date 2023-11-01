@@ -10,7 +10,7 @@
       <div class="flex items-center gap-3">
         <div class="list">
           <a-col :span="4">
-            <div class="button" @click="goToPath('vip')">会员购买</div>
+            <div class="text-yellow-400 text-base cursor-pointer hover:text-yellow-300" @click="goToPath('vipBuy')">开通会员</div>
           </a-col>
         </div>
         <div class="flex" v-if="!isLogin">
