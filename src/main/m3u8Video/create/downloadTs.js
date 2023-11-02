@@ -255,8 +255,9 @@ function combineVideo(tempPath, outputPath, loadingRecord) {
         key: 'message',
         value: loadingRecord.message
     })
-    console.log(`cd "${tempPath}" && ${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -progress - -c copy "${outputPath}"`)
-    const exec_1 = childProcess.spawn(`cd "${tempPath}" && ${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "index.m3u8" -progress - -c copy "${outputPath}"`, {
+    const m3u8FilePath = path.resolve(tempPath, 'index.m3u8')
+    console.log(`${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "${m3u8FilePath}" -progress - -c copy "${outputPath}"`)
+    const exec_1 = childProcess.spawn(`${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i "${m3u8FilePath}" -progress - -c copy "${outputPath}"`, {
         maxBuffer: 5 * 1024 * 1024,
         shell: true
     });

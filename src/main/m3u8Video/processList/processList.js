@@ -5,10 +5,11 @@ import fs from "fs";
 import shortId from "shortid";
 import {createWork, updateWork} from '../create/workManager';
 import {sendTips} from "../../util/source/electronOperations";
+import path from "path";
 
 const basePath = app.getPath('userData')
-const processUrlsPath = `${basePath}/m3u8Video/processUrls`
-const tempSourcePath = `${basePath}/m3u8Video/tempSource`;
+const processUrlsPath = path.resolve(basePath, 'm3u8Video', 'processUrls');
+const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource');
 makeDir(processUrlsPath)
 
 ipcMain.handle('get-m3u8-loading-list', getLoadingList)
@@ -32,7 +33,7 @@ function getLoadingList () {
  * @returns {string|*}
  */
 export async function newLoadingRecord (data) {
-    const path = `${processUrlsPath}/${data.name}.txt`
+    const urlPath = path.resolve(processUrlsPath, `${data.name}.txt`);
     const id = shortId.generate()
     const json = {
         id: id,
@@ -42,7 +43,7 @@ export async function newLoadingRecord (data) {
             status: 'success',
             content: '未开始进行下载'
         },
-        urlPath: path,
+        urlPath: urlPath,
         // 判断是否在进行中
         pausing: false,
         pause: false,
@@ -53,7 +54,7 @@ export async function newLoadingRecord (data) {
         totalIndex: data.totalIndex,
         outputPath: data.outputPath
     }
-    await createProcessFile(path, data.totalUrls, data.m3u8Data, [])
+    await createProcessFile(urlPath, data.totalUrls, data.m3u8Data, [])
     // 暂停时存储的json太大了。需要分文件存储
     m3u8VideoDownloadingListDB.data.loadingList.unshift(json)
     await m3u8VideoDownloadingListDB.write()
@@ -100,11 +101,11 @@ export async function deleteLoadingRecordAndFile(event, id) {
  * 删除记录和列表
  */
 async function deleteRecordAndFile(item, index) {
-    const path = item.urlPath;
-    const tempPath = `${tempSourcePath}/${item.name}`;
+    const urlPath = item.urlPath;
+    const tempPath = path.resolve(tempSourcePath, item.name);
     deleteDirectory(tempPath)
-    if(path && fs.existsSync(path)) {
-        fs.unlinkSync(path)
+    if(urlPath && fs.existsSync(urlPath)) {
+        fs.unlinkSync(urlPath)
     }
     m3u8VideoDownloadingListDB.data.loadingList.splice(index, 1)
     await m3u8VideoDownloadingListDB.write()
