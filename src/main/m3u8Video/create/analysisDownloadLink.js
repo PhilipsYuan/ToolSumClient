@@ -1,5 +1,6 @@
 import {ipcMain, app, BrowserWindow} from "electron";
 import puppeteer from '../../util/source/puppeteer-core'
+
 ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
 
 /**
@@ -10,10 +11,7 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
     let m3u8Url = null
     const browser = await global.pie.connect(app, puppeteer);
     const window = new BrowserWindow({
-        show: false,
-        width: 900,
-        height: 600,
-        webPreferences: {
+        show: false, width: 900, height: 600, webPreferences: {
             devTools: true,
             webSecurity: false,
             allowRunningInsecureContent: true,
@@ -27,33 +25,40 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
 
     async function logRequest(request) {
         const url = request.url()
-        if(/\.m3u8$/.test(url)) {
+        if (/\.m3u8$/.test(url)) {
             m3u8Url = url
         }
         // const content = await page.content();
         // console.log(content)
     }
+
     page.on('request', logRequest);
     try {
-        window.loadURL(htmlUrl, {
+        return await window.loadURL(htmlUrl, {
             userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1'
-        });
-        const promise = new Promise((resolve) => {
-            let index = 0
-            const interval = setInterval(() => {
-                console.log(`检测次数：${index + 1}`)
-                if(m3u8Url || index > 20) {
-                    clearInterval(interval);
-                    page && page.close();
-                    window && window.destroy();
-                    resolve(m3u8Url)
-                } else {
-                    index ++
-                }
-            }, 1000)
         })
-        return promise
+            .then((res) => {
+                const promise = new Promise((resolve) => {
+                    let index = 0
+                    const interval = setInterval(() => {
+                        console.log(`检测次数：${index + 1}`)
+                        if (m3u8Url || index > 10) {
+                            clearInterval(interval);
+                            window && window.destroy();
+                            resolve(m3u8Url)
+                        } else {
+                            index++
+                        }
+                    }, 1000)
+                })
+                return promise
+            })
+            .catch((e) => {
+                window && window.destroy();
+                return 'error'
+            })
     } catch (e) {
-     return Promise.resolve('error')
+        window && window.destroy();
+        return Promise.resolve('error')
     }
 }

@@ -183,7 +183,7 @@ export default {
       if(this.form.htmlUrl && this.isUrl(this.form.htmlUrl)) {
         this.analysisLoading = true
         this.message = {
-          content: "网页解析中...",
+          content: "网页解析中...（可能需要1-2分钟，请耐心等待） ",
           status: 'success'
         }
         const m3u8Url = await window.electronAPI.getDownloadLinkFromUrl(this.form.htmlUrl)
@@ -200,7 +200,7 @@ export default {
           }
         } else {
           this.message = {
-            content: "未发现可以下载的链接！",
+            content: "未发现可以下载的链接！您可以查看使用指南自己查找下载链接。",
             status: 'error'
           }
         }
