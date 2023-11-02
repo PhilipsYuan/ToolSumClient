@@ -7,6 +7,7 @@ import {parentPort} from 'worker_threads';
 import axios from '../../util/source/axios'
 import os from "os";
 import path from "path";
+import { batchNum } from "./m3u8Config";
 
 const binary = os.platform() === 'win32' ? 'ffmpeg.exe' : 'ffmpeg';
 const ffmpegPath = path.resolve(__dirname, binary);
@@ -70,7 +71,7 @@ async function downloadTss(totalUrls, m3u8Data, tempPath, totalIndex, loadingRec
     let m3u8DataString = await loopDownloadTs(totalUrls, m3u8Data, tempPath, totalIndex, loadingRecord)
     if(m3u8DataString !== 'pause') {
         let reloadNumber = 0
-        while(loadingRecord.missLinks.length > 0 && reloadNumber < 100 && loadingRecord.pause === false) {
+        while(loadingRecord.missLinks.length > 0 && reloadNumber < 50 && loadingRecord.pause === false) {
             reloadNumber ++
             m3u8DataString = await checkErrorTs(m3u8DataString, loadingRecord, reloadNumber, tempPath)
         }
@@ -116,7 +117,7 @@ async function downloadTss(totalUrls, m3u8Data, tempPath, totalIndex, loadingRec
  */
 async function loopDownloadTs(totalUrls, m3u8Data, tempPath, totalIndex, loadingRecord) {
     const newErrors = loadingRecord.missLinks || []
-    const twoUrls = splitArray(totalUrls, 100)
+    const twoUrls = splitArray(totalUrls, batchNum)
     function download(index) {
         if (index < totalIndex && loadingRecord.pause === false) {
             const pros = twoUrls[index]

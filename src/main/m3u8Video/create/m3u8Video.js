@@ -6,6 +6,7 @@ import {splitArray} from '../../util/array';
 import {newLoadingRecord} from '../processList/processList';
 import axios from '../../util/source/axios'
 import path from "path";
+import { batchNum } from "./m3u8Config";
 
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
@@ -41,7 +42,7 @@ async function createM3u8DownloadTask(event, url, name, outPath) {
                             item, url, number: index + 1
                         }
                     })
-                    const twoUrls = splitArray(formatUrls, 100)
+                    const twoUrls = splitArray(formatUrls, batchNum)
                     await newLoadingRecord({
                         name: name,
                         m3u8Url: url,
@@ -90,7 +91,6 @@ async function downloadSecretKey(data, host, tempPath, pathname) {
         keys.forEach((item, index) => {
             m3u8Data = m3u8Data.replace(item, `./key${index + 1}.key`)
         })
-        console.log('here', path.resolve(tempPath, `index.m3u8`))
         await fs.writeFileSync(path.resolve(tempPath, `index.m3u8`), m3u8Data, "utf-8")
     }
     return m3u8Data
