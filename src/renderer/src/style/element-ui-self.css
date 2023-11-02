@@ -16,7 +16,7 @@
 .el-aside {
     padding: 16px;
     width: fit-content !important;
-    border-right: 1px solid #dcdfe6;
+    border-right: 1px solid #d1d5db;
     height: calc(100vh - 60px);
 }
 .el-menu {
@@ -26,13 +26,14 @@
     background: #ecf5ff;
 }
 .el-main {
-    padding: 32px 48px;
+    padding: 32px 48px !important;
     background: #f6f8fc;
 }
 
 /* tabs */
 .el-tabs--border-card {
     border-radius: 6px;
+    border: 1px solid #d1d5db !important;
 }
 .el-tabs__header {
     border-top-left-radius: 6px;
@@ -41,6 +42,7 @@
 }
 .el-tabs--border-card>.el-tabs__header {
     background: #ffffff !important;
+    border-bottom: 1px solid #d1d5db !important;
 }
 .el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active {
     background: #ecf5ff !important;
