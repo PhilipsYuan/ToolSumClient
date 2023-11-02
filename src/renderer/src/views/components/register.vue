@@ -26,14 +26,14 @@
         <div class="flex items-center gap-4 justify-between w-full">
           <el-input v-model="form.validateCode"
                     placeholder="请输入验证码"/>
-          <el-button class="w-32" :disabled="codeButtonEnable" @click="sendCode">{{
+          <el-button class="w-32" :disabled="codeButtonEnable" :loading="requestLoading" @click="sendCode">{{
               codeMessage
             }}
           </el-button>
         </div>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="handleSubmit($event)">注 册</el-button>
+        <el-button type="primary" @click="handleSubmit($event)" :loading="requestLoading">注 册</el-button>
       </el-form-item>
     </el-form>
   </p-dialog>
@@ -115,7 +115,8 @@ export default {
           {pattern: /^\d{6}$/, message: '验证码格式不正确！', trigger: 'blur'}
         ]
       },
-      codeMessage: '获取验证码'
+      codeMessage: '获取验证码',
+      requestLoading: false
     }
   },
   mounted() {
@@ -148,14 +149,20 @@ export default {
             email: this.form.email,
             validateCode: this.form.validateCode
           }
+          this.requestLoading = true
           register(json)
               .then((res) => {
+                this.requestLoading = false
                 if (res.data.code === 200) {
                   this.close()
                   this.$message.success('注册成功啦，可以进行登录喽！')
                 } else {
                   this.$message.error(res.data.message)
                 }
+              })
+              .catch(() => {
+                this.requestLoading = false
+                this.$message.success('注册失败，稍后再试，或者给我们发送邮件(1016027198@qq.com)，我们会尽快修复，并通知您！')
               })
         }
       });
@@ -168,14 +175,20 @@ export default {
         let json = {
           email: this.form.email
         }
+        this.requestLoading = true
         sendValidateCode(json)
             .then((res) => {
+              this.requestLoading = false
               if (res.data.code === 200) {
                 this.changeCodeButton()
                 this.$message.success('验证码已发送，请注意查收！');
               } else {
-                this.$message.error('邮件发送失败, 请在问题留言（评论留言）下，留言告知。我们会尽快修复，并通知您！')
+                this.$message.error('邮件发送失败, 请给我们发送邮件(1016027198@qq.com)，我们会尽快修复，并通知您！')
               }
+            })
+            .catch(() => {
+              this.requestLoading = false
+              this.$message.error('邮件发送失败, 请给我们发送邮件(1016027198@qq.com)，我们会尽快修复，并通知您！')
             })
       }
     },
