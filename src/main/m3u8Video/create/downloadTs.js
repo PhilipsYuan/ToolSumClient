@@ -174,7 +174,7 @@ function checkErrorTs(data, loadingRecord, reloadNumber, tempPath) {
             loadingRecord.missLinks.forEach((item, index) => {
                 m3u8Data = m3u8Data.replace(item.item, `./${item.number}.ts`)
             })
-            fs.writeFile(`${tempPath}/index.m3u8`, m3u8Data, "utf-8", (err) => {
+            fs.writeFile(path.resolve(tempPath, `index.m3u8`), m3u8Data, "utf-8", (err) => {
                 if(err) {
                     console.log('checkErrorTs failure')
                 }
@@ -197,7 +197,7 @@ async function getFileAndStore(url, number, item, tempPath, errorList, loadingRe
             "Content-Type": "application/octet-stream",
         }
     }).then(async (res) => {
-         fs.writeFile(`${tempPath}/${number}.ts`, res.data, 'binary', (err) => {
+         fs.writeFile(path.resolve(tempPath, `${number}.ts`), res.data, 'binary', (err) => {
             if(err) {
                 console.log('ts file create failure')
             }
@@ -225,7 +225,7 @@ function replaceTsFileUrls(urls, data, tempPath) {
     urls.forEach((item) => {
         m3u8Data = m3u8Data.replace(item.item, `./${item.number}.ts`)
     })
-    fs.writeFile(`${tempPath}/index.m3u8`, m3u8Data, "utf-8", (err) => {
+    fs.writeFile(path.resolve(tempPath, `index.m3u8`), m3u8Data, "utf-8", (err) => {
         if(err) {
             console.log('replaceTsFileUrls failure')
         } else {
