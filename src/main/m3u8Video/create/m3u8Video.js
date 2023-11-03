@@ -89,7 +89,7 @@ async function downloadSecretKey(data, host, tempPath, pathname) {
             i++
         }
         keys.forEach((item, index) => {
-            m3u8Data = m3u8Data.replace(item, `./key${index + 1}.key`)
+            m3u8Data = m3u8Data.replace(item, path.resolve(tempPath, `key${index + 1}.key`).replace(/\\/g, '/'))
         })
         await fs.writeFileSync(path.resolve(tempPath, `index.m3u8`), m3u8Data, "utf-8")
     }

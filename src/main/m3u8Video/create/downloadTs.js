@@ -173,7 +173,7 @@ function checkErrorTs(data, loadingRecord, reloadNumber, tempPath) {
         .then(() => {
             let m3u8Data = data
             loadingRecord.missLinks.forEach((item, index) => {
-                m3u8Data = m3u8Data.replace(item.item, `${item.number}.ts`)
+                m3u8Data = m3u8Data.replace(item.item, path.resolve(tempPath, `${item.number}.ts`))
             })
             fs.writeFile(path.resolve(tempPath, `index.m3u8`), m3u8Data, "utf-8", (err) => {
                 if(err) {
@@ -224,7 +224,7 @@ async function getFileAndStore(url, number, item, tempPath, errorList, loadingRe
 function replaceTsFileUrls(urls, data, tempPath) {
     let m3u8Data = data
     urls.forEach((item) => {
-        m3u8Data = m3u8Data.replace(item.item, `${item.number}.ts`)
+        m3u8Data = m3u8Data.replace(item.item, path.resolve(tempPath, `${item.number}.ts`))
     })
     fs.writeFile(path.resolve(tempPath, `index.m3u8`), m3u8Data, "utf-8", (err) => {
         if(err) {
