@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="mt-16 text-center text-3xl font-medium">
+  <div class="relative h-[calc(100vh-124px)]">
+    <div class="pt-16 text-center text-3xl font-medium">
       小滑轮会员
     </div>
     <div class="flex gap-6 mt-16">
@@ -24,6 +24,7 @@
       </div>
       <div class="mt-4 text-base text-yellow-500 text-center">无限量使用下载视频功能</div>
     </div>
+    <div class="absolute bottom-8 flex justify-center text-gray-500 w-full">P.S. 如果您在使用过程中遇到问题，欢迎给我们邮箱留言(1016027198@qq.com)，我们会尽快回复您。</div>
   </div>
 </template>
 

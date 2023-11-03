@@ -1,13 +1,15 @@
 <template>
-  <el-tabs type="border-card" v-model="activeName" @tab-change="tabChanged">
-    <el-tab-pane label="视频下载" name="create" />
-    <el-tab-pane label="下载中" name="loading" />
-    <el-tab-pane label="已完成" name="finish" />
-    <m3u8-create v-show="activeName === 'create'" @changeTab="changeTab" />
-    <finished-list ref="finishList" v-show="activeName === 'finish'" />
-    <loading-list ref="loadingList" v-show="activeName === 'loading'" @changeTab="changeTab"/>
-  </el-tabs>
-
+  <div class="relative h-[calc(100vh-124px)]">
+    <el-tabs type="border-card" v-model="activeName" @tab-change="tabChanged">
+      <el-tab-pane label="视频下载" name="create" />
+      <el-tab-pane label="下载中" name="loading" />
+      <el-tab-pane label="已完成" name="finish" />
+      <m3u8-create v-show="activeName === 'create'" @changeTab="changeTab" />
+      <finished-list ref="finishList" v-show="activeName === 'finish'" />
+      <loading-list ref="loadingList" v-show="activeName === 'loading'" @changeTab="changeTab"/>
+    </el-tabs>
+    <div v-if="activeName === 'create'" class="absolute bottom-8 flex justify-center text-gray-500 w-full">P.S. 如果您在使用过程中遇到问题，欢迎给我们邮箱留言(1016027198@qq.com)，我们会尽快回复您。</div>
+  </div>
 </template>
 
 <script>
