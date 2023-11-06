@@ -5,7 +5,7 @@
   "description": "ToolSumClient",
   "main": ".vite/build/main.js",
   "scripts": {
-    "start": "node config/ffmpeg.js && electron-forge start",
+    "start": "node config/ffmpeg.js && electron-forge start --inspect-electron",
     "package": "electron-forge package",
     "package-win": "electron-forge package --arch x64 --platform win32",
     "make": "node config/ffmpeg.js darwin-x64 darwin && electron-forge make --arch x64 --platform darwin",

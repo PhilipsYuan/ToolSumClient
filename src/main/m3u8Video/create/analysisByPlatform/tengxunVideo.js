@@ -1,27 +1,6 @@
-import {ipcMain, app, BrowserWindow} from "electron";
-import puppeteer from '../../util/source/puppeteer-core';
-import { getTXDownloadLink } from './analysisByPlatform/tengxunVideo';
+import {app, BrowserWindow} from "electron";
 
-
-let browser = null
-ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
-
-/**
- * 从一个网页里分析出可以下载link(m3u8url)
- * @returns {Promise<void>}
- */
-async function getDownloadLinkFromUrl(event, htmlUrl) {
-    if(!browser) {
-        browser = await global.pie.connect(app, puppeteer);
-    }
-    if(/v\.qq\.com/.test(htmlUrl)) {
-        return await getTXDownloadLink(htmlUrl, browser)
-    } else {
-        return await getNormalM3u8Link(htmlUrl)
-    }
-}
-
-async function getNormalM3u8Link(htmlUrl) {
+export async function getTXDownloadLink(htmlUrl, browser) {
     let m3u8Url = null
     const window = new BrowserWindow({
         show: false, width: 900, height: 600, webPreferences: {
@@ -35,8 +14,10 @@ async function getNormalM3u8Link(htmlUrl) {
     });
     const page = await pie.getPage(browser, window)
     await page.setViewport({"width": 475, "height": 867, "isMobile": true})
-
     async function logRequest(request) {
+        if(/qq\.com\/proxyhttp/.test(request.url())) {
+            console.log(await request.response())
+        }
         const url = request.url()
         if (/\.m3u8$/.test(url)) {
             m3u8Url = url
@@ -44,11 +25,18 @@ async function getNormalM3u8Link(htmlUrl) {
         // const content = await page.content();
         // console.log(content)
     }
-
     page.on('request', logRequest);
+    page.on('response', async response => {
+        if(/qq\.com\/proxyhttp/.test(response.url())) {
+            const json = await response.json()
+            const json2 = JSON.parse(json.vinfo)
+            m3u8Url = json2.vl.vi[0].ul.m3u8
+        }
+        // do something here
+    });
     try {
         return await window.loadURL(htmlUrl, {
-            userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1'
+            userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
         })
             .then((res) => {
                 const promise = new Promise((resolve) => {
@@ -58,6 +46,7 @@ async function getNormalM3u8Link(htmlUrl) {
                         if (m3u8Url || index > 10) {
                             clearInterval(interval);
                             window && window.destroy();
+
                             resolve(m3u8Url)
                         } else {
                             index++
@@ -67,6 +56,7 @@ async function getNormalM3u8Link(htmlUrl) {
                 return promise
             })
             .catch((e) => {
+                console.log(e)
                 window && window.destroy();
                 return 'error'
             })
@@ -75,3 +65,4 @@ async function getNormalM3u8Link(htmlUrl) {
         return Promise.resolve('error')
     }
 }
+
