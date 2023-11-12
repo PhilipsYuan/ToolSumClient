@@ -11,7 +11,9 @@
           }}
         </div>
         <div
-            class="bg-gradient-to-r from-red-300 to-red-500 rounded-3xl px-4 py-2 text-white w-32 mt-8 m-auto text-center hover:from-red-500 hover:to-red-600 cursor-pointer">
+            class="bg-gradient-to-r from-red-300 to-red-500 rounded-3xl px-4 py-2 text-white w-32 mt-8 m-auto text-center hover:from-red-500 hover:to-red-600 cursor-pointer"
+            @click="buyVipFun(item.name, item.price, item.type)"
+        >
           立即购买
         </div>
       </div>
@@ -24,31 +26,69 @@
       </div>
       <div class="mt-4 text-base text-yellow-500 text-center">无限量使用下载视频功能</div>
     </div>
-    <div class="absolute bottom-8 flex justify-center text-gray-500 w-full">P.S. 如果您在使用过程中遇到问题，欢迎给我们邮箱留言(1016027198@qq.com)，我们会尽快回复您。</div>
+    <div class="absolute bottom-8 flex justify-center text-gray-500 w-full">P.S.
+      如果您在使用过程中遇到问题，欢迎给我们邮箱留言(1016027198@qq.com)，我们会尽快回复您。
+    </div>
   </div>
 </template>
 
 <script>
+import {buyVip, getVipProductList} from '../../../api/vip'
+import {checkLogin} from "../../../api/login";
+import {useService} from "../../../service/service";
+
 export default {
   name: "vipBuy",
   data() {
     return {
+      isLogin: false,
       buyList: [{
         name: '一周',
-        date: 7,
         price: '3.9',
-        unit: '周'
+        unit: '周',
+        type: 1
       }, {
         name: '半月',
-        date: 15,
         price: '5.9',
-        unit: '半月'
+        unit: '半月',
+        type: 2
       }, {
-        name: '1月',
-        date: 31,
+        name: '一月',
         price: '9.9',
-        unit: '月'
+        unit: '月',
+        type: 3
       }]
+    }
+  },
+  mounted() {
+    checkLogin()
+        .then((res) => {
+          if (res) {
+            this.isLogin = true
+          }
+        })
+    getVipProductList()
+        .then((res) => {
+          if(res.data.result)  {
+            const result = res.data.result
+                this.buyList.forEach((item) => {
+                  const product = result.find((i) => i.product_type == item.type)
+                  item.price = product.product_price
+                })
+          }
+        })
+  },
+  methods: {
+    buyVipFun(name, price, type) {
+      if(this.isLogin) {
+        const remarks = `小滑轮${name}会员`
+        buyVip({type, price, remarks})
+            .then((result) => {
+              console.log(result)
+            })
+      } else {
+        useService('openLoginTip');
+      }
     }
   }
 }
