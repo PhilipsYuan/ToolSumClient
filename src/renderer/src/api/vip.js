@@ -28,3 +28,27 @@ export function getBuyVipRecords() {
     const url = `${host.server}mini/vip/buy/list`
     return axios.get(url)
 }
+
+/**
+ * 取消订单
+ * @param orderId
+ * @returns {Promise<axios.AxiosResponse<any>>}
+ */
+export function cancelBuyVipRecords(orderId) {
+    const url = `${host.server}mini/vip/buy/cancel`
+    return axios.put(url, {
+        orderId
+    })
+}
+
+/**
+ * 删除订单
+ * @param orderId
+ * @returns {Promise<axios.AxiosResponse<any>>}
+ */
+export function deleteBuyVipRecords(orderId) {
+    const url = `${host.server}mini/vip/buy/delete`;
+    return axios.put(url, {
+        orderId
+    })
+}

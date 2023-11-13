@@ -91,4 +91,5 @@
 .el-popover.el-popper {
     font-size: 12px !important;
     padding: 6px 12px !important;
+    min-width: 30px !important;
 }

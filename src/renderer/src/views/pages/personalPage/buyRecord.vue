@@ -4,10 +4,10 @@
     <el-tab-pane label="已完成" name="complete" />
     <el-tab-pane label="已过期" name="overTime" />
     <el-tab-pane label="已取消" name="cancel" />
-    <not-pay-list v-show="activeName === 'notPay'" ref="notPayList" />
-    <complete-pay-list v-show="activeName === 'complete'" ref="completePayList" />
-    <overtime-pay-list v-show="activeName === 'overTime'" ref="overtimePayList" />
-    <cancel-pay-list v-show="activeName === 'cancel'" ref="cancelPayList" />
+    <not-pay-list v-show="activeName === 'notPay'" ref="notPayList" @getRecords="getRecords"/>
+    <complete-pay-list v-show="activeName === 'complete'" ref="completePayList" @getRecords="getRecords" />
+    <overtime-pay-list v-show="activeName === 'overTime'" ref="overtimePayList" @getRecords="getRecords" />
+    <cancel-pay-list v-show="activeName === 'cancel'" ref="cancelPayList" @getRecords="getRecords" />
   </el-tabs>
 </template>
 
@@ -30,27 +30,7 @@ export default {
     }
   },
   mounted() {
-    getBuyVipRecords()
-        .then((res) => {
-          const result = res.data.result || []
-          console.log(result)
-          result.forEach((item) => {
-            console.log('item')
-            if(item.order_status === 1) {
-              this.notPays.push(item)
-            } else if(item.order_status === 2) {
-              this.completePays.push(item)
-            } else if(item.order_status === 3) {
-              this.overTimePays.push(item)
-            } else if(item.order_status === 4) {
-              this.cancelPays.push(item)
-            }
-          })
-          this.$refs.notPayList.updateList(this.notPays)
-          this.$refs.completePayList.updateList(this.completePays)
-          this.$refs.overtimePayList.updateList(this.overTimePays)
-          this.$refs.cancelPayList.updateList(this.cancelPays)
-        })
+    this.getRecords()
   },
   methods: {
     tabChanged() {
@@ -60,6 +40,36 @@ export default {
         this.$refs.loadingList.getLoadingList()
       }
     },
+    resetList() {
+      this.notPays = [];
+      this.completePays = [];
+      this.overTimePays = [];
+      this.cancelPays = [];
+    },
+    getRecords() {
+      this.resetList()
+      getBuyVipRecords()
+          .then((res) => {
+            const result = res.data.result || []
+            console.log(result)
+            result.forEach((item) => {
+              console.log('item')
+              if(item.order_status === 1) {
+                this.notPays.push(item)
+              } else if(item.order_status === 2) {
+                this.completePays.push(item)
+              } else if(item.order_status === 3) {
+                this.overTimePays.push(item)
+              } else if(item.order_status === 4) {
+                this.cancelPays.push(item)
+              }
+            })
+            this.$refs.notPayList.updateList(this.notPays)
+            this.$refs.completePayList.updateList(this.completePays)
+            this.$refs.overtimePayList.updateList(this.overTimePays)
+            this.$refs.cancelPayList.updateList(this.cancelPays)
+          })
+    }
   }
 }
 </script>
