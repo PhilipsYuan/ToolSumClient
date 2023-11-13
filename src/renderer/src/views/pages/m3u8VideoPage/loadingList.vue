@@ -1,6 +1,6 @@
 <template>
-  <diV class="min-h-[300px]">
-    <div class="grid gap-4">
+  <div class="min-h-[300px]">
+    <div class="grid gap-4" v-if="list.length > 0">
       <div v-for="item in list" class="border rounded-md px-4 py-2 h-fit" :id="item.id">
         <div class="flex items-center justify-between">
           <div>
@@ -42,7 +42,8 @@
         </div>
       </div>
     </div>
-  </diV>
+    <el-empty v-if="list.length === 0" description="暂无数据" />
+  </div>
 </template>
 
 <script>
