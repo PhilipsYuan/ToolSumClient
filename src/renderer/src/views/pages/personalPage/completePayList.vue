@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-if="list.length > 0" class="grid grid-2">
-      <div v-for="item in list" class="flex justify-between items-center px-5 py-2 border rounded-md ">
+    <div v-if="list.length > 0" class="grid gap-3">
+      <div v-for="item in list" class="flex justify-between items-center px-5 py-2 border rounded-md hover:bg-gray-100 border-gray-300">
         <div class="flex gap-8 items-center ">
           <div class="text-green-500 bg-green-200 px-2 py-0.5 text-sm rounded-md">已完成</div>
           <div>{{item.remarks}}</div>
