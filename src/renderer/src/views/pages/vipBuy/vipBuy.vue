@@ -83,17 +83,17 @@ export default {
   },
   methods: {
     buyVipFun(name, price, type) {
-      this.$refs.showCodeModal.open('https://www.baidu.com', name, price)
-      // if(this.isLogin) {
-      //   const remarks = `小滑轮${name}会员`
-      //   buyVip({type, price, remarks})
-      //       .then((result) => {
-      //         console.log(result)
-      //         this.$refs.showCodeModal.open()
-      //       })
-      // } else {
-      //   useService('openLoginTip');
-      // }
+      if(this.isLogin) {
+        const remarks = `小滑轮${name}会员`
+        buyVip({type, price, remarks})
+            .then((res) => {
+              console.log(res)
+              const result = res.data.result
+              this.$refs.showCodeModal.open(result.codeUrl, name, price, result.selfOrderId)
+            })
+      } else {
+        useService('openLoginTip');
+      }
     }
   }
 }

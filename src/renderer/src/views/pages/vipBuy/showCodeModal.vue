@@ -16,15 +16,17 @@
         以及购买时间(例如：2023-01-01 15点50分左右), 我们会尽快确认问题，并给您下发权益。</div>
       <div class="mt-6 px-5 py-2 flex items-center justify-end">
         <div class="text-xs text-gray-500 mr-2">个人信息也可以支付此订单</div>
-        <el-button type="primary" @click="close">等会支付</el-button>
+        <el-button type="primary" @click="notPayNow">等会支付</el-button>
       </div>
     </div>
   </p-dialog>
 </template>
 
 <script>
+import { getBuyVipOrderStatus } from '../../../api/vip'
 import PDialog from "../../UIComponents/PDialog.vue";
 import qrCode from 'qrcode'
+import dayjs from 'dayjs'
 export default {
   name: "showCodeModal",
   components: { PDialog },
@@ -33,16 +35,23 @@ export default {
       showModal: false,
       codeUrl: '',
       name: '',
-      price: ''
+      price: '',
+      orderId: '',
+      orderOverTime: '',
+      interval: ''
     }
   },
   methods: {
-    open (codeUrl, name, price) {
+    open (codeUrl, name, price, orderId) {
+      console.log(codeUrl, name, price, orderId)
       this.showModal = true;
       this.codeUrl = codeUrl;
       this.name = name
       this.price = price
+      this.orderId = orderId
+      this.orderOverTime = dayjs(new Date()).add(15, 'minute')
       this.generateQRCode()
+      this.loopOrderStatus()
     },
     generateQRCode() {
       setTimeout(() => {
@@ -55,17 +64,32 @@ export default {
       })
     },
     loopOrderStatus() {
-      const interval = setInterval(() => {
-        // 查询订单结果，如果15分钟没有支付，关闭订单，支付成功后，设置内容
-        if(status === 'success') {
-          clearInterval(interval)
-          this.$message.success("支付成功，权益下发成功了。请开始使用吧！")
-          setTimeout(() => {
-            this.close()
-            this.$router.push({path: '/m3u8'})
-          }, 1000 * 2.5)
-        }
+      this.interval = setInterval(() => {
+        getBuyVipOrderStatus({orderId: this.orderId})
+            .then((res) => {
+              const result = res.data.result
+              // 查询订单结果，如果15分钟没有支付，关闭订单，支付成功后，设置内容
+              if(result.orderStatus == '2') {
+                clearInterval(this.interval)
+                this.$message.success("支付成功，权益下发成功了。请开始使用吧！")
+                setTimeout(() => {
+                  this.close()
+                  this.$router.push({path: '/m3u8'})
+                }, 1000 * 2.5)
+              } else if (dayjs(new Date()).isAfter(this.orderOverTime)) {
+                clearInterval(this.interval)
+                this.$message.success("订单支付已经过期，请重新购买")
+                setTimeout(() => {
+                  this.close()
+                }, 1000 * 2.5)
+              }
+            })
       }, 1000 * 5)
+    },
+    notPayNow() {
+      clearInterval(this.interval)
+      this.close()
+      this.$router.push({path: '/personal'})
     },
     close() {
       this.showModal = false

@@ -52,3 +52,13 @@ export function deleteBuyVipRecords(orderId) {
         orderId
     })
 }
+
+/**
+ * 获取订单的状态
+ */
+export function getBuyVipOrderStatus(data) {
+    const url = `${host.server}mini/vip/buy/order/status`
+    return axios.get(url, {
+        params: data
+    })
+}
