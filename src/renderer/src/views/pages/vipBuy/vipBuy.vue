@@ -29,16 +29,19 @@
     <div class="absolute bottom-8 flex justify-center text-gray-500 w-full">P.S.
       如果您在使用过程中遇到问题，欢迎给我们邮箱留言(1016027198@qq.com)，我们会尽快回复您。
     </div>
+    <show-code-modal ref="showCodeModal" />
   </div>
 </template>
 
 <script>
+import showCodeModal from "./showCodeModal.vue";
 import {buyVip, getVipProductList} from '../../../api/vip'
 import {checkLogin} from "../../../api/login";
 import {useService} from "../../../service/service";
 
 export default {
   name: "vipBuy",
+  components: { showCodeModal },
   data() {
     return {
       isLogin: false,
@@ -80,15 +83,17 @@ export default {
   },
   methods: {
     buyVipFun(name, price, type) {
-      if(this.isLogin) {
-        const remarks = `小滑轮${name}会员`
-        buyVip({type, price, remarks})
-            .then((result) => {
-              console.log(result)
-            })
-      } else {
-        useService('openLoginTip');
-      }
+      this.$refs.showCodeModal.open('https://www.baidu.com', name, price)
+      // if(this.isLogin) {
+      //   const remarks = `小滑轮${name}会员`
+      //   buyVip({type, price, remarks})
+      //       .then((result) => {
+      //         console.log(result)
+      //         this.$refs.showCodeModal.open()
+      //       })
+      // } else {
+      //   useService('openLoginTip');
+      // }
     }
   }
 }

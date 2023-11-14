@@ -7,7 +7,6 @@
       <div class="mt-4 text-sm">如您还没有账号，请先注册账号，再登录。</div>
       <div class="mt-1">注册成功后，赠送<span class="text-red-500 text-lg mx-1">20</span>次免费使用功能。</div>
     </div>
-
   </p-dialog>
 </template>
 

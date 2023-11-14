@@ -30,7 +30,13 @@
         </div>
       </div>
     </div>
-    <div class="text-lg font-medium my-4">购买记录</div>
+    <div class="flex items-center">
+      <div class="text-lg font-medium my-4">
+        购买记录
+      </div>
+      <div class="text-sm text-gray-500">（只保留最近3个月的记录）</div>
+    </div>
+
     <buy-record />
   </div>
 
