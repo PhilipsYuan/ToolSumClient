@@ -38,7 +38,7 @@ export default {
       this.message = message
       this.status = status
       getUserBenefit()
-          .then((res) => this.userBenefit = res)
+          .then((res) => this.userBenefit = res || {})
     },
     close() {
       this.showModal = false

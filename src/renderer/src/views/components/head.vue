@@ -80,6 +80,7 @@ export default {
               window.location.reload();
             } else {
               this.$router.push({name: 'home'})
+              window.location.reload();
             }
           }
         })

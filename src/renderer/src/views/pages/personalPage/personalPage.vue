@@ -61,7 +61,7 @@ export default {
     this.user = getUser() || {}
     getUserBenefit()
         .then((res) => {
-          this.userBenefit = res
+          this.userBenefit = res || {}
         })
   },
   methods: {
