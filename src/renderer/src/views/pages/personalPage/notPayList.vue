@@ -60,7 +60,6 @@ export default {
     toBuy(item) {
       const name = productTypeList.find((i) => i.type === item.product_type).name
       const restMinutes = dayjs(new Date()).diff(dayjs(item.created_time), 'minute')
-      console.log(restMinutes)
       if(restMinutes >= 15) {
         this.$message.error({ message: "该订单已经过期了, 请选择其他订单。", duration: 4 * 1000} )
         overtimeBuyVipRecordsApi(item.order_num)
