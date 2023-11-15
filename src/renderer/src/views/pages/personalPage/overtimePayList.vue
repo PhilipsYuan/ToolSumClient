@@ -8,7 +8,7 @@
           <div>{{item.product_price}}<span class="text-xs ml-1">元</span></div>
         </div>
         <div class="flex gap-8 items-center">
-          <div class="text-sm">{{dayjs(item.created_time).format('YYYY/MM/DD')}}</div>
+          <div class="text-sm">{{dayjs(item.created_time).format('YYYY/MM/DD HH:mm')}}</div>
           <el-popover
               placement="left"
               :width="80"
