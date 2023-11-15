@@ -54,6 +54,7 @@ export default {
       this.name = name
       this.price = price
       this.orderId = orderId
+      this.downTime = `${restMinutes || 15}:00`
       this.restMinutes = restMinutes || 15
       this.generateQRCode()
       this.loopOrderStatus()
