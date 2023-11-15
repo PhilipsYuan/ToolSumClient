@@ -4,7 +4,9 @@
             :close-on-press-escape="false" width="500px">
     <div>
       <div class="text-lg font-medium text-center">{{message}}</div>
-      <div v-if="status === 'success'" class="text-center mt-1">会员到期时间：{ userBenefit.vipEnd || '----'}}</div>
+      <div v-if="status === 'success'" class="text-center mt-1">
+        会员到期时间：<span class="text-red-500">{{ userBenefit.vipEnd || '----'}}</span>
+      </div>
       <div v-if="status === 'success'" class="flex justify-center mt-6">
         <el-button class="w-80" type="primary" @click="toUse">去使用吧</el-button>
       </div>
