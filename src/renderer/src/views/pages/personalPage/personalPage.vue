@@ -44,8 +44,7 @@
 
 <script>
 import VipIcon from '../../../assets/vip.svg'
-import {getUser} from "../../../service/userService";
-import {getUserBenefit} from "../../../api/user";
+import {getUser, getUserBenefit} from "../../../service/userService";
 import buyRecord from "./buyRecord.vue"
 
 export default {
@@ -62,9 +61,7 @@ export default {
     this.user = getUser() || {}
     getUserBenefit()
         .then((res) => {
-          if(res.data.result) {
-            this.userBenefit = res.data.result
-          }
+          this.userBenefit = res
         })
   },
   methods: {

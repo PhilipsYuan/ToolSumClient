@@ -4,10 +4,12 @@
     <el-tab-pane label="已完成" name="complete" />
     <el-tab-pane label="已过期" name="overTime" />
     <el-tab-pane label="已取消" name="cancel" />
-    <not-pay-list v-show="activeName === 'notPay'" ref="notPayList" @getRecords="getRecords"/>
-    <complete-pay-list v-show="activeName === 'complete'" ref="completePayList" @getRecords="getRecords" />
-    <overtime-pay-list v-show="activeName === 'overTime'" ref="overtimePayList" @getRecords="getRecords" />
-    <cancel-pay-list v-show="activeName === 'cancel'" ref="cancelPayList" @getRecords="getRecords" />
+    <div class="max-h-[calc(100vh-438px)] overflow-auto px-[15px] -mx-[15px]">
+      <not-pay-list v-show="activeName === 'notPay'" ref="notPayList" @getRecords="getRecords"/>
+      <complete-pay-list v-show="activeName === 'complete'" ref="completePayList" @getRecords="getRecords" />
+      <overtime-pay-list v-show="activeName === 'overTime'" ref="overtimePayList" @getRecords="getRecords" />
+      <cancel-pay-list v-show="activeName === 'cancel'" ref="cancelPayList" @getRecords="getRecords" />
+    </div>
   </el-tabs>
 </template>
 
@@ -51,9 +53,7 @@ export default {
       getBuyVipRecords()
           .then((res) => {
             const result = res.data.result || []
-            console.log(result)
             result.forEach((item) => {
-              console.log('item')
               if(item.order_status === 1) {
                 this.notPays.push(item)
               } else if(item.order_status === 2) {

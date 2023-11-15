@@ -29,7 +29,8 @@
     <div class="absolute bottom-8 flex justify-center text-gray-500 w-full">P.S.
       如果您在使用过程中遇到问题，欢迎给我们邮箱留言(1016027198@qq.com)，我们会尽快回复您。
     </div>
-    <show-code-modal ref="showCodeModal" />
+    <show-code-modal ref="showCodeModal" @openOrderModal="openOrderModal"/>
+    <order-status-modal ref="orderStatusModal" />
   </div>
 </template>
 
@@ -38,29 +39,16 @@ import showCodeModal from "./showCodeModal.vue";
 import {buyVip, getVipProductList} from '../../../api/vip'
 import {checkLogin} from "../../../api/login";
 import {useService} from "../../../service/service";
+import orderStatusModal from "./orderStatusModal.vue";
+import { productTypeList } from '../../../utils/const/productTypeList'
 
 export default {
   name: "vipBuy",
-  components: { showCodeModal },
+  components: { showCodeModal, orderStatusModal },
   data() {
     return {
       isLogin: false,
-      buyList: [{
-        name: '一周',
-        price: '3.9',
-        unit: '周',
-        type: 1
-      }, {
-        name: '半月',
-        price: '5.9',
-        unit: '半月',
-        type: 2
-      }, {
-        name: '一月',
-        price: '9.9',
-        unit: '月',
-        type: 3
-      }]
+      buyList: productTypeList
     }
   },
   mounted() {
@@ -87,13 +75,15 @@ export default {
         const remarks = `小滑轮${name}会员`
         buyVip({type, price, remarks})
             .then((res) => {
-              console.log(res)
               const result = res.data.result
               this.$refs.showCodeModal.open(result.codeUrl, name, price, result.selfOrderId)
             })
       } else {
         useService('openLoginTip');
       }
+    },
+    openOrderModal(message, status) {
+      this.$refs.orderStatusModal.open(message, status)
     }
   }
 }

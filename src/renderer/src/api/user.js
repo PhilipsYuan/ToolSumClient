@@ -77,7 +77,7 @@ function getSystemUpdateNotice() {
 /**
  * 获取用户免费次数和vip的相关信息
  */
-function getUserBenefit() {
+function getUserBenefitApi() {
   const url = `${host.server}mini/user/getUserBenefit`;
   return axios.get(url)
 }
@@ -96,6 +96,6 @@ export {
   getUserInfo,
   userLogOut,
   getSystemUpdateNotice,
-  getUserBenefit,
+  getUserBenefitApi,
   reduceBenefit
 }

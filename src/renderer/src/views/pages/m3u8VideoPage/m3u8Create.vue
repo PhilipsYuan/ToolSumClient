@@ -61,7 +61,7 @@
 import {addService, useService} from "../../../service/service";
 import alreadyExistedModal from "./alreadyExistedModal.vue";
 import { checkLogin } from "../../../api/login";
-import { getUserBenefit } from "../../../api/user";
+import {getUserBenefitApi} from "../../../api/user";
 
 export default {
   name: "m3u8Create",
@@ -163,7 +163,7 @@ export default {
      * 查看用户的权益，看是否满足下载
      */
     checkUserBenefit() {
-      return getUserBenefit()
+      return getUserBenefitApi()
           .then((res) => {
             if(res.data.result) {
               const result = res.data.result

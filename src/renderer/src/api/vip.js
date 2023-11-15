@@ -62,3 +62,13 @@ export function getBuyVipOrderStatus(data) {
         params: data
     })
 }
+
+/**
+ * 过期时间
+ */
+export function overtimeBuyVipRecordsApi(orderId) {
+    const url = `${host.server}mini/vip/buy/overtime`;
+    return axios.put(url, {
+        orderId
+    })
+}

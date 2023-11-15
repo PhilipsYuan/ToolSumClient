@@ -10,7 +10,8 @@
           <canvas ref="qrCodeCanvas"/>
         </div>
         <div class="text-center mt-1">微信扫码支付</div>
-        <div class="text-center text-xs text-gray-500">请在15分钟内支付，一旦付款成功，概不对款，请谨慎支付</div>
+        <div class="text-center text-xs text-gray-500">请在<span class="text-red-500">15</span>分钟内支付，一旦付款成功，概不对款，请谨慎支付</div>
+        <div class="text-center mt-1 text-lg text-red-500 font-medium">{{downTime}}</div>
       </div>
       <div class="text-xs">P.S. 出现付款成功后，没有收到权益，请给我们发邮件(1016027198@qq.com)，备注：用户名或者邮箱地址，购买会员类型，
         以及购买时间(例如：2023-01-01 15点50分左右), 我们会尽快确认问题，并给您下发权益。</div>
@@ -23,10 +24,10 @@
 </template>
 
 <script>
-import { getBuyVipOrderStatus } from '../../../api/vip'
+import {getBuyVipOrderStatus, overtimeBuyVipRecordsApi} from '../../../api/vip'
+import { setUserBenefit } from "../../../service/userService";
 import PDialog from "../../UIComponents/PDialog.vue";
 import qrCode from 'qrcode'
-import dayjs from 'dayjs'
 export default {
   name: "showCodeModal",
   components: { PDialog },
@@ -37,21 +38,26 @@ export default {
       name: '',
       price: '',
       orderId: '',
-      orderOverTime: '',
-      interval: ''
+      orderOverTime: false,
+      interval: '',
+      timeInterval: '',
+      // 倒计时时间
+      downTime: '15:00',
+      restMinutes: 15,
     }
   },
   methods: {
-    open (codeUrl, name, price, orderId) {
+    open (codeUrl, name, price, orderId, restMinutes) {
       console.log(codeUrl, name, price, orderId)
       this.showModal = true;
       this.codeUrl = codeUrl;
       this.name = name
       this.price = price
       this.orderId = orderId
-      this.orderOverTime = dayjs(new Date()).add(15, 'minute')
+      this.restMinutes = restMinutes || 15
       this.generateQRCode()
       this.loopOrderStatus()
+      this.setDownTime()
     },
     generateQRCode() {
       setTimeout(() => {
@@ -70,28 +76,54 @@ export default {
               const result = res.data.result
               // 查询订单结果，如果15分钟没有支付，关闭订单，支付成功后，设置内容
               if(result.orderStatus == '2') {
-                clearInterval(this.interval)
-                this.$message.success("支付成功，权益下发成功了。请开始使用吧！")
-                setTimeout(() => {
-                  this.close()
-                  this.$router.push({path: '/m3u8'})
-                }, 1000 * 2.5)
-              } else if (dayjs(new Date()).isAfter(this.orderOverTime)) {
-                clearInterval(this.interval)
-                this.$message.success("订单支付已经过期，请重新购买")
-                setTimeout(() => {
-                  this.close()
-                }, 1000 * 2.5)
+                setUserBenefit()
+                    .then(() => {
+                      this.close()
+                      this.$emit('openOrderModal', '支付成功，权益已下发，请开始使用吧！', 'success')
+                    })
+              } else if (this.orderOverTime) {
+                overtimeBuyVipRecordsApi(this.orderId)
+                    .then((res) => {
+                      if(res) {
+                        this.close()
+                        this.$emit('openOrderModal', '订单支付已经过期，请重新购买', 'failure')
+                      }
+                    })
               }
             })
       }, 1000 * 5)
     },
+    /**
+     * 设置15分钟倒计时
+     */
+    setDownTime() {
+      let minutes = this.restMinutes;
+      let seconds = 0;
+      this.timeInterval = setInterval(() => {
+        if (seconds == 0) {
+          if (minutes == 0) {
+            clearInterval(this.timeInterval);
+            this.downTime = '00:00'
+            this.orderOverTime = true
+            return;
+          }
+          minutes--;
+          seconds = 59;
+        } else {
+          seconds--;
+        }
+        let sec = seconds < 10 ? '0' + seconds : seconds;
+        let min = minutes < 10 ? '0' + minutes : minutes;
+        this.downTime = min + ':' + sec
+      }, 1000);
+    },
     notPayNow() {
-      clearInterval(this.interval)
       this.close()
       this.$router.push({path: '/personal'})
     },
     close() {
+      clearInterval(this.interval)
+      clearInterval(this.timeInterval)
       this.showModal = false
     }
   }

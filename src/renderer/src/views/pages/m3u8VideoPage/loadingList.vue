@@ -49,7 +49,7 @@
 <script>
 import {VideoPlay} from "@element-plus/icons-vue";
 import {addService, useService} from "../../../service/service";
-import {getUserBenefit, reduceBenefit} from "../../../api/user";
+import {getUserBenefitApi, reduceBenefit} from "../../../api/user";
 export default {
   name: "loadingList",
   components: {VideoPlay},
@@ -110,7 +110,7 @@ export default {
      * 下载成功后，消耗用户的权益
      */
     costUserBenefit() {
-      return getUserBenefit()
+      return getUserBenefitApi()
           .then((res) => {
             if(res.data.result) {
               const result = res.data.result
