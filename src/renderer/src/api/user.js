@@ -87,6 +87,16 @@ function reduceBenefit() {
   return axios.get(url)
 }
 
+/**
+ * 验证邮件是否已经注册过了没有
+ */
+function checkEmailIsRegister(data) {
+  let url = `${host.server}mini/user/checkEmailIsRegister`;
+  return axios.get(url, {
+    params: data
+  })
+}
+
 export {
   login,
   register,
@@ -97,5 +107,6 @@ export {
   userLogOut,
   getSystemUpdateNotice,
   getUserBenefitApi,
-  reduceBenefit
+  reduceBenefit,
+  checkEmailIsRegister
 }

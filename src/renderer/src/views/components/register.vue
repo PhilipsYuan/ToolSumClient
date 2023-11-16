@@ -41,7 +41,7 @@
 
 <script>
 import {addService} from '../../service/service';
-import {register, checkUserName, sendValidateCode } from '../../api/user';
+import {register, checkUserName, sendValidateCode, checkEmailIsRegister } from '../../api/user';
 import PDialog from "../UIComponents/PDialog.vue";
 import { View, Hide } from '@element-plus/icons-vue'
 export default {
@@ -107,6 +107,20 @@ export default {
           {
             pattern: /^\w+((.\w+)|(-\w+))@[A-Za-z0-9]+((.|-)[A-Za-z0-9]+).[A-Za-z0-9]+$/,
             message: '邮箱格式不正确！',
+            trigger: 'blur'
+          },
+          {
+            required: true,
+            validator: (rule, value, callback) => {
+              checkEmailIsRegister({email: value})
+                  .then((res) => {
+                    if (res.data.code === 200) {
+                      callback()
+                    } else {
+                      callback(new Error('该邮箱已经注册!'))
+                    }
+                  })
+            },
             trigger: 'blur'
           }
         ],

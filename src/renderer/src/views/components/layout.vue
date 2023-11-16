@@ -25,8 +25,8 @@
       </el-aside>
       <el-main>
         <div v-if="notice"
-            class="-ml-5 -mt-5 mb-8 text-sm text-red-400 border-b text-center bg-white p-2 w-[calc(100%+40px)] shadow-[0px_8px_16px_rgba(147,151,159,0.16)]">
-          {{notice}}
+             class="-ml-5 -mt-5 mb-8 text-sm text-red-400 border-b text-center bg-white p-2 w-[calc(100%+40px)] shadow-[0px_8px_16px_rgba(147,151,159,0.16)]">
+          {{ notice }}
         </div>
         <router-view/>
       </el-main>
@@ -36,7 +36,7 @@
 
 <script>
 import headPart from "./head.vue";
-import { getSystemUpdateNotice } from "../../api/user";
+import {getSystemUpdateNotice} from "../../api/user";
 
 export default {
   name: "layout",
@@ -45,6 +45,33 @@ export default {
     return {
       notice: null,
       active: '1'
+    }
+  },
+  watch: {
+    $route: {
+      handler: function (val) {
+        switch (val.name) {
+          case 'home':
+            this.active = '1';
+            break;
+          case 'm3u8':
+            this.active = '1';
+            break;
+          case 'personal':
+            this.active = '2';
+            break;
+          case 'vipBuy':
+            this.active = '3';
+            break;
+          case 'setting':
+            this.active = '4';
+            break;
+          case 'help':
+            this.active = '5';
+        }
+      },
+      // 深度观察监听
+      deep: true
     }
   },
   async mounted() {
