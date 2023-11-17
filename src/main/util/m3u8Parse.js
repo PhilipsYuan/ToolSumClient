@@ -15,7 +15,7 @@ export function getCorrectM3u8File(url) {
                          return res.data
                      })
                      .catch((res) => {
-                         sendTips('m3u8-file-get-failure', 'error', '下载资源失败，请重新尝试或者更换个下载资源')
+                         sendTips('m3u8-file-get-failure', 'error', '下载资源失败，请重新尝试或者更换个下载资源!')
                          return null
                      })
              } else {
@@ -23,7 +23,7 @@ export function getCorrectM3u8File(url) {
              }
         })
         .catch((res) => {
-            sendTips('m3u8-file-get-failure', 'error', '下载资源失败，请重新尝试或者更换个下载资源')
+            sendTips('m3u8-file-get-failure', 'error', '下载资源失败，请重新尝试或者更换个下载资源!')
             return null
         })
 }

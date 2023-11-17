@@ -18,45 +18,50 @@ ipcMain.handle('create-m3u8-download-task', createM3u8DownloadTask);
  * 创建m3u8下载任务
  */
 async function createM3u8DownloadTask(event, url, name, outPath) {
-    const outputPath = path.resolve(outPath, `${name}.mp4`);
-    if (checkOutputFileNotExist(null, outputPath)) {
-        const tempPath = path.resolve(tempSourcePath, name);
-        makeDir(tempPath)
-        return getCorrectM3u8File(url)
-            .then(async (data) => {
-                if (data) {
-                    const urlObject = new URL(url);
-                    const host = `${urlObject.protocol}//${urlObject.host}`
-                    const m3u8Data = await downloadSecretKey(data, host, tempPath, urlObject.pathname)
-                    const urls = getPlayList(data)
-                    const formatUrls = urls.map((item, index) => {
-                        let url = ''
-                        if (item[0] !== '/' && !/^http/.test(item)) {
-                            url = host + urlObject.pathname.match(/\/.*\//)[0] + item
-                        } else if (/^http/.test(item)) {
-                            url = item
-                        } else {
-                            url = host + item
-                        }
-                        return {
-                            item, url, number: index + 1
-                        }
-                    })
-                    const twoUrls = splitArray(formatUrls, batchNum)
-                    await newLoadingRecord({
-                        name: name,
-                        m3u8Url: url,
-                        m3u8Data: m3u8Data,
-                        batchIndex: 0,
-                        totalIndex: twoUrls.length,
-                        totalUrls: formatUrls,
-                        outputPath: outputPath
-                    })
-                    return 'success'
-                } else {
-                    return 'failure'
-                }
-            })
+    try{
+        const outputPath = path.resolve(outPath, `${name}.mp4`);
+        if (checkOutputFileNotExist(null, outputPath)) {
+            const tempPath = path.resolve(tempSourcePath, name);
+            makeDir(tempPath)
+            return getCorrectM3u8File(url)
+                .then(async (data) => {
+                    if (data) {
+                        const urlObject = new URL(url);
+                        const host = `${urlObject.protocol}//${urlObject.host}`
+                        const m3u8Data = await downloadSecretKey(data, host, tempPath, urlObject.pathname)
+                        const urls = getPlayList(data)
+                        const formatUrls = urls.map((item, index) => {
+                            let url = ''
+                            if (item[0] !== '/' && !/^http/.test(item)) {
+                                url = host + urlObject.pathname.match(/\/.*\//)[0] + item
+                            } else if (/^http/.test(item)) {
+                                url = item
+                            } else {
+                                url = host + item
+                            }
+                            return {
+                                item, url, number: index + 1
+                            }
+                        })
+                        const twoUrls = splitArray(formatUrls, batchNum)
+                        await newLoadingRecord({
+                            name: name,
+                            m3u8Url: url,
+                            m3u8Data: m3u8Data,
+                            batchIndex: 0,
+                            totalIndex: twoUrls.length,
+                            totalUrls: formatUrls,
+                            outputPath: outputPath
+                        })
+                        return 'success'
+                    } else {
+                        return 'failure'
+                    }
+                })
+        }
+    } catch (e) {
+        console.log(e)
+        return 'failure'
     }
 }
 

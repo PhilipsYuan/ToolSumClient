@@ -14,7 +14,7 @@
         <div class="text-center mt-1 text-lg text-red-500 font-medium">{{downTime}}</div>
       </div>
       <div class="text-xs">P.S. 出现付款成功后，没有收到权益，请给我们发邮件(1016027198@qq.com)，备注：用户名或者邮箱地址，购买会员类型，
-        以及购买时间(例如：2023-01-01 15点50分左右), 我们会尽快确认问题，并给您下发权益。</div>
+        以及微信支付截图, 我们会尽快确认问题，并给您下发权益。</div>
       <div class="mt-6 px-5 py-2 flex items-center justify-end">
         <div class="text-xs text-gray-500 mr-2">个人信息也可以支付此订单</div>
         <el-button type="primary" @click="notPayNow">等会支付</el-button>
@@ -43,19 +43,19 @@ export default {
       timeInterval: '',
       // 倒计时时间
       downTime: '15:00',
-      restMinutes: 15,
+      restSeconds: 900,
     }
   },
   methods: {
-    open (codeUrl, name, price, orderId, restMinutes) {
-      console.log(codeUrl, name, price, orderId)
+    open (codeUrl, name, price, orderId, restSeconds) {
       this.showModal = true;
       this.codeUrl = codeUrl;
       this.name = name
       this.price = price
       this.orderId = orderId
-      this.downTime = `${restMinutes || 15}:00`
-      this.restMinutes = restMinutes || 15
+      this.restSeconds = restSeconds || 900
+      const times = this.convertSeconds(this.restSeconds)
+      this.downTime = `${times.minutes < 10 ? '0' + times.minutes : times.minutes}:${times.second < 10 ? '0' + times.second : times.second}`
       this.generateQRCode()
       this.loopOrderStatus()
       this.setDownTime()
@@ -98,8 +98,9 @@ export default {
      * 设置15分钟倒计时
      */
     setDownTime() {
-      let minutes = this.restMinutes;
-      let seconds = 0;
+      const times = this.convertSeconds(this.restSeconds)
+      let minutes = times.minutes
+      let seconds = times.second;
       this.timeInterval = setInterval(() => {
         if (seconds == 0) {
           if (minutes == 0) {
@@ -126,6 +127,11 @@ export default {
       clearInterval(this.interval)
       clearInterval(this.timeInterval)
       this.showModal = false
+    },
+    convertSeconds(seconds) {
+      const minutes = Math.floor(seconds / 60)
+      const second = seconds % 60
+      return { minutes, second }
     }
   }
 }

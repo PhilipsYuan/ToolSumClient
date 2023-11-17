@@ -11,14 +11,20 @@ ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
  * @returns {Promise<void>}
  */
 async function getDownloadLinkFromUrl(event, htmlUrl) {
-    if(!browser) {
-        browser = await global.pie.connect(app, puppeteer);
+    try{
+        if(!browser) {
+            browser = await global.pie.connect(app, puppeteer);
+        }
+        if(/v\.qq\.com/.test(htmlUrl)) {
+            return await getTXDownloadLink(htmlUrl, browser)
+        } else {
+            return await getNormalM3u8Link(htmlUrl)
+        }
+    } catch (e) {
+        console.log(e)
+        return "error"
     }
-    if(/v\.qq\.com/.test(htmlUrl)) {
-        return await getTXDownloadLink(htmlUrl, browser)
-    } else {
-        return await getNormalM3u8Link(htmlUrl)
-    }
+
 }
 
 async function getNormalM3u8Link(htmlUrl) {

@@ -26,7 +26,7 @@
         <el-form-item label="网址">
           <div class="flex items-center gap-4 w-full">
             <el-input v-model="form.htmlUrl" class="w-full" @change="()=> this.form.htmlUrl = this.form.htmlUrl.trim()"/>
-            <el-button @click="startAnalysis" :loading="analysisLoading">解析下载链接</el-button>
+            <el-button @click="startAnalysis" :loading="analysisLoading" :disabled="createLoading">解析下载链接</el-button>
           </div>
         </el-form-item>
         <el-form-item label="m3u8链接:">
@@ -39,7 +39,7 @@
           <el-button :loading="createLoading" type="primary" @click="getInfo">
             创建
           </el-button>
-          <el-button :loading="createLoading" @click="clearInput">清空</el-button>
+          <el-button :disabled="createLoading" @click="clearInput">清空</el-button>
           <el-popover
               placement="bottom"
               :width="'fit-content'"
@@ -109,6 +109,9 @@ export default {
               useService('getM3u8LoadingList')
               this.changeTab('loading')
               this.createLoading = false
+            } else {
+              this.createLoading = false
+              this.getM3u8FileFailureMessage('error', '下载资源失败，请重新尝试或者更换个下载资源!')
             }
           }
         } else {

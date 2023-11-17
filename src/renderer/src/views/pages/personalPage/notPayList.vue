@@ -59,8 +59,8 @@ export default {
     },
     toBuy(item) {
       const name = productTypeList.find((i) => i.type === item.product_type).name
-      const restMinutes = dayjs(new Date()).diff(dayjs(item.created_time), 'minute')
-      if(restMinutes >= 15) {
+      const restSeconds = dayjs(new Date()).diff(dayjs(item.created_time), 'second')
+      if(restSeconds >= 900) {
         this.$message.error({ message: "该订单已经过期了, 请选择其他订单。", duration: 4 * 1000} )
         overtimeBuyVipRecordsApi(item.order_num)
             .then((res) => {
@@ -69,11 +69,10 @@ export default {
               }
             })
       } else {
-        this.$refs.showCodeModal.open(item.code_url, name, item.product_price, item.order_num, 15 - restMinutes)
+        this.$refs.showCodeModal.open(item.code_url, name, item.product_price, item.order_num, 900 - restSeconds)
       }
     },
     openOrderModal(message, status) {
-      console.log('here1')
       this.$refs.orderStatusModal.open(message, status)
     }
   }

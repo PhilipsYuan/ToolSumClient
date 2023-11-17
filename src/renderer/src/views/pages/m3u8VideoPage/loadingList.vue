@@ -50,6 +50,7 @@
 import {VideoPlay} from "@element-plus/icons-vue";
 import {addService, useService} from "../../../service/service";
 import {getUserBenefitApi, reduceBenefit} from "../../../api/user";
+import {setUserBenefit} from "../../../service/userService";
 export default {
   name: "loadingList",
   components: {VideoPlay},
@@ -118,6 +119,9 @@ export default {
                 // nothing to do
               } else if(result.freeCount > 0) {
                 reduceBenefit()
+                    .then(() => {
+                      setUserBenefit()
+                    })
               }
             }
           })
