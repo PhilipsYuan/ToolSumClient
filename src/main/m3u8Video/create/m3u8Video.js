@@ -1,7 +1,7 @@
 import {app, ipcMain} from "electron";
 import fs from "fs";
 import {getSecretKeys, getCorrectM3u8File, getPlayList} from "../../util/m3u8Parse"
-import {makeDir} from "../../util/fs"
+import {getFileInfo, makeDir} from "../../util/fs"
 import {splitArray} from '../../util/array';
 import {newLoadingRecord} from '../processList/processList';
 import axios from '../../util/source/axios'
@@ -18,6 +18,58 @@ ipcMain.handle('create-m3u8-download-task', createM3u8DownloadTask);
  * 创建m3u8下载任务
  */
 async function createM3u8DownloadTask(event, url, name, outPath) {
+    if(/m3u8Video[/|\\]tempM3u8Url/.test(url)) {
+        return createOtherM3u8DownloadTask(url, name, outPath)
+    } else {
+        return createNormalM3u8DownloadTask(url, name, outPath)
+    }
+}
+
+/**
+ * 存储在本地的文件
+ */
+async function createOtherM3u8DownloadTask(url, name, outPath) {
+    try {
+        const outputPath = path.resolve(outPath, `${name}.mp4`);
+        if (checkOutputFileNotExist(null, outputPath)) {
+            const tempPath = path.resolve(tempSourcePath, name);
+            makeDir(tempPath)
+            const info = JSON.parse(getFileInfo(url))
+            const m3u8Data = await downloadSecretKey(info.text, info.host, tempPath, null, info.cookie)
+            const urls = getPlayList(info.text)
+            const formatUrls = urls.map((item, index) => {
+                let url = info.host + '/' + item
+                return {
+                    item, url, number: index + 1, cookie: info.cookie
+                }
+            })
+            const twoUrls = splitArray(formatUrls, batchNum)
+            await newLoadingRecord({
+                name: name,
+                m3u8Url: url,
+                m3u8Data: m3u8Data,
+                batchIndex: 0,
+                totalIndex: twoUrls.length,
+                totalUrls: formatUrls,
+                outputPath: outputPath
+            })
+            return 'success'
+        } else {
+            return 'failure'
+        }
+    } catch (e) {
+        console.log(e)
+        return 'failure'
+    }
+
+}
+
+/**
+ * 最基础的https的m3u8文件的处理
+ * @param url
+ * @returns {*}
+ */
+function createNormalM3u8DownloadTask(url, name, outPath) {
     try{
         const outputPath = path.resolve(outPath, `${name}.mp4`);
         if (checkOutputFileNotExist(null, outputPath)) {
@@ -69,26 +121,37 @@ async function createM3u8DownloadTask(event, url, name, outPath) {
  * 下载解码key，并进行替换,
  * 文件里可能会出现多个
  */
-async function downloadSecretKey(data, host, tempPath, pathname) {
+async function downloadSecretKey(data, host, tempPath, pathname, cookie) {
     const keys = getSecretKeys(data)
     let i = 0;
     let m3u8Data = data
+    console.log(keys.length)
     if (keys.length > 0) {
         while (i < keys.length) {
             let url = null
-            if (keys[i][0] !== '/' && !/^http/.test(keys[i])) {
-                url = host + pathname.match(/\/.*\//)[0] + keys[i]
-            } else if (/^http/.test(keys[i])) {
-                url = keys[i]
+            if(cookie) {
+                url = host + '/' + keys[i]
             } else {
-                url = host + keys[i]
+                if (keys[i][0] !== '/' && !/^http/.test(keys[i])) {
+                    url = host + pathname.match(/\/.*\//)[0] + keys[i]
+                } else if (/^http/.test(keys[i])) {
+                    url = keys[i]
+                } else {
+                    url = host + keys[i]
+                }
+            }
+
+            const headers = {
+                "Content-Type": "application/octet-stream",
+            }
+            if(cookie) {
+                headers.Cookie = cookie
             }
             const res = await axios.get(url, {
                 responseType: "arraybuffer",
-                headers: {
-                    "Content-Type": "application/octet-stream",
-                }
+                headers: headers
             })
+            console.log(res.data)
             const dyData = new Uint8Array(res.data);
             await fs.writeFileSync(path.resolve(tempPath, `key${i + 1}.key`), dyData, "utf-8")
             i++

@@ -122,7 +122,7 @@ async function loopDownloadTs(totalUrls, m3u8Data, tempPath, totalIndex, loading
         if (index < totalIndex && loadingRecord.pause === false) {
             const pros = twoUrls[index]
             const promises = pros.map(async (item) => {
-                return getFileAndStore(item.url, item.number, item.item, tempPath, newErrors, loadingRecord)
+                return getFileAndStore(item.url, item.number, item.item, tempPath, newErrors, loadingRecord, item.cookie)
             })
             return Promise.all(promises)
                 .then(async (results) => {
@@ -167,7 +167,7 @@ function checkErrorTs(data, loadingRecord, reloadNumber, tempPath) {
     console.log(`对失败的进行第${reloadNumber}次请求`)
     const newErrors = []
     const promises = loadingRecord.missLinks.map(async (item) => {
-        return getFileAndStore(item.url, item.number, item.item, tempPath, newErrors, loadingRecord)
+        return getFileAndStore(item.url, item.number, item.item, tempPath, newErrors, loadingRecord, item.cookie)
     })
     return Promise.all(promises)
         .then(() => {
@@ -190,13 +190,17 @@ function checkErrorTs(data, loadingRecord, reloadNumber, tempPath) {
         })
 }
 
-async function getFileAndStore(url, number, item, tempPath, errorList, loadingRecord) {
+async function getFileAndStore(url, number, item, tempPath, errorList, loadingRecord, cookie) {
+    const headers = {
+        "Content-Type": "application/octet-stream",
+    }
+    if(cookie) {
+        headers.Cookie = cookie
+    }
     return axios.get(url, {
         timeout: 10000,
         responseType: "arraybuffer",
-        headers: {
-            "Content-Type": "application/octet-stream",
-        }
+        headers: headers
     }).then(async (res) => {
          fs.writeFile(path.resolve(tempPath, `${number}.ts`), res.data, 'binary', (err) => {
             if(err) {
@@ -215,7 +219,8 @@ async function getFileAndStore(url, number, item, tempPath, errorList, loadingRe
         errorList.push({
             number: number,
             url: url,
-            item: item
+            item: item,
+            cookie
         })
         return 'failure'
     })
