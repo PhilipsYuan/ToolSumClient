@@ -35,11 +35,8 @@ body {
     @apply p-0.5 rounded-md hover:bg-gray-200 !w-6 !h-6 hover:!text-blue-500
 }
 
-.help-title {
-    @apply font-medium text-lg
-}
 .help-answer {
-    @apply text-gray-600 grid gap-6 mt-8 pb-6
+    @apply text-gray-600 grid gap-6 mt-8 pb-6 text-sm
 }
 .help-answer div {
     @apply flex items-start
