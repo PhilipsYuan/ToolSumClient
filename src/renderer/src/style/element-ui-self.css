@@ -93,3 +93,7 @@
     padding: 6px 12px !important;
     min-width: 30px !important;
 }
+.el-collapse-item__header {
+    font-weight: bold !important;
+    font-size: 16px !important;
+}

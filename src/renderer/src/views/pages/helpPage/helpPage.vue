@@ -2,7 +2,7 @@
   <div class="max-h-[calc(100vh-124px)] overflow-auto border p-5 bg-white rounded-md border-[#d1d5db]">
     <div class="">
       <el-collapse v-model="activeNames" @change="handleChange">
-        <el-collapse-item title="如何下载视频？" name="1">
+        <el-collapse-item title="1. 如何下载视频？" name="1">
           <div class="help-answer">
             <div>
               <div class="help-answer-index">1</div>
@@ -17,7 +17,7 @@
             <div><img src="./h-7.png"/></div>
           </div>
         </el-collapse-item>
-        <el-collapse-item title="如何获取m3u8链接？" name="2">
+        <el-collapse-item title="2. 如何获取m3u8链接？" name="2">
           <div class="help-answer">
             输入网页网址有可能解析不出来m3u8的下载链接。我们可以通过下面步骤，自己查找m3u8下载链接。
             然后将它放入m3u8链接输入框中，再输入名称，就可以进行下载了。
