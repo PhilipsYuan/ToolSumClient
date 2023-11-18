@@ -15,6 +15,7 @@ export async function getMgTvDownloadLink(htmlUrl, browser) {
     if(id) {
         let m3u8Text = null
         let infoPath = null
+        let cookie = null
         const window = new BrowserWindow({
             show: false, width: 900, height: 600, webPreferences: {
                 devTools: true,
@@ -45,6 +46,7 @@ export async function getMgTvDownloadLink(htmlUrl, browser) {
                 }
             } else if(/\.m3u8/.test(url) && url.indexOf(infoPath) > -1) {
                 m3u8Text = await response.text()
+                cookie = await page.cookies()
             }
         });
         try {
@@ -52,12 +54,11 @@ export async function getMgTvDownloadLink(htmlUrl, browser) {
                 userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
             })
                 .then(async (res) => {
-                    const cookie = await page.cookies()
                     const promise = new Promise((resolve) => {
                         let index = 0
                         const interval = setInterval(() => {
                             console.log(`检测次数：${index + 1}`)
-                            if ((m3u8Text && cookie && infoPath) || index > 10) {
+                            if ((m3u8Text && cookie && cookie.length > 0 && infoPath) || index > 10) {
                                 clearInterval(interval);
                                 window && window.destroy();
                                 const url = createM3u8Url(m3u8Text, cookie, infoPath, id)
@@ -96,15 +97,37 @@ function getTVId(htmlUrl) {
  */
 async function createM3u8Url(m3u8Text, cookie, infoPath, id) {
     const urlObject = new URL(infoPath)
-    const map = cookie.reverse().map((item) => {
-        return `${item.name}=${item.value}`
+    const keys = ['_source_', 'Province', '__STKUUID', 'mba_deviceid', 'mba_sessionid', 'mba_cxid_expiration', 'mba_cxid',
+    'finger', 'beta_timer', 'MQGUID', 'PLANB_FREQUENCY', '__MQGUID', 'PM_CHKID', 'isShowUserPop', 'IPDX', 'sessionid',
+        'mba_last_action_time', 'lastActionTime']
+    const maps = []
+    keys.forEach((key) => {
+        const item = cookie.find((item) => {
+            console.log(item.name, key)
+            return item.name === key
+        })
+        if(item) {
+            maps.push(`${item.name}=${item.value}`)
+        }
     })
+    const paths = urlObject.pathname.split('/')
+    paths.splice(-1, 1)
     const json = {
-        host: `${urlObject.protocol}//${urlObject.host}`,
-        text: m3u8Text,
-        cookie: map.join(';')
+        host: `${urlObject.protocol}//${urlObject.host}${paths.join('/')}`,
+        text: deleteM3uu8Map(m3u8Text),
+        cookie: maps.join('; ')
     }
     const filePath = path.resolve(m3u8UrlMgPath, `${id}.m3u8`)
     await fs.writeFileSync(path.resolve(m3u8UrlMgPath, `${id}.m3u8`), JSON.stringify(json), "utf-8")
     return filePath
+}
+
+/**
+ * 删除m3u8文件里#EXT-X-MAP
+ */
+function deleteM3uu8Map(aa) {
+    const map = aa.match(/#EXT-X-MAP:URI="[^"]*"\n/)[0]
+    const missMap= aa.replace(map, '')
+    const xmap = missMap.match(/#EXT-MGTV-X-MAP:URI="[^"]*"\n/)[0]
+    return missMap.replace(xmap, '')
 }

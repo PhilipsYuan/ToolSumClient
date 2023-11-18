@@ -202,7 +202,13 @@ async function getFileAndStore(url, number, item, tempPath, errorList, loadingRe
         responseType: "arraybuffer",
         headers: headers
     }).then(async (res) => {
-         fs.writeFile(path.resolve(tempPath, `${number}.ts`), res.data, 'binary', (err) => {
+        let data = res.data
+        let fileType = 'ts'
+        if(/mgtv\.com/.test(url)) {
+            data = res.data.slice(16)
+            fileType = 'm4s'
+        }
+         fs.writeFile(path.resolve(tempPath, `${number}.${fileType}`), data, 'binary', (err) => {
             if(err) {
                 console.log('ts file create failure')
             }
