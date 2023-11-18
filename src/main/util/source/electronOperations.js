@@ -1,8 +1,9 @@
 import {dialog, ipcMain, shell} from 'electron'
+import fs from "fs";
 
 ipcMain.handle('open-directory-dialog', openDirectoryDialog)
-ipcMain.on('go-to-directory', goToDirectory)
-ipcMain.on('open-directory-and-file', openDirectoryAndFile)
+ipcMain.handle('go-to-directory', goToDirectory)
+ipcMain.handle('open-directory-and-file', openDirectoryAndFile)
 /**
  * 后端向前端推送信息
  * @param name
@@ -30,7 +31,12 @@ export async function openDirectoryDialog() {
  * @returns {Promise<void>}
  */
 export async function goToDirectory(event, path) {
-    shell.showItemInFolder(path)
+    if(fs.existsSync(path)) {
+        shell.showItemInFolder(path)
+        return 'success'
+    } else {
+        return 'failure'
+    }
 }
 
 /**
@@ -40,5 +46,11 @@ export async function goToDirectory(event, path) {
  * @returns {Promise<void>}
  */
 export async function openDirectoryAndFile(event, path) {
-    await shell.openPath(path)
+    if(fs.existsSync(path)) {
+        await shell.openPath(path)
+        return 'success'
+    } else {
+        return 'failure'
+    }
+
 }

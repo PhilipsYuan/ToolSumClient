@@ -78,7 +78,7 @@ export async function createProcessFile (path, totalUrls, m3u8Data, missLinks) {
  * 删除记录和列表
  * @returns {Promise<void>}
  */
-export async function deleteLoadingRecordAndFile(event, id) {
+export async function deleteLoadingRecordAndFile(event, id, callType = 'delete') {
     const list = m3u8VideoDownloadingListDB.data.loadingList
     const index = list.findIndex((item) => item.id === id)
     if(index > -1) {
@@ -88,11 +88,11 @@ export async function deleteLoadingRecordAndFile(event, id) {
             const interval = setInterval(async () => {
                 if(item.isStart && item.pause && !item.pausing) {
                     clearInterval(interval);
-                    await deleteRecordAndFile(item, index)
+                    await deleteRecordAndFile(item, index, callType)
                 }
             },500)
         } else {
-            await deleteRecordAndFile(item, index)
+            await deleteRecordAndFile(item, index, callType)
         }
     }
 }
@@ -100,7 +100,7 @@ export async function deleteLoadingRecordAndFile(event, id) {
 /**
  * 删除记录和列表
  */
-async function deleteRecordAndFile(item, index) {
+async function deleteRecordAndFile(item, index, callType) {
     const urlPath = item.urlPath;
     const tempPath = path.resolve(tempSourcePath, item.name);
     deleteDirectory(tempPath)
@@ -109,7 +109,7 @@ async function deleteRecordAndFile(item, index) {
     }
     m3u8VideoDownloadingListDB.data.loadingList.splice(index, 1)
     await m3u8VideoDownloadingListDB.write()
-    sendTips("delete-m3u8-loading-success")
+    sendTips("delete-m3u8-loading-success", callType)
 }
 
 /**
