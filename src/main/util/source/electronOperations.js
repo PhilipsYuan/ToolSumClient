@@ -12,7 +12,9 @@ ipcMain.handle('open-directory-and-file', openDirectoryAndFile)
  * @param param3
  */
 export function sendTips (name, param1, param2, param3) {
-    global.mainWindow.webContents.send(name, param1, param2, param3)
+    if(global.mainWindow && !global.mainWindow.isDestroyed()) {
+        global.mainWindow && global.mainWindow.webContents.send(name, param1, param2, param3)
+    }
 }
 
 /**
