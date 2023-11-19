@@ -49,6 +49,7 @@ export default {
     },
     toGoBuy() {
       this.close()
+      this.$router.push({path: '/vipBuy'})
     }
   }
 }

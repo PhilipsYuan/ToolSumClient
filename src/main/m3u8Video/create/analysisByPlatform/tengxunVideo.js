@@ -12,7 +12,7 @@ export async function getTXDownloadLink(htmlUrl, browser) {
             autoplayPolicy: "document-user-activation-required"
         }
     });
-    const page = await pie.getPage(browser, window)
+    const page = await global.pie.getPage(browser, window)
     await page.setViewport({"width": 475, "height": 867, "isMobile": true})
     async function logRequest(request) {
         if(/qq\.com\/proxyhttp/.test(request.url())) {
