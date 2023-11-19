@@ -49,7 +49,7 @@ export default {
   name: "helpPage",
   data() {
     return {
-      activeNames: '1'
+      activeNames: '0'
     }
   }
 }
