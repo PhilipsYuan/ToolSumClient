@@ -16,6 +16,6 @@ window.electronAPI.showPauseTipBeforeClose(async(event, content) => {
     useService("showScreenLoadingMessage", content)
 })
 
-window.electronAPI.deleteM3u8LoadingSuccess(async (event) => {
-    useService("deleteM3u8LoadingSuccess")
+window.electronAPI.deleteM3u8LoadingSuccess(async (event, callType) => {
+    useService("deleteM3u8LoadingSuccess", callType)
 })

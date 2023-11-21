@@ -91,8 +91,10 @@ export default {
     async deleteRecord(id) {
       await window.electronAPI.deleteM3u8LoadingList(id)
     },
-    async deleteSuccess() {
-      this.$message.success("删除成功")
+    async deleteSuccess(callType) {
+      if(callType !== 'success') {
+        this.$message.success("删除成功")
+      }
       await this.getLoadingList()
     },
     async getLoadingList() {

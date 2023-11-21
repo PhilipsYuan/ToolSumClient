@@ -41,12 +41,12 @@ async function getNormalM3u8Link(htmlUrl) {
             autoplayPolicy: "document-user-activation-required"
         }
     });
-    const page = await pie.getPage(browser, window)
+    const page = await global.pie.getPage(browser, window)
     await page.setViewport({"width": 475, "height": 867, "isMobile": true})
 
     async function logRequest(request) {
         const url = request.url()
-        if (/\.m3u8$/.test(url)) {
+        if (/\.m3u8/.test(url)) {
             m3u8Url = url
         }
         // const content = await page.content();

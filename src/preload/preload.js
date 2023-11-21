@@ -19,11 +19,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     startDownloadM3u8Video: (id) => ipcRenderer.invoke('start-download-one-loading', id),
     pauseM3u8DownloadVideo: (id) => ipcRenderer.invoke('pause-m3u8-download-Video', id),
     continueM3u8DownloadVideo: (id) => ipcRenderer.invoke('continue-m3u8-download-Video', id),
+    goToDirectory: (path) => ipcRenderer.invoke('go-to-directory', path),
+    openDirectoryAndFile: (path) => ipcRenderer.invoke('open-directory-and-file', path),
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),
     updateMenus: () => ipcRenderer.send('update-menus'),
-    goToDirectory: (path) => ipcRenderer.send('go-to-directory', path),
-    openDirectoryAndFile: (path) => ipcRenderer.send('open-directory-and-file', path),
     // 主进程到渲染器进程
     getM3u8FileFailureTips: (callback) => ipcRenderer.on('m3u8-file-get-failure', callback),
     m3u8VideoDownloadSuccess: (callback) => ipcRenderer.on('m3u8-download-video-success', callback),
