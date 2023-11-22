@@ -42,16 +42,14 @@ async function getNormalM3u8Link(htmlUrl) {
     const page = await global.pie.getPage(browser, window)
     await page.setViewport({"width": 475, "height": 867, "isMobile": true})
 
-    async function logRequest(request) {
-        const url = request.url()
+    page.on('response', async response => {
+        const url = response.url()
         if (/\.m3u8/.test(url)) {
+            const text = await response.text()
+            if(/#EXT-X-ENDLIST/.test(text))
             m3u8Url = url
         }
-        // const content = await page.content();
-        // console.log(content)
-    }
-
-    page.on('request', logRequest);
+    });
     try {
         return await window.loadURL(htmlUrl, {
             userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1'
