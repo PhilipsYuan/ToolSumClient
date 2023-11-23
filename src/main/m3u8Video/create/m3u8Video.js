@@ -1,6 +1,6 @@
 import {app, ipcMain} from "electron";
 import fs from "fs";
-import {getSecretKeys, getCorrectM3u8File, getPlayList} from "../../util/m3u8Parse"
+import {getSecretKeys, getCorrectM3u8File, getPlayList, getXMap} from "../../util/m3u8Parse"
 import {getFileInfo, makeDir} from "../../util/fs"
 import {splitArray} from '../../util/array';
 import {newLoadingRecord} from '../processList/processList';
@@ -35,7 +35,8 @@ async function createOtherM3u8DownloadTask(url, name, outPath) {
             const tempPath = path.resolve(tempSourcePath, name);
             makeDir(tempPath)
             const info = JSON.parse(getFileInfo(url))
-            const m3u8Data = await downloadSecretKey(info.text, info.host, tempPath, null, info.cookie)
+            let m3u8Data = await downloadSecretKey(info.text, info.host, tempPath, null, info.cookie)
+            m3u8Data = await downloadMap(m3u8Data, info.host, tempPath, null, info.cookie)
             const urls = getPlayList(info.text)
             const formatUrls = urls.map((item, index) => {
                 let url = info.host + '/' + item
@@ -125,7 +126,6 @@ async function downloadSecretKey(data, host, tempPath, pathname, cookie) {
     const keys = getSecretKeys(data)
     let i = 0;
     let m3u8Data = data
-    console.log(keys.length)
     if (keys.length > 0) {
         while (i < keys.length) {
             let url = null
@@ -151,7 +151,6 @@ async function downloadSecretKey(data, host, tempPath, pathname, cookie) {
                 responseType: "arraybuffer",
                 headers: headers
             })
-            console.log(res.data)
             const dyData = new Uint8Array(res.data);
             await fs.writeFileSync(path.resolve(tempPath, `key${i + 1}.key`), dyData, "utf-8")
             i++
@@ -164,7 +163,54 @@ async function downloadSecretKey(data, host, tempPath, pathname, cookie) {
     return m3u8Data
 }
 
+/**
+ * EXT-X-MAP 进行替换
+ * @param data
+ * @param host
+ * @param tempPath
+ * @param pathname
+ * @param cookie
+ */
+async function downloadMap(data, host, tempPath, pathname, cookie) {
+    const keys = getXMap(data)
+    let i = 0;
+    let m3u8Data = data
+    if (keys.length > 0) {
+        while (i < keys.length) {
+            let url = null
+            if(cookie) {
+                url = host + '/' + keys[i]
+            } else {
+                if (keys[i][0] !== '/' && !/^http/.test(keys[i])) {
+                    url = host + pathname.match(/\/.*\//)[0] + keys[i]
+                } else if (/^http/.test(keys[i])) {
+                    url = keys[i]
+                } else {
+                    url = host + keys[i]
+                }
+            }
 
+            const headers = {
+                "Content-Type": "application/octet-stream",
+            }
+            if(cookie) {
+                headers.Cookie = cookie
+            }
+            const res = await axios.get(url, {
+                responseType: "arraybuffer",
+                headers: headers
+            })
+            const dyData = new Uint8Array(res.data);
+            await fs.writeFileSync(path.resolve(tempPath, `map${i + 1}.map`), dyData, "utf-8")
+            i++
+        }
+        keys.forEach((item, index) => {
+            m3u8Data = m3u8Data.replace(item, path.resolve(tempPath, `map${index + 1}.map`).replace(/\\/g, '/'))
+        })
+        await fs.writeFileSync(path.resolve(tempPath, `index.m3u8`), m3u8Data, "utf-8")
+    }
+    return m3u8Data
+}
 
 /**
  * 检测要输出的文件是否已经存在，如果已经存在，提示更换名称

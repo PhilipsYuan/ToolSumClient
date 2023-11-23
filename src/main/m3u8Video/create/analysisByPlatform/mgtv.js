@@ -33,7 +33,7 @@ export async function getMgTvDownloadLink(htmlUrl, browser) {
             const url = response.url()
             const regexId = new RegExp(id)
             if(url === htmlUrl) {
-                console.log(await response.request().headers().Cookie)
+                // nothing to do
             } else if(/\/streamList/.test(url) && regexId.test(url)) {
                 const json = await response.json()
                 if(json.data && json.data.stream_h265 && json.data.stream_h265.length > 0) {
@@ -113,7 +113,7 @@ async function createM3u8Url(m3u8Text, cookie, infoPath, id) {
     paths.splice(-1, 1)
     const json = {
         host: `${urlObject.protocol}//${urlObject.host}${paths.join('/')}`,
-        text: deleteM3uu8Map(m3u8Text),
+        text: m3u8Text,
         cookie: maps.join('; ')
     }
     const filePath = path.resolve(m3u8UrlMgPath, `${id}.m3u8`)
