@@ -26,7 +26,7 @@ export async function getMgTvDownloadLink(htmlUrl, browser) {
                 autoplayPolicy: "document-user-activation-required"
             }
         });
-        const page = await pie.getPage(browser, window)
+        const page = await global.pie.getPage(browser, window)
         await page.setViewport({"width": 475, "height": 867, "isMobile": true})
 
         page.on('response', async response => {
@@ -103,7 +103,6 @@ async function createM3u8Url(m3u8Text, cookie, infoPath, id) {
     const maps = []
     keys.forEach((key) => {
         const item = cookie.find((item) => {
-            console.log(item.name, key)
             return item.name === key
         })
         if(item) {
