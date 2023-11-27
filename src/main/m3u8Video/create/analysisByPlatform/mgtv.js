@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from "path";
 import { app } from 'electron'
 import {makeDir} from "../../../util/fs";
+import puppeteer from "../../../util/source/puppeteer-core";
 const basePath = app.getPath('userData')
 const m3u8UrlMgPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url', 'mg');
 makeDir(m3u8UrlMgPath)
@@ -10,7 +11,7 @@ makeDir(m3u8UrlMgPath)
 /**
  * 芒果TV
  */
-export async function getMgTvDownloadLink(htmlUrl, browser) {
+export async function getMgTvDownloadLink(htmlUrl) {
     const id = getTVId(htmlUrl)
     if(id) {
         let m3u8Text = null
@@ -26,6 +27,7 @@ export async function getMgTvDownloadLink(htmlUrl, browser) {
                 autoplayPolicy: "document-user-activation-required"
             }
         });
+        const browser = await pie.connect(app, puppeteer);
         const page = await global.pie.getPage(browser, window)
         await page.setViewport({"width": 475, "height": 867, "isMobile": true})
 
