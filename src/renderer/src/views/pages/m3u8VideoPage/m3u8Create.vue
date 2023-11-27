@@ -111,6 +111,7 @@ export default {
               this.createLoading = false
             } else {
               this.createLoading = false
+              console.log('ere')
               this.getM3u8FileFailureMessage('error', '下载资源失败，请重新尝试或者更换个下载资源!')
             }
           }
@@ -129,7 +130,7 @@ export default {
       } else if(!(this.form.name && this.form.m3u8Url)) {
         this.$message.error("请先输入链接和文件名称，再进行下载")
         return false
-      } else if(!this.isUrl(this.form.m3u8Url)){
+      } else if(!(this.isUrl(this.form.m3u8Url) || /m3u8Video[/|\\]tempM3u8Url/.test(this.form.m3u8Url))){
         this.$message.error("链接格式不正确, 请确认链接正确后，再进行下载！")
         return false
       } else {

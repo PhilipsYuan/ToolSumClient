@@ -103,7 +103,7 @@ export async function deleteLoadingRecordAndFile(event, id, callType = 'delete')
 async function deleteRecordAndFile(item, index, callType) {
     const urlPath = item.urlPath;
     const tempPath = path.resolve(tempSourcePath, item.name);
-    deleteDirectory(tempPath)
+    // deleteDirectory(tempPath)
     if(urlPath && fs.existsSync(urlPath)) {
         fs.unlinkSync(urlPath)
     }

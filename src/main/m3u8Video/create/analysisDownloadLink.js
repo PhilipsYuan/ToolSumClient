@@ -1,6 +1,7 @@
 import {ipcMain, app, BrowserWindow} from "electron";
 import puppeteer from '../../util/source/puppeteer-core';
 import { getTXDownloadLink } from './analysisByPlatform/tengxunVideo';
+import { getMgTvDownloadLink } from "./analysisByPlatform/mgtv";
 
 ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
 
@@ -12,6 +13,8 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
     try{
         if(/v\.qq\.com/.test(htmlUrl)) {
             return await getTXDownloadLink(htmlUrl, browser)
+        } else if(/mgtv\.com/.test(htmlUrl)) {
+            return await getMgTvDownloadLink(htmlUrl, browser)
         } else {
             return await getNormalM3u8Link(htmlUrl)
         }
