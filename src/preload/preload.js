@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     continueM3u8DownloadVideo: (id) => ipcRenderer.invoke('continue-m3u8-download-Video', id),
     goToDirectory: (path) => ipcRenderer.invoke('go-to-directory', path),
     openDirectoryAndFile: (path) => ipcRenderer.invoke('open-directory-and-file', path),
+    getSearchResult: (key) => ipcRenderer.invoke('get-search-result', key),
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),
     updateMenus: () => ipcRenderer.send('update-menus'),

@@ -23,6 +23,9 @@
         </div>
       </div>
       <el-form :model="form" label-width="85px" label-position="left">
+        <el-form-item label="搜索">
+          <search-resource />
+        </el-form-item>
         <el-form-item label="网址">
           <div class="flex items-center gap-4 w-full">
             <el-input v-model="form.htmlUrl" class="w-full" @change="()=> this.form.htmlUrl = this.form.htmlUrl.trim()"/>
@@ -62,10 +65,11 @@ import {addService, useService} from "../../../service/service";
 import alreadyExistedModal from "./alreadyExistedModal.vue";
 import { checkLogin } from "../../../api/login";
 import {getUserBenefitApi} from "../../../api/user";
+import SearchResource from './searchResource.vue'
 
 export default {
   name: "m3u8Create",
-  components: { alreadyExistedModal },
+  components: { alreadyExistedModal, SearchResource },
   data() {
     return {
       isLogin: false,

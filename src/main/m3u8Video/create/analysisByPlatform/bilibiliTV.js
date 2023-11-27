@@ -15,7 +15,7 @@ export async function getBiliTVDownloadLink(htmlUrl) {
         }
     });
     const page = await global.pie.getPage(browser, window)
-    await page.setViewport({"width": 475, "height": 867, "isMobile": true})
+    await page.setViewport({"width": 475, "height": 867, "isMobile": false})
 
     page.on('response', async response => {
         const url = response.url()
