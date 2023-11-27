@@ -2,8 +2,6 @@ import {ipcMain, app, BrowserWindow} from "electron";
 import puppeteer from '../../util/source/puppeteer-core';
 import { getTXDownloadLink } from './analysisByPlatform/tengxunVideo';
 
-
-let browser = null
 ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
 
 /**
@@ -12,9 +10,6 @@ ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
  */
 async function getDownloadLinkFromUrl(event, htmlUrl) {
     try{
-        if(!browser) {
-            browser = await global.pie.connect(app, puppeteer);
-        }
         if(/v\.qq\.com/.test(htmlUrl)) {
             return await getTXDownloadLink(htmlUrl, browser)
         } else {
@@ -29,6 +24,7 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
 
 async function getNormalM3u8Link(htmlUrl) {
     let m3u8Url = null
+    const browser = await pie.connect(app, puppeteer);
     const window = new BrowserWindow({
         show: false, width: 900, height: 600, webPreferences: {
             devTools: true,

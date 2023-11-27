@@ -1,6 +1,7 @@
 import {app, BrowserWindow} from "electron";
+import puppeteer from "../../../util/source/puppeteer-core";
 
-export async function getTXDownloadLink(htmlUrl, browser) {
+export async function getTXDownloadLink(htmlUrl) {
     let m3u8Url = null
     const window = new BrowserWindow({
         show: false, width: 900, height: 600, webPreferences: {
@@ -12,6 +13,7 @@ export async function getTXDownloadLink(htmlUrl, browser) {
             autoplayPolicy: "document-user-activation-required"
         }
     });
+    const browser = await pie.connect(app, puppeteer);
     const page = await global.pie.getPage(browser, window)
     await page.setViewport({"width": 475, "height": 867, "isMobile": true})
     async function logRequest(request) {
