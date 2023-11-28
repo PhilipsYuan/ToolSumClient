@@ -44,14 +44,16 @@ async function getNormalM3u8Link(htmlUrl) {
     const page = await global.pie.getPage(browser, window)
     await page.setViewport({"width": 475, "height": 867, "isMobile": true})
 
-    page.on('response', async response => {
+    async function responseFun (response) {
         const url = response.url()
         if (/\.m3u8/.test(url)) {
             const text = await response.text()
             if(/#EXT-X-ENDLIST/.test(text))
-            m3u8Url = url
+                m3u8Url = url
         }
-    });
+    }
+    page.on('response', responseFun);
+
     try {
         return await window.loadURL(htmlUrl, {
             userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1'
@@ -62,6 +64,7 @@ async function getNormalM3u8Link(htmlUrl) {
                     const interval = setInterval(() => {
                         console.log(`检测次数：${index + 1}`)
                         if (m3u8Url || index > 10) {
+                            page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
                             resolve(m3u8Url)

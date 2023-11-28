@@ -31,7 +31,7 @@ export async function getMgTvDownloadLink(htmlUrl) {
         const page = await global.pie.getPage(browser, window)
         await page.setViewport({"width": 475, "height": 867, "isMobile": false})
 
-        page.on('response', async response => {
+        async function responseFun (response) {
             const url = response.url()
             const regexId = new RegExp(id)
             if(url === htmlUrl) {
@@ -50,7 +50,9 @@ export async function getMgTvDownloadLink(htmlUrl) {
                 m3u8Text = await response.text()
                 cookie = await page.cookies()
             }
-        });
+        }
+
+        page.on('response', responseFun);
         try {
             return await window.loadURL(htmlUrl, {
                 userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
@@ -61,6 +63,7 @@ export async function getMgTvDownloadLink(htmlUrl) {
                         const interval = setInterval(() => {
                             console.log(`检测次数：${index + 1}`)
                             if ((m3u8Text && cookie && cookie.length > 0 && infoPath) || index > 10) {
+                                page.removeListener('response', responseFun);
                                 clearInterval(interval);
                                 window && window.destroy();
                                 const url = createM3u8Url(m3u8Text, cookie, infoPath, id)

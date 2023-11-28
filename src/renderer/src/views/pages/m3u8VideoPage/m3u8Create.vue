@@ -24,7 +24,7 @@
       </div>
       <el-form :model="form" label-width="85px" label-position="left">
         <el-form-item label="搜索">
-          <search-resource />
+          <search-resource @setHtmlUrl="setHtmlUrl" />
         </el-form-item>
         <el-form-item label="网址">
           <div class="flex items-center gap-4 w-full">
@@ -223,6 +223,12 @@ export default {
           content: "请先输入个网址再进行解析！",
           status: 'error'
         }
+      }
+    },
+    setHtmlUrl (url, name) {
+      this.form.htmlUrl = url;
+      if(name) {
+        this.form.name = name;
       }
     }
   }
