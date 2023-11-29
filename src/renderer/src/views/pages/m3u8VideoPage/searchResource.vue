@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center gap-4 w-full">
     <el-input v-model="searchText" class="w-full" placeholder="请输入完整的电影名称"
-              @change="()=> this.searchText = this.searchText.trim()"/>
+              @change="()=> this.searchText = this.searchText.trim()" @keydown.enter="searchContent"/>
     <el-button @click="searchContent" :loading="loading" :disabled="loading">自动搜索</el-button>
     <el-button @click="selfSearchContent" :loading="loading" :disabled="loading">手动搜索</el-button>
     <search-dialog ref="searchDialog" />
@@ -27,6 +27,7 @@ export default {
       if(link) {
         this.$emit('setHtmlUrl', link, this.searchText)
       } else {
+        this.$emit('setHtmlUrl', '', '')
         this.$message.error("没有搜索到内容，请选择手动搜索试试！")
       }
     },

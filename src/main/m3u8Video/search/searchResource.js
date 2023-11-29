@@ -5,7 +5,7 @@ ipcMain.handle('get-search-result', searchResourceByKey)
 
 export async function searchResourceByKey(event, key) {
     let searchLink = null
-    const searchUrl = `https://quark.sm.cn/s?q=${key}&safe=1&snum=40`
+    const searchUrl = `https://quark.sm.cn/s?q=${key}&safe=1&snum=6`
     const browser = await pie.connect(app, puppeteer);
     const window = new BrowserWindow({
         show: false, width: 900, height: 600, webPreferences: {
@@ -71,12 +71,11 @@ async function analysisResultDom (page) {
              * 1. 是DIV标签
              * 2. 没有 ad_dot_url属性（有这个属性的是广告）
              * 3. 肯定有id属性
-             * 4. class属性结果是（sc c-container)
-             * 5. 包含影院或影视关键字
-             * 6. 包含data-reco属性
+             * 4. 包含影院或影视关键字
+             * 5. 包含data-reco属性
              */
-            if (item.tagName === 'DIV' && !item.getAttribute('ad_dot_url') && item.getAttribute('id')
-                && item.getAttribute('class') === `sc c-container` && item.getAttribute('data-reco') != null
+            if (item.tagName === 'DIV' && !item.getAttribute('ad_dot_url')
+                && item.getAttribute('id') && item.getAttribute('data-reco') != null
                 && /影院|影视/.test(item.textContent)) {
                 matchResults.push(item)
             }

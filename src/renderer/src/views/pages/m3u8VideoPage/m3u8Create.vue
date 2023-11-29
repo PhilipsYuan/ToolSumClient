@@ -230,9 +230,7 @@ export default {
     },
     setHtmlUrl (url, name) {
       this.form.htmlUrl = url;
-      if(name) {
-        this.form.name = name;
-      }
+      this.form.name = name || '';
     }
   }
 }
