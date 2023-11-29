@@ -26,6 +26,8 @@ export default {
       this.loading = false;
       if(link) {
         this.$emit('setHtmlUrl', link, this.searchText)
+      } else {
+        this.$message.error("没有搜索到内容，请选择手动搜索试试！")
       }
     },
     async selfSearchContent() {

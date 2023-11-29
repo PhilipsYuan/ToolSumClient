@@ -5,7 +5,7 @@ ipcMain.handle('get-search-result', searchResourceByKey)
 
 export async function searchResourceByKey(event, key) {
     let searchLink = null
-    const searchUrl = `https://quark.sm.cn/s?q=${key}&safe=1&snum=6`
+    const searchUrl = `https://quark.sm.cn/s?q=${key}&safe=1&snum=40`
     const browser = await pie.connect(app, puppeteer);
     const window = new BrowserWindow({
         show: false, width: 900, height: 600, webPreferences: {
@@ -62,8 +62,30 @@ export async function searchResourceByKey(event, key) {
  */
 async function analysisResultDom (page) {
     const searchLink = await page.evaluateHandle(() => {
-        const aa = document.querySelector('#sc_yisou_porsche_1_1')
-        return aa.querySelector('a').href
+        const results = document.querySelector('#results')
+        const children = $(results).children()
+        const matchResults = []
+        children.forEach((item) => {
+            /**
+             * match 条件
+             * 1. 是DIV标签
+             * 2. 没有 ad_dot_url属性（有这个属性的是广告）
+             * 3. 肯定有id属性
+             * 4. class属性结果是（sc c-container)
+             * 5. 包含影院或影视关键字
+             * 6. 包含data-reco属性
+             */
+            if (item.tagName === 'DIV' && !item.getAttribute('ad_dot_url') && item.getAttribute('id')
+                && item.getAttribute('class') === `sc c-container` && item.getAttribute('data-reco') != null
+                && /影院|影视/.test(item.textContent)) {
+                matchResults.push(item)
+            }
+        })
+        if(matchResults.length > 0) {
+            return matchResults[0].querySelector('a').href
+        } else {
+            return null
+        }
     });
     const link = await searchLink.jsonValue()
     return link || null

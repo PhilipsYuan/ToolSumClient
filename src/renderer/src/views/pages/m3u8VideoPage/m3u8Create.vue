@@ -28,15 +28,18 @@
         </el-form-item>
         <el-form-item label="网址">
           <div class="flex items-center gap-4 w-full">
-            <el-input v-model="form.htmlUrl" class="w-full" @change="()=> this.form.htmlUrl = this.form.htmlUrl.trim()"/>
+            <el-input v-model="form.htmlUrl" class="w-full" placeholder="请输入视频网址"
+                      @change="()=> this.form.htmlUrl = this.form.htmlUrl.trim()"/>
             <el-button @click="startAnalysis" :loading="analysisLoading" :disabled="createLoading">解析下载链接</el-button>
           </div>
         </el-form-item>
         <el-form-item label="m3u8链接:">
-          <el-input v-model="form.m3u8Url" @change="()=> this.form.m3u8Url = this.form.m3u8Url.trim()"/>
+          <el-input v-model="form.m3u8Url" placeholder="请输入m3u8的下载链接"
+                    @change="()=> this.form.m3u8Url = this.form.m3u8Url.trim()"/>
         </el-form-item>
         <el-form-item label="文件名称:">
-          <el-input v-model="form.name" @change="()=> this.form.name = this.form.name.trim()"/>
+          <el-input v-model="form.name" placeholder="请输入下载视频名称"
+                    @change="()=> this.form.name = this.form.name.trim()"/>
         </el-form-item>
         <el-form-item label="">
           <el-button :loading="createLoading" type="primary" @click="getInfo">
