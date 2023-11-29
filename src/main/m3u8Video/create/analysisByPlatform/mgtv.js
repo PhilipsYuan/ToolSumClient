@@ -5,7 +5,9 @@ import { app } from 'electron'
 import {makeDir} from "../../../util/fs";
 import puppeteer from "../../../util/source/puppeteer-core";
 const basePath = app.getPath('userData')
-const m3u8UrlMgPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url', 'mg');
+const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
+makeDir(tempM3u8UrlPath)
+const m3u8UrlMgPath = path.resolve(tempM3u8UrlPath, 'mg')
 makeDir(m3u8UrlMgPath)
 
 /**

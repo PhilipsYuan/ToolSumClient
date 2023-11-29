@@ -24,7 +24,7 @@
       </div>
       <el-form :model="form" label-width="85px" label-position="left">
         <el-form-item label="搜索">
-          <search-resource @setHtmlUrl="setHtmlUrl" />
+          <search-resource ref="searchResource" @setHtmlUrl="setHtmlUrl" />
         </el-form-item>
         <el-form-item label="网址">
           <div class="flex items-center gap-4 w-full">
@@ -157,6 +157,7 @@ export default {
         status: 'success',
         content: ''
       }
+      this.$refs.searchResource.clearSearchText()
     },
     getM3u8FileFailureMessage(status, content) {
       this.message = {

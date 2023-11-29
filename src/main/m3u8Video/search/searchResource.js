@@ -1,5 +1,6 @@
 import {app, BrowserWindow, ipcMain} from "electron";
 import puppeteer from "../../util/source/puppeteer-core";
+import {sendTips} from "../../util/source/electronOperations";
 
 ipcMain.handle('get-search-result', searchResourceByKey)
 ipcMain.handle('open-search-window', openSearchWindow)
@@ -95,7 +96,7 @@ async function analysisResultDom (page) {
  * 打开新的窗口，让用户自己选择
  */
 export function openSearchWindow(event, searchText) {
-    const searchUrl = `https://quark.sm.cn/s?q=${searchText}&safe=1&snum=6`
+    const searchUrl = `https://quark.sm.cn/s?q=${searchText}&safe=1&snum=20`
     const window = new BrowserWindow({
         parent: global.mainWindow, modal: true, frame: true, show: true,
         closable: true,
@@ -103,4 +104,12 @@ export function openSearchWindow(event, searchText) {
         type: 'panel'
     });
     window.loadURL(searchUrl)
+    window.on('close', () => {
+        const currentUrl = window.webContents.getURL()
+        if(currentUrl != searchUrl) {
+            sendTips("get-user-choose-search-page-url", currentUrl)
+        } else {
+            sendTips("get-user-choose-search-page-url", null)
+        }
+    })
 }

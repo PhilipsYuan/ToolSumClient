@@ -30,7 +30,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getM3u8FileFailureTips: (callback) => ipcRenderer.on('m3u8-file-get-failure', callback),
     m3u8VideoDownloadSuccess: (callback) => ipcRenderer.on('m3u8-download-video-success', callback),
     showPauseTipBeforeClose: (callback) => ipcRenderer.on('close-app-before-task-tip', callback),
-    deleteM3u8LoadingSuccess: (callback) => ipcRenderer.on('delete-m3u8-loading-success', callback)
+    deleteM3u8LoadingSuccess: (callback) => ipcRenderer.on('delete-m3u8-loading-success', callback),
+    getUserChooseSearchPageUrl:(callback) => ipcRenderer.on('get-user-choose-search-page-url', callback)
 })
 
 window.addEventListener('DOMContentLoaded', () => {

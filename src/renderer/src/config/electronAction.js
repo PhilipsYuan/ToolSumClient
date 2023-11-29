@@ -19,3 +19,7 @@ window.electronAPI.showPauseTipBeforeClose(async(event, content) => {
 window.electronAPI.deleteM3u8LoadingSuccess(async (event, callType) => {
     useService("deleteM3u8LoadingSuccess", callType)
 })
+
+window.electronAPI.getUserChooseSearchPageUrl(async (event, url) => {
+    useService('getUserChooseSearchPageUrl', url)
+})
