@@ -2,6 +2,7 @@ import {app, BrowserWindow, ipcMain} from "electron";
 import puppeteer from "../../util/source/puppeteer-core";
 
 ipcMain.handle('get-search-result', searchResourceByKey)
+ipcMain.handle('open-search-window', openSearchWindow)
 
 export async function searchResourceByKey(event, key) {
     let searchLink = null
@@ -88,4 +89,18 @@ async function analysisResultDom (page) {
     });
     const link = await searchLink.jsonValue()
     return link || null
+}
+
+/**
+ * 打开新的窗口，让用户自己选择
+ */
+export function openSearchWindow(event, searchText) {
+    const searchUrl = `https://quark.sm.cn/s?q=${searchText}&safe=1&snum=6`
+    const window = new BrowserWindow({
+        parent: global.mainWindow, modal: true, frame: true, show: true,
+        closable: true,
+        enableLargerThanScreen: true,
+        type: 'panel'
+    });
+    window.loadURL(searchUrl)
 }

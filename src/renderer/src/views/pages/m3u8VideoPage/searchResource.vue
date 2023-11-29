@@ -33,7 +33,8 @@ export default {
     },
     async selfSearchContent() {
       if(this.searchText) {
-        this.$refs.searchDialog.openModal(this.searchText)
+        await window.electronAPI.openSearchWindow(this.searchText)
+        // this.$refs.searchDialog.openModal(this.searchText)
       } else {
         this.$message.error('请输入电影名称！')
       }
