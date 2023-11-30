@@ -98,7 +98,7 @@ async function analysisResultDom (page) {
 export function openSearchWindow(event, searchText) {
     const searchUrl = `https://quark.sm.cn/s?q=${searchText}&safe=1&snum=20`
     const window = new BrowserWindow({
-        parent: global.mainWindow, modal: true, frame: true, show: true,
+        parent: global.mainWindow, modal: false, frame: true, show: true,
         closable: true,
         enableLargerThanScreen: true,
         type: 'panel'

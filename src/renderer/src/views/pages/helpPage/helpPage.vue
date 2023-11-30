@@ -1,20 +1,32 @@
 <template>
   <div class="max-h-[calc(100vh-124px)] overflow-auto border p-5 bg-white rounded-md border-[#d1d5db]">
     <div class="">
-      <el-collapse v-model="activeNames" @change="handleChange">
+      <el-collapse v-model="activeNames">
         <el-collapse-item title="1. 如何下载视频？" name="1">
           <div class="help-answer">
             <div>
               <div class="help-answer-index">1</div>
-              在下载视频页面里，输入您想要下载的视频网页地址（比如：https://m.zlyka1.com/p/64797-2-1.html ）， 然后点击'解析下载链接'。<br/>
-              它就会解析出可以下载的m3u8的下载链接。再给视频起一个名称（比如：惊奇队长2 ）， 然后点击'创建'，会创建一个下载任务。
+              在下载视频页面里，输入某个电影名称后，可以进行自动搜索，或者手动搜索。自动搜索，系统去找是否合适的下载页面网址。自动方式比较快，但是可能不准确。 <br />
+              如果自动方式没有找到，可以再用手动搜索，自己确定视频下载的页面，手动搜索时，会有个弹框，在弹框选择你确定视频页面，然后关闭弹框。<br/>
+              在网址栏里就会输入当时确定的页面。
+            </div>
+            <div><img src="./h-8.png"/></div>
+            <div><img src="./h-9.png"/></div>
+            <div>
+              <div class="help-answer-index">2</div>
+              通过点击'解析下载链接'按钮， 软件就会解析出可以下载的m3u8的下载链接。 <br />
+              再给视频起一个名称（比如：惊奇队长2 ）， 然后点击'创建'，会创建一个下载任务。
             </div>
             <div><img src="./h-6.png"/></div>
             <div>
-              <div class="help-answer-index">2</div>
+              <div class="help-answer-index">3</div>
               您在下载中，就看到这个任务了，点击开始图标，开始进行下载。下载完成后，在已完成中可以看到视频了。
             </div>
             <div><img src="./h-7.png"/></div>
+            <div>
+              <div class="help-answer-index">4</div>
+              如果上面的步骤不是很好用，您可以自己找m3u8链接，具体步骤，可以看问题2（如何获取m3u8链接）。
+            </div>
           </div>
         </el-collapse-item>
         <el-collapse-item title="2. 如何获取m3u8链接？" name="2">
