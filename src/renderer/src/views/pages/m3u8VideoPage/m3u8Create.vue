@@ -112,11 +112,13 @@ export default {
           if(await this.checkDownloadCondition()) {
             this.createLoading = true
             const result = await window.electronAPI.createM3u8DownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
+            console.log(result)
             if(result === 'success') {
               useService('getM3u8LoadingList')
               this.changeTab('loading')
               this.createLoading = false
             } else {
+              console.log("here3")
               this.createLoading = false
               this.getM3u8FileFailureMessage('error', '下载资源失败，请重新尝试或者更换个下载资源!')
             }
@@ -138,6 +140,9 @@ export default {
         return false
       } else if(!(this.isUrl(this.form.m3u8Url) || /m3u8Video[/|\\]tempM3u8Url/.test(this.form.m3u8Url))){
         this.$message.error("链接格式不正确, 请确认链接正确后，再进行下载！")
+        return false
+      } else if(! await window.electronAPI.checkDownloadFileNotExist(this.form.name, this.downloadPath)) {
+        this.$message.error("存储地址里已存在此名称的文件，请更换一个名称！")
         return false
       } else {
         const m3u8UrlIsNotDownloaded = await window.electronAPI.checkDownloadUrlNotExist(this.form.m3u8Url, this.form.name)
@@ -211,7 +216,7 @@ export default {
           }
         } else {
           this.message = {
-            content: "未发现可以下载的链接！您可以查看使用指南自己查找下载链接。",
+            content: "未找到下载的链接，请重新尝试或者查看使用指南自己查找下载链接。",
             status: 'error'
           }
         }

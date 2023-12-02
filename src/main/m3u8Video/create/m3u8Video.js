@@ -11,7 +11,7 @@ import { batchNum } from "./m3u8Config";
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
 
-ipcMain.handle('check-output-file-not-exist', checkOutputFileNotExist);
+ipcMain.handle('check-download-file-not-exist', checkDownloadFileNotExist);
 ipcMain.handle('create-m3u8-download-task', createM3u8DownloadTask);
 
 /**
@@ -74,6 +74,7 @@ function createNormalM3u8DownloadTask(url, name, outPath) {
     try{
         const outputPath = path.resolve(outPath, `${name}.mp4`);
         if (checkOutputFileNotExist(null, outputPath)) {
+            console.log("here1")
             const tempPath = path.resolve(tempSourcePath, name);
             makeDir(tempPath)
             return getCorrectM3u8File(url)
@@ -222,4 +223,17 @@ function checkOutputFileNotExist(event, path) {
     } else {
         return true
     }
+}
+
+/**
+ * 测试下载的文件是否不存在，不存在才可以进行下载。
+ * name 是文件名称，
+ * downloadPath 是存储下载地方
+ * @param event
+ * @param path
+ * @returns {boolean}
+ */
+function checkDownloadFileNotExist(event, name, downloadPath) {
+    const outputPath = path.resolve(downloadPath, `${name}.mp4`);
+    return checkOutputFileNotExist(null, outputPath)
 }

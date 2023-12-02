@@ -5,7 +5,7 @@ import {callbackPromise} from "nodemailer/lib/shared";
 
 contextBridge.exposeInMainWorld('electronAPI', {
     // 渲染器进程到主进程（双向）
-    checkOutputFileNotExist: (outputPath) => ipcRenderer.invoke('check-output-file-not-exist',  outputPath),
+    checkDownloadFileNotExist: (name, outputPath) => ipcRenderer.invoke('check-download-file-not-exist',  name, outputPath),
     getDownloadSetting: () => ipcRenderer.invoke('get-download-setting'),
     setDownloadSetting: (data) => ipcRenderer.invoke('set-download-setting',  data),
     openDirectoryDialog: () => ipcRenderer.invoke('open-directory-dialog'),
