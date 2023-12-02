@@ -1,6 +1,7 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 import {contextBridge, ipcRenderer} from 'electron'
+import {callbackPromise} from "nodemailer/lib/shared";
 
 contextBridge.exposeInMainWorld('electronAPI', {
     // 渲染器进程到主进程（双向）
@@ -31,7 +32,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     m3u8VideoDownloadSuccess: (callback) => ipcRenderer.on('m3u8-download-video-success', callback),
     showPauseTipBeforeClose: (callback) => ipcRenderer.on('close-app-before-task-tip', callback),
     deleteM3u8LoadingSuccess: (callback) => ipcRenderer.on('delete-m3u8-loading-success', callback),
-    getUserChooseSearchPageUrl:(callback) => ipcRenderer.on('get-user-choose-search-page-url', callback)
+    getUserChooseSearchPageUrl:(callback) => ipcRenderer.on('get-user-choose-search-page-url', callback),
+    sendSearchPageUrlLoadFail: (callback) => ipcRenderer.on('search-page-url-load-Fail', callback)
 })
 
 window.addEventListener('DOMContentLoaded', () => {

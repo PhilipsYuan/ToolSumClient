@@ -4,6 +4,7 @@
               @change="()=> this.searchText = this.searchText.trim()" @keydown.enter="searchContent"/>
     <el-button @click="searchContent" :loading="loading" :disabled="loading">自动搜索</el-button>
     <el-popover
+        ref="popover"
         placement="top-end"
         :width="'fit-content'"
         trigger="hover"
@@ -32,6 +33,7 @@ export default {
   },
   mounted() {
     addService('getUserChooseSearchPageUrl', this.getUserChooseSearchPageUrl.bind(this))
+    addService('showSearchPageUrlLoadFail', this.showSearchPageUrlLoadFail.bind(this))
   },
   methods: {
     async searchContent() {
@@ -50,6 +52,7 @@ export default {
       }
     },
     async selfSearchContent() {
+      this.$refs.popover.hide()
       if(this.searchText) {
         this.loading = true;
         await window.electronAPI.openSearchWindow(this.searchText)
@@ -64,8 +67,10 @@ export default {
         this.$emit('setHtmlUrl', link, this.searchText)
       } else {
         this.$emit('setHtmlUrl', '', '')
-        this.$message.error("没有搜索到内容，请选择其他内容试试！")
       }
+    },
+    showSearchPageUrlLoadFail() {
+      this.$message.error("无法访问此网站, 将返回到搜索页面。")
     },
     clearSearchText() {
       this.searchText = ''

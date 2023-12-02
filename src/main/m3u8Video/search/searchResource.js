@@ -106,10 +106,18 @@ export function openSearchWindow(event, searchText) {
     window.loadURL(searchUrl)
     window.on('close', () => {
         const currentUrl = window.webContents.getURL()
-        if(currentUrl != searchUrl) {
+        if(currentUrl != searchUrl && currentUrl != encodeURI(searchUrl)) {
             sendTips("get-user-choose-search-page-url", currentUrl)
         } else {
             sendTips("get-user-choose-search-page-url", null)
         }
     })
+    window.webContents.on('did-fail-load', () => {
+        sendTips("search-page-url-load-Fail")
+        setTimeout(() => {
+            window.loadURL(searchUrl)
+        }, 2000)
+
+    })
+
 }

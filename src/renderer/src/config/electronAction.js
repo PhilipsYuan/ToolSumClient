@@ -23,3 +23,7 @@ window.electronAPI.deleteM3u8LoadingSuccess(async (event, callType) => {
 window.electronAPI.getUserChooseSearchPageUrl(async (event, url) => {
     useService('getUserChooseSearchPageUrl', url)
 })
+
+window.electronAPI.sendSearchPageUrlLoadFail(async (event) => {
+    useService('showSearchPageUrlLoadFail')
+})

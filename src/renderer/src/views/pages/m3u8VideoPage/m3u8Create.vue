@@ -118,7 +118,6 @@ export default {
               this.createLoading = false
             } else {
               this.createLoading = false
-              console.log('ere')
               this.getM3u8FileFailureMessage('error', '下载资源失败，请重新尝试或者更换个下载资源!')
             }
           }
@@ -230,6 +229,11 @@ export default {
       }
     },
     setHtmlUrl (url, name) {
+      this.form.m3u8Url = ''
+      this.message = {
+        status: 'success',
+        content: ''
+      }
       this.form.htmlUrl = url;
       this.form.name = name || '';
     }
