@@ -45,22 +45,24 @@ parentPort.onmessage = async (event) => {
         await downloadingM3u8Video(data.loadingRecord)
 
     } else if(data.type === 'pause') {
-        loadingRecord.pause = true
-        // 取消发出去请求
-        source.cancel("pause")
-        // 更新进度条内容
         const notLoadUrls = loadingRecord.totalUrls.filter((urlItem) => urlItem.isLoad)
-        updateProcessPercent(loadingRecord, notLoadUrls.length)
-        // 更新外部的totalUrls外部的状态
-        parentPort.postMessage({
-            type: 'updateRecord',
-            key: 'totalUrls',
-            value: loadingRecord.totalUrls
-        })
-        // 通知外部暂停成功
-        parentPort.postMessage({
-            type: 'pauseSuccess'
-        })
+        if(notLoadUrls.length > 0) {
+            loadingRecord.pause = true
+            // 取消发出去请求
+            source.cancel("pause")
+            // 更新进度条内容
+            updateProcessPercent(loadingRecord, notLoadUrls.length)
+            // 更新外部的totalUrls外部的状态
+            parentPort.postMessage({
+                type: 'updateRecord',
+                key: 'totalUrls',
+                value: loadingRecord.totalUrls
+            })
+            // 通知外部暂停成功
+            parentPort.postMessage({
+                type: 'pauseSuccess'
+            })
+        }
     }
 }
 

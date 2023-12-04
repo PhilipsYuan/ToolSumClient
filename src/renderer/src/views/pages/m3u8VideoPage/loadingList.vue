@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     async startDownload(item) {
-      if(this.checkoutDownloadingLimit()) {
+      if(item.message.content !== '合成中...' && this.checkoutDownloadingLimit()) {
         if(item.pause === false && item.isStart === false) {
           await window.electronAPI.startDownloadM3u8Video(item.id)
         }  else {
@@ -80,7 +80,7 @@ export default {
       }
     },
     async pauseDownload(item) {
-      if(!item.pausing) {
+      if(item.message.content !== '合成中...' && !item.pausing) {
         await window.window.electronAPI.pauseM3u8DownloadVideo(item.id)
         await this.getLoadingList()
       }
