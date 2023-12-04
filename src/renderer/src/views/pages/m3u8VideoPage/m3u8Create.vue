@@ -141,13 +141,13 @@ export default {
       } else if(!(this.isUrl(this.form.m3u8Url) || /m3u8Video[/|\\]tempM3u8Url/.test(this.form.m3u8Url))){
         this.$message.error("链接格式不正确, 请确认链接正确后，再进行下载！")
         return false
-      } else if(! await window.electronAPI.checkDownloadFileNotExist(this.form.name, this.downloadPath)) {
-        this.$message.error("存储地址里已存在此名称的文件，请更换一个名称！")
-        return false
       } else {
         const m3u8UrlIsNotDownloaded = await window.electronAPI.checkDownloadUrlNotExist(this.form.m3u8Url, this.form.name)
         if(m3u8UrlIsNotDownloaded.id) {
           this.$refs.alreadyExistedModal.openModal(m3u8UrlIsNotDownloaded, this.form.m3u8Url, this.form.name)
+          return false
+        } else if(! await window.electronAPI.checkDownloadFileNotExist(this.form.name, this.downloadPath)) {
+          this.$message.error("存储地址里已存在此名称的文件，请更换一个名称！")
           return false
         }
         return true

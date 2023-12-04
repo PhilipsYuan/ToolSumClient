@@ -74,7 +74,6 @@ function createNormalM3u8DownloadTask(url, name, outPath) {
     try{
         const outputPath = path.resolve(outPath, `${name}.mp4`);
         if (checkOutputFileNotExist(null, outputPath)) {
-            console.log("here1")
             const tempPath = path.resolve(tempSourcePath, name);
             makeDir(tempPath)
             return getCorrectM3u8File(url)

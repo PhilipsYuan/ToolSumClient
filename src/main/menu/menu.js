@@ -1,6 +1,7 @@
 import {Menu, app} from "electron";
 import {m3u8VideoDownloadingListDB} from "../db/db";
 import { sendTips } from "../util/source/electronOperations";
+import {updateWork} from "../m3u8Video/create/workManager";
 
 const template = [
     {
@@ -45,12 +46,12 @@ createMenu()
 export function closeTaskBeforeQuit(isQuit, windowToClose) {
     sendTips('close-app-before-task-tip', '暂停下载任务中，完成暂停后关闭！')
     const list = m3u8VideoDownloadingListDB.data.loadingList
-    const index = list.findIndex((item) => item.isStart && !item.pause)
-    if(index > -1) {
-        const item = m3u8VideoDownloadingListDB.data.loadingList[index];
+    const downloadingItems = list.filter((item) => item.isStart && !item.pause)
+    downloadingItems.forEach((item) => {
         item.pause = true
         item.pausing = true
-    }
+        updateWork(item)
+    })
     const interval = setInterval(() => {
         const index = list.findIndex((item) => (item.isStart && !item.pause) || (item.pause && item.pausing))
         if(index === -1) {
