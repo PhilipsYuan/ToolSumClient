@@ -49,26 +49,22 @@ export async function newLoadingRecord (data) {
         pause: false,
         isStart: false,
         successTsNum: 0,
-        // 下次执行的位置
-        batchIndex: data.batchIndex,
-        totalIndex: data.totalIndex,
         outputPath: data.outputPath
     }
-    await createProcessFile(urlPath, data.totalUrls, data.m3u8Data, [])
+    await createProcessFile(urlPath, data.totalUrls, data.m3u8Data)
     // 暂停时存储的json太大了。需要分文件存储
     m3u8VideoDownloadingListDB.data.loadingList.unshift(json)
     await m3u8VideoDownloadingListDB.write()
 }
 
 /**
- * 独立文件处理下载过程中的总共Urls和missLinks
+ * 独立文件处理下载过程中的总共Urls
  * @returns {Promise<void>}
  */
-export async function createProcessFile (path, totalUrls, m3u8Data, missLinks) {
+export async function createProcessFile (path, totalUrls, m3u8Data) {
     const json = {
         totalUrls,
-        m3u8Data,
-        missLinks
+        m3u8Data
     }
     await fs.writeFileSync(path, global.JSON.stringify(json), "utf-8")
 }
@@ -127,7 +123,6 @@ export async function startDownloadLoading(event, id) {
         const json = global.JSON.parse(string)
         item.totalUrls = json.totalUrls
         item.m3u8Data = json.m3u8Data
-        item.missLinks = json.missLinks
         item.isStart = true
         item.message = {
             status: 'success',
@@ -175,7 +170,7 @@ export async function savePauseDownloadInfo(record) {
     const index = list.findIndex((item) => item.id === record.id)
     if(index > -1) {
         list[index].batchIndex = record.batchIndex
-        await createProcessFile(record.urlPath, record.totalUrls, record.m3u8Data, record.missLinks)
+        await createProcessFile(record.urlPath, record.totalUrls, record.m3u8Data)
         list[index].pausing = false
     }
     await m3u8VideoDownloadingListDB.write()

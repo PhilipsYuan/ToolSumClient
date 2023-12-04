@@ -44,13 +44,10 @@ async function createOtherM3u8DownloadTask(url, name, outPath) {
                     item, url, number: index + 1, cookie: info.cookie
                 }
             })
-            const twoUrls = splitArray(formatUrls, batchNum)
             await newLoadingRecord({
                 name: name,
                 m3u8Url: url,
                 m3u8Data: m3u8Data,
-                batchIndex: 0,
-                totalIndex: twoUrls.length,
                 totalUrls: formatUrls,
                 outputPath: outputPath
             })
@@ -96,13 +93,10 @@ function createNormalM3u8DownloadTask(url, name, outPath) {
                                 item, url, number: index + 1
                             }
                         })
-                        const twoUrls = splitArray(formatUrls, batchNum)
                         await newLoadingRecord({
                             name: name,
                             m3u8Url: url,
                             m3u8Data: m3u8Data,
-                            batchIndex: 0,
-                            totalIndex: twoUrls.length,
                             totalUrls: formatUrls,
                             outputPath: outputPath
                         })
