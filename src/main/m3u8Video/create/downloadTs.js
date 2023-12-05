@@ -221,9 +221,6 @@ function combineVideo(tempPath, outputPath, loadingRecord) {
         maxBuffer: 5 * 1024 * 1024,
         shell: true
     });
-    // exec_1.stdout.on('data', (info) => {
-    //     console.log('stdout:' + info)
-    // });
     exec_1.stderr.on('data', (info) => {
         console.log('2222222：' + info)
     });
