@@ -1,9 +1,12 @@
 import {app, BrowserWindow, ipcMain} from "electron";
 import puppeteer from "../../util/source/puppeteer-core";
 import {sendTips} from "../../util/source/electronOperations";
+import path from "path";
+import {addWindow, getWindow} from "../../service";
 
 ipcMain.handle('get-search-result', searchResourceByKey)
 ipcMain.handle('open-search-window', openSearchWindow)
+ipcMain.on('confirm-search-window', confirmSearchWindow)
 
 export async function searchResourceByKey(event, key) {
     let searchLink = null
@@ -95,29 +98,49 @@ async function analysisResultDom (page) {
 /**
  * 打开新的窗口，让用户自己选择
  */
-export function openSearchWindow(event, searchText) {
+export async function openSearchWindow(event, searchText) {
     const searchUrl = `https://quark.sm.cn/s?q=${searchText}&safe=1&snum=20`
-    const window = new BrowserWindow({
-        parent: global.mainWindow, modal: false, frame: true, show: true,
-        closable: true,
-        enableLargerThanScreen: true,
-        type: 'panel'
-    });
-    window.loadURL(searchUrl)
-    window.on('close', () => {
-        const currentUrl = window.webContents.getURL()
-        if(currentUrl != searchUrl && currentUrl != encodeURI(searchUrl)) {
-            sendTips("get-user-choose-search-page-url", currentUrl)
-        } else {
-            sendTips("get-user-choose-search-page-url", null)
-        }
-    })
-    window.webContents.on('did-fail-load', () => {
-        sendTips("search-page-url-load-Fail")
-        setTimeout(() => {
-            window.loadURL(searchUrl)
-        }, 2000)
+    let selfSearchWindow = getWindow("selfSearchWindow")
+    if(!selfSearchWindow) {
+        const window = new BrowserWindow({
+            show: true,
+            closable: true,
+            enableLargerThanScreen: true,
+            titleBarStyle: 'hidden',
+            webPreferences: {
+                nodeIntegration: true,
+                preload: path.join(__dirname, 'preload.js'),
+                webSecurity: false,
+                allowRunningInsecureContent: false,
+                webviewTag: true
+            },
+        });
+        window.webContents.on("did-attach-webview", (e, webContent) => {
+            addWindow("selfSearchWindow", window, webContent)
+            webContent.setWindowOpenHandler((e) => {
+                const urlClass = new URL(e.url);
+                const { protocol } = urlClass;
+                if (protocol === "http:" || protocol === "https:") {
+                    webContent.loadURL(e.url);
+                }
+            })
+        })
+        await window.webContents.loadURL(`http://localhost:8001/#/search?view=${encodeURIComponent(searchUrl)}`)
+    } else {
+        selfSearchWindow.window.focus()
+        selfSearchWindow.window.webContents.send('change-search-page-url', searchUrl)
+    }
+}
 
-    })
-
+/**
+ * 确定页面后，关闭按钮
+ * @param event
+ * @param url
+ * @returns {Promise<void>}
+ */
+export async function confirmSearchWindow(event, url) {
+    console.log(url)
+    sendTips("get-user-choose-search-page-url", url)
+    const window = getWindow("selfSearchWindow")
+    window.destroy()
 }

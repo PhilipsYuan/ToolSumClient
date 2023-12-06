@@ -27,3 +27,8 @@ window.electronAPI.getUserChooseSearchPageUrl(async (event, url) => {
 window.electronAPI.sendSearchPageUrlLoadFail(async (event) => {
     useService('showSearchPageUrlLoadFail')
 })
+
+window.electronAPI.changeSearchPageUrl(async (event, url) => {
+    console.log('mmmm')
+    useService('changeSearchPageUrl', url)
+})

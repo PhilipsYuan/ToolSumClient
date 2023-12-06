@@ -54,7 +54,7 @@ export default {
     async selfSearchContent() {
       this.$refs.popover.hide()
       if(this.searchText) {
-        this.loading = true;
+        // this.loading = true;
         await window.electronAPI.openSearchWindow(this.searchText)
         // this.$refs.searchDialog.openModal(this.searchText)
       } else {

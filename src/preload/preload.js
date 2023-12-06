@@ -27,13 +27,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),
     updateMenus: () => ipcRenderer.send('update-menus'),
+    confirmSearchWindow: (url) => ipcRenderer.send('confirm-search-window', url),
+
     // 主进程到渲染器进程
     getM3u8FileFailureTips: (callback) => ipcRenderer.on('m3u8-file-get-failure', callback),
     m3u8VideoDownloadSuccess: (callback) => ipcRenderer.on('m3u8-download-video-success', callback),
     showPauseTipBeforeClose: (callback) => ipcRenderer.on('close-app-before-task-tip', callback),
     deleteM3u8LoadingSuccess: (callback) => ipcRenderer.on('delete-m3u8-loading-success', callback),
     getUserChooseSearchPageUrl:(callback) => ipcRenderer.on('get-user-choose-search-page-url', callback),
-    sendSearchPageUrlLoadFail: (callback) => ipcRenderer.on('search-page-url-load-Fail', callback)
+    sendSearchPageUrlLoadFail: (callback) => ipcRenderer.on('search-page-url-load-Fail', callback),
+    changeSearchPageUrl: (callback) => ipcRenderer.on('change-search-page-url', callback)
 })
 
 window.addEventListener('DOMContentLoaded', () => {
