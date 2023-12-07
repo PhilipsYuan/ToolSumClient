@@ -7,6 +7,7 @@ import {addWindow, deleteWindow, getWindow} from "../../service";
 ipcMain.handle('get-search-result', searchResourceByKey)
 ipcMain.handle('open-search-window', openSearchWindow)
 ipcMain.on('confirm-search-window', confirmSearchWindow)
+ipcMain.on('close-search-window', closeSearchWindow)
 
 export async function searchResourceByKey(event, key) {
     let searchLink = null
@@ -117,12 +118,8 @@ export async function openSearchWindow(event, searchText) {
         });
         window.webContents.on("did-attach-webview", (e, webContent) => {
             addWindow("selfSearchWindow", window, webContent)
-            webContent.setWindowOpenHandler((e) => {
-                const urlClass = new URL(e.url);
-                const { protocol } = urlClass;
-                if (protocol === "http:" || protocol === "https:") {
-                    webContent.loadURL(e.url);
-                }
+            webContent.on("will-navigate", (e) => {
+                window.webContents.send('change-search-page-url')
             })
         })
         window.on('closed', () => {
@@ -148,6 +145,16 @@ export async function openSearchWindow(event, searchText) {
  */
 export async function confirmSearchWindow(event, url) {
     sendTips("get-user-choose-search-page-url", url)
+    const selfSearchWindow = getWindow("selfSearchWindow")
+    selfSearchWindow.window.destroy()
+    deleteWindow("selfSearchWindow")
+}
+
+/**
+ * 关闭接口
+ * @returns {Promise<void>}
+ */
+export async function closeSearchWindow() {
     const selfSearchWindow = getWindow("selfSearchWindow")
     selfSearchWindow.window.destroy()
     deleteWindow("selfSearchWindow")

@@ -29,6 +29,5 @@ window.electronAPI.sendSearchPageUrlLoadFail(async (event) => {
 })
 
 window.electronAPI.changeSearchPageUrl(async (event, url) => {
-    console.log('mmmm')
     useService('changeSearchPageUrl', url)
 })

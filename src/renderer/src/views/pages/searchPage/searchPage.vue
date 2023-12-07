@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="bg-gray-100 pl-20 pr-4 h-10 py-2 w-full" style="-webkit-app-region: drag;">
+    <div class="bg-gray-100 pl-4 pr-4 h-10 py-2 w-full" :class="{'!pl-20': isMac}" style="-webkit-app-region: drag;">
       <div class="flex h-6 justify-between items-center" >
         <div class="flex gap-1" style="-webkit-app-region: no-drag;">
           <div class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg" @click="goBack">
@@ -9,15 +9,19 @@
           <div class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg" @click="goForward">
             <el-icon><ArrowRight /></el-icon>
           </div>
-          <div class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg" @click="goForward">
+          <div class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg" @click="reload">
             <el-icon><RefreshLeft /></el-icon>
           </div>
         </div>
         <div style="-webkit-app-region: no-drag;">
           <el-input v-model="url" size="small" class="h-6 !w-[400px]" @keydown.enter="changeView"/>
         </div>
-        <div style="-webkit-app-region: no-drag;">
+        <div class="flex gap-1" style="-webkit-app-region: no-drag;">
           <el-button size="small" class="!h-6" @click="confirmCurrentPage">确定</el-button>
+          <div v-if="!isMac" class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg"
+               @click="closeWindow">
+            <el-icon><Close /></el-icon>
+          </div>
         </div>
       </div>
     </div>
@@ -40,11 +44,12 @@ export default {
     return {
       webview: null,
       url: "",
-      viewUrl: ""
+      viewUrl: "",
+      isMac: false
     }
   },
   beforeCreate() {
-
+    this.isMac = /macintosh|mac os x/i.test(navigator.userAgent);
   },
   mounted() {
     addService('changeSearchPageUrl', this.changeSearchPageUrl.bind(this))
@@ -56,9 +61,18 @@ export default {
   methods: {
     goBack() {
       this.webview.goBack()
+      setTimeout(() => {
+        this.url = this.webview.getURL()
+      },500)
     },
     goForward() {
       this.webview.goForward()
+      setTimeout(() => {
+        this.url = this.webview.getURL()
+      },500)
+    },
+    reload() {
+      this.webview.reload()
     },
     changeView() {
       if(!/^http/.test(this.url)) {
@@ -71,8 +85,17 @@ export default {
       window.electronAPI.confirmSearchWindow(url)
     },
     changeSearchPageUrl(url) {
-      this.url = url
-      this.webview.loadURL(this.url)
+      if(url ) {
+        this.url = url
+        this.webview.loadURL(this.url)
+      } else {
+        setTimeout(() => {
+          this.url = this.webview.getURL()
+        },700)
+      }
+    },
+    closeWindow() {
+      window.electronAPI.closeSearchWindow()
     }
   }
 }
