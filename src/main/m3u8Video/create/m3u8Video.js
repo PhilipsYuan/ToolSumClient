@@ -2,11 +2,9 @@ import {app, ipcMain} from "electron";
 import fs from "fs";
 import {getSecretKeys, getCorrectM3u8File, getPlayList, getXMap} from "../../util/m3u8Parse"
 import {getFileInfo, makeDir} from "../../util/fs"
-import {splitArray} from '../../util/array';
 import {newLoadingRecord} from '../processList/processList';
 import axios from '../../util/source/axios'
 import path from "path";
-import { batchNum } from "./m3u8Config";
 
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')

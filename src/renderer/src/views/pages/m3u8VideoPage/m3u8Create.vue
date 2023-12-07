@@ -56,6 +56,7 @@
               <el-icon class="ml-4"><QuestionFilled class="text-gray-400" /></el-icon>
             </template>
           </el-popover>
+          <el-button :disabled="createLoading" @click="downloadMagnet">test</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -241,6 +242,9 @@ export default {
       }
       this.form.htmlUrl = url;
       this.form.name = name || '';
+    },
+    downloadMagnet() {
+      window.electronAPI.createMagnetDownloadTask()
     }
   }
 }

@@ -65,6 +65,7 @@
   },
   "dependencies": {
     "child_process": "^1.0.2",
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "webtorrent": "^2.1.30"
   }
 }
