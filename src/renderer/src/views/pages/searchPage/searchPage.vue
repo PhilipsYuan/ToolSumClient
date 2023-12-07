@@ -48,15 +48,13 @@ export default {
       isMac: false
     }
   },
-  beforeCreate() {
-    this.isMac = /macintosh|mac os x/i.test(navigator.userAgent);
-  },
   mounted() {
     addService('changeSearchPageUrl', this.changeSearchPageUrl.bind(this))
     this.webview = document.getElementById('webviewTag')
     const params = getUrlParams(window.location.href)
     this.url = params.view
     this.viewUrl = this.url
+    this.isMac = /macintosh|mac os x/i.test(navigator.userAgent);
   },
   methods: {
     goBack() {
