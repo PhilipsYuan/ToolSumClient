@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="bg-gray-100 pl-20 pr-4 h-10 py-2 w-full" style="-webkit-app-region: drag;">
-      <div class="flex h-6 justify-between items-center" style="-webkit-app-region: no-drag;">
-        <div class="flex gap-1">
+      <div class="flex h-6 justify-between items-center" >
+        <div class="flex gap-1" style="-webkit-app-region: no-drag;">
           <div class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg" @click="goBack">
             <el-icon><ArrowLeft /></el-icon>
           </div>
@@ -13,10 +13,10 @@
             <el-icon><RefreshLeft /></el-icon>
           </div>
         </div>
-        <div>
+        <div style="-webkit-app-region: no-drag;">
           <el-input v-model="url" size="small" class="h-6 !w-[400px]" @keydown.enter="changeView"/>
         </div>
-        <div>
+        <div style="-webkit-app-region: no-drag;">
           <el-button size="small" class="!h-6" @click="confirmCurrentPage">确定</el-button>
         </div>
       </div>
@@ -71,7 +71,6 @@ export default {
       window.electronAPI.confirmSearchWindow(url)
     },
     changeSearchPageUrl(url) {
-      console.log('here')
       this.url = url
       this.webview.loadURL(this.url)
     }

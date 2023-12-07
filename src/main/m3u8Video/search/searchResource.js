@@ -2,7 +2,7 @@ import {app, BrowserWindow, ipcMain} from "electron";
 import puppeteer from "../../util/source/puppeteer-core";
 import {sendTips} from "../../util/source/electronOperations";
 import path from "path";
-import {addWindow, getWindow} from "../../service";
+import {addWindow, deleteWindow, getWindow} from "../../service";
 
 ipcMain.handle('get-search-result', searchResourceByKey)
 ipcMain.handle('open-search-window', openSearchWindow)
@@ -125,7 +125,15 @@ export async function openSearchWindow(event, searchText) {
                 }
             })
         })
-        await window.webContents.loadURL(`http://localhost:8001/#/search?view=${encodeURIComponent(searchUrl)}`)
+        window.on('closed', () => {
+            deleteWindow("selfSearchWindow")
+        })
+        if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+            await window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/search?view=${encodeURIComponent(searchUrl)}`)
+        } else {
+            const urlPath = path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
+            await window.webContents.loadURL(`file://${urlPath}#/search?view=${encodeURIComponent(searchUrl)}`)
+        }
     } else {
         selfSearchWindow.window.focus()
         selfSearchWindow.window.webContents.send('change-search-page-url', searchUrl)
@@ -139,8 +147,8 @@ export async function openSearchWindow(event, searchText) {
  * @returns {Promise<void>}
  */
 export async function confirmSearchWindow(event, url) {
-    console.log(url)
     sendTips("get-user-choose-search-page-url", url)
-    const window = getWindow("selfSearchWindow")
-    window.destroy()
+    const selfSearchWindow = getWindow("selfSearchWindow")
+    selfSearchWindow.window.destroy()
+    deleteWindow("selfSearchWindow")
 }

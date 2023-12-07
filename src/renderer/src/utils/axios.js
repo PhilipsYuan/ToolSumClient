@@ -18,7 +18,6 @@ let instance = axios.create({
 instance.interceptors.response.use((response)=>{
     return response;
 }, (err)=> {
-    console.log('here')
     const item = exceptionList.find((item) => {
         const regex = new RegExp(item)
         return regex.test(err.config.url)

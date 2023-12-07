@@ -1,4 +1,5 @@
 import './menu/menu'
+import './menu/dockMenu'
 import './pdf2word/pdf2word'
 import './settings/settings'
 import './util/source/electronOperations'

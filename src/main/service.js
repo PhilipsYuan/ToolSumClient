@@ -10,3 +10,7 @@ export function addWindow (name, window, webviewContent) {
 export function getWindow(name) {
     return browserWindows[name]
 }
+
+export function deleteWindow(name) {
+    browserWindows[name] && delete browserWindows[name]
+}
