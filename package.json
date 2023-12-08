@@ -61,11 +61,11 @@
     "unplugin-vue-components": "^0.25.0",
     "vite": "^4.2.1",
     "vue": "^3.2.47",
-    "vue-router": "4"
+    "vue-router": "4",
+    "webtorrent": "1.9.7"
   },
   "dependencies": {
     "child_process": "^1.0.2",
-    "electron-squirrel-startup": "^1.0.0",
-    "webtorrent": "^2.1.30"
+    "electron-squirrel-startup": "^1.0.0"
   }
 }

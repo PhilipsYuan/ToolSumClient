@@ -7,7 +7,7 @@ export default defineConfig({
         'process.env.mode': 'develop'
     },
     build: {
-        minify: false,
-        sourcemap: true
+        // minify: false,
+        // sourcemap: true
     },
 });

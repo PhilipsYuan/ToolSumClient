@@ -1,6 +1,6 @@
-import WebTorrent from '../util/source/webtorrent'
+// import WebTorrent from 'webtorrent'
 import {ipcMain} from "electron";
-// const WebTorrent = require('')
+import WebTorrent from '../util/source/webtorrent'
 
 
 ipcMain.handle('create-magnet-download-task', createMagnetDownloadTask);
