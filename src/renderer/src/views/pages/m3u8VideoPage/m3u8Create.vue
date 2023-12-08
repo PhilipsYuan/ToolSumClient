@@ -118,7 +118,6 @@ export default {
               this.changeTab('loading')
               this.createLoading = false
             } else {
-              console.log("here3")
               this.createLoading = false
               this.getM3u8FileFailureMessage('error', '下载资源失败，请重新尝试或者更换个下载资源!')
             }
