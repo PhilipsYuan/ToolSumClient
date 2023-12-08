@@ -86,10 +86,6 @@ export default {
       if(url ) {
         this.url = url
         this.webview.loadURL(this.url)
-      } else {
-        setTimeout(() => {
-          this.url = this.webview.getURL()
-        },700)
       }
     },
     closeWindow() {
