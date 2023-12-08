@@ -116,7 +116,6 @@ export async function openSearchWindow(event, searchText) {
                 webviewTag: true
             },
         });
-        window.webContents.openDevTools()
         window.webContents.on("did-attach-webview", (e, webContent) => {
             addWindow("selfSearchWindow", window, webContent)
             webContent.on("will-navigate", (e, url) => {

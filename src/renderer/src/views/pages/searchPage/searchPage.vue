@@ -3,11 +3,15 @@
     <div class="bg-gray-100 pl-4 pr-4 h-10 py-2 w-full" :class="{'!pl-20': isMac}" style="-webkit-app-region: drag;">
       <div class="flex h-6 justify-between items-center" >
         <div class="flex gap-1" style="-webkit-app-region: no-drag;">
-          <div class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg" @click="goBack">
-            <el-icon><ArrowLeft /></el-icon>
+          <div class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg"
+               :class="{'cursor-not-allow !text-gray-300': !backStatus}"
+               @click="goBack">
+            <el-icon><Back /></el-icon>
           </div>
-          <div class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg" @click="goForward">
-            <el-icon><ArrowRight /></el-icon>
+          <div class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg"
+               :class="{'cursor-not-allow !text-gray-300': !forwardStatus}"
+               @click="goForward">
+            <el-icon><Right /></el-icon>
           </div>
           <div class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg" @click="reload">
             <el-icon><RefreshLeft /></el-icon>
@@ -45,7 +49,9 @@ export default {
       webview: null,
       url: "",
       viewUrl: "",
-      isMac: false
+      isMac: false,
+      backStatus: false,
+      forwardStatus: false
     }
   },
   mounted() {
@@ -55,16 +61,19 @@ export default {
     this.url = params.view
     this.viewUrl = this.url
     this.isMac = /macintosh|mac os x/i.test(navigator.userAgent);
+    this.checkStatus()
   },
   methods: {
     goBack() {
       this.webview.goBack()
+      this.checkStatus()
       setTimeout(() => {
         this.url = this.webview.getURL()
       },500)
     },
     goForward() {
       this.webview.goForward()
+      this.checkStatus()
       setTimeout(() => {
         this.url = this.webview.getURL()
       },500)
@@ -77,6 +86,7 @@ export default {
         this.url = `https://${this.url}`
       }
       this.webview.loadURL(this.url)
+      this.checkStatus()
     },
     confirmCurrentPage() {
       const url = this.webview.getURL()
@@ -86,10 +96,25 @@ export default {
       if(url ) {
         this.url = url
         this.webview.loadURL(this.url)
+        this.checkStatus()
       }
     },
     closeWindow() {
       window.electronAPI.closeSearchWindow()
+    },
+    checkStatus() {
+      let num = 0
+      const interval = setInterval(()=> {
+        const bs = this.webview.canGoBack()
+        const fs = this.webview.canGoForward()
+        if(num > 5 || bs !== this.backStatus || fs !== this.forwardStatus ) {
+          clearInterval(interval)
+          this.backStatus = bs
+          this.forwardStatus = fs
+        } else {
+          num ++
+        }
+      }, 300)
     }
   }
 }
