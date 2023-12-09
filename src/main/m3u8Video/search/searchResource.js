@@ -118,8 +118,14 @@ export async function openSearchWindow(event, searchText) {
         });
         window.webContents.on("did-attach-webview", (e, webContent) => {
             addWindow("selfSearchWindow", window, webContent)
+            // link 是当前页打开的
             webContent.on("will-navigate", (e, url) => {
                 window.webContents.send('change-search-page-url', url)
+            })
+            // link 是新页打开的（target='_blank'）
+            webContent.setWindowOpenHandler((details) => {
+                window.webContents.send('change-search-page-url', details.url)
+                return { action: 'deny' }
             })
         })
         window.on('closed', () => {
