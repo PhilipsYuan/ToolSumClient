@@ -1,7 +1,7 @@
 {
   "name": "ToolSumClient",
   "productName": "ToolSumClient",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "ToolSumClient",
   "main": ".vite/build/main.js",
   "scripts": {
