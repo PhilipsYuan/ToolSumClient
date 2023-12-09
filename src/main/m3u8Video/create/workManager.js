@@ -20,12 +20,12 @@ export function createWork(loadingRecord) {
 }
 
 function runWork(work, loadingRecord) {
-    work.postMessage({
+    work && work.postMessage({
         type: 'start',
         loadingRecord,
         tempSourcePath
     })
-    work.on('message', async (data) => {
+    work && work.on('message', async (data) => {
         if (data.type === 'combineSuccess') {
             await newFinishedRecord({
                 name: loadingRecord.name,
@@ -44,7 +44,7 @@ function runWork(work, loadingRecord) {
             loadingRecord[data.key] = data.value
         }
     })
-    work.on('exit', (code) => {
+    work && work.on('exit', (code) => {
         delete works[loadingRecord.id]
         console.log('exit')
         if (code !== 0) {
@@ -58,7 +58,7 @@ function runWork(work, loadingRecord) {
  */
 export function updateWork(loadingRecord) {
     const work = works[loadingRecord.id]
-    work.postMessage({
+    work && work.postMessage({
         type: 'pause'
     })
 }
