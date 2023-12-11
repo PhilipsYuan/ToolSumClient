@@ -25,7 +25,7 @@ const sendProcess = Throttle((loadingRecord) => {
         status: 'success',
         content: `下载完成${Number((loadingRecord.successTsNum / loadingRecord.totalUrls.length) * 100).toFixed(2)}%`
     }
-    parentPort.postMessage({
+    parentPort && parentPort.postMessage({
         type: 'updateRecord',
         key: 'message',
         value: loadingRecord.message
@@ -53,13 +53,13 @@ parentPort.onmessage = async (event) => {
             // 更新进度条内容
             updateProcessPercent(loadingRecord, notLoadUrls.length)
             // 更新外部的totalUrls外部的状态
-            parentPort.postMessage({
+            parentPort && parentPort.postMessage({
                 type: 'updateRecord',
                 key: 'totalUrls',
                 value: loadingRecord.totalUrls
             })
             // 通知外部暂停成功
-            parentPort.postMessage({
+            parentPort && parentPort.postMessage({
                 type: 'pauseSuccess'
             })
         }
@@ -101,7 +101,7 @@ async function downloadTss(totalUrls, m3u8Data, tempPath, loadingRecord) {
     } else if (totalUrls.filter((urlItem) => !urlItem.isLoad).length > 0) {
         // 更新外面的字段信息
         loadingRecord.isStart = false
-        parentPort.postMessage({
+        parentPort && parentPort.postMessage({
             type: 'updateRecord',
             key: 'isStart',
             value: false
@@ -110,7 +110,7 @@ async function downloadTss(totalUrls, m3u8Data, tempPath, loadingRecord) {
             status: 'error',
             content: `下载失败，请重新进行下载!`
         }
-        parentPort.postMessage({
+        parentPort && parentPort.postMessage({
             type: 'updateRecord',
             key: 'message',
             value: loadingRecord.message
@@ -201,7 +201,7 @@ function replaceTsFileUrls(urls, data, tempPath) {
  */
 function combineVideo(tempPath, outputPath, loadingRecord) {
     loadingRecord.pause = true
-    parentPort.postMessage({
+    parentPort && parentPort.postMessage({
         type: 'updateRecord',
         key: 'pause',
         value: true
@@ -210,7 +210,7 @@ function combineVideo(tempPath, outputPath, loadingRecord) {
         status: 'success',
         content: `合成中...`
     }
-    parentPort.postMessage({
+    parentPort && parentPort.postMessage({
         type: 'updateRecord',
         key: 'message',
         value: loadingRecord.message
@@ -226,7 +226,7 @@ function combineVideo(tempPath, outputPath, loadingRecord) {
     });
     exec_1.stderr.on('close', async () => {
         deleteTempSource(tempPath)
-        parentPort.postMessage({
+        parentPort && parentPort.postMessage({
             type: 'combineSuccess'
         })
     });
@@ -244,7 +244,7 @@ function deleteTempSource(tempPath) {
  */
 function updateProcessPercent(loadingRecord, num) {
     loadingRecord.successTsNum = num
-    parentPort.postMessage({
+    parentPort && parentPort.postMessage({
         type: 'updateRecord',
         key: 'successTsNum',
         value: loadingRecord.successTsNum
