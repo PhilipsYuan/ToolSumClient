@@ -143,8 +143,9 @@ export default {
         return false
       } else {
         const m3u8UrlIsNotDownloaded = await window.electronAPI.checkDownloadUrlNotExist(this.form.m3u8Url, this.form.name)
-        if(m3u8UrlIsNotDownloaded.id) {
-          this.$refs.alreadyExistedModal.openModal(m3u8UrlIsNotDownloaded, this.form.m3u8Url, this.form.name)
+        console.log(m3u8UrlIsNotDownloaded)
+        if(m3u8UrlIsNotDownloaded.item) {
+          this.$refs.alreadyExistedModal.openModal(m3u8UrlIsNotDownloaded.item, this.form.m3u8Url, this.form.name, m3u8UrlIsNotDownloaded.type)
           return false
         } else if(! await window.electronAPI.checkDownloadFileNotExist(this.form.name, this.downloadPath)) {
           this.$message.error("存储地址里已存在此名称的文件，请更换一个名称！")

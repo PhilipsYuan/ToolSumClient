@@ -3,6 +3,7 @@ import { m3u8VideoDownloadListDB, m3u8VideoDownloadingListDB } from "../../db/db
 import fs from "fs";
 import shortId from "shortid";
 import dayjs from "dayjs";
+import {deleteDirectory} from "../../util/fs";
 
 ipcMain.handle('get-m3u8-finish-list', getFinishList)
 ipcMain.handle('delete-m3u8-finished-record', deleteFinishedRecord)
@@ -81,9 +82,7 @@ export async function deleteFinishedRecordAndFile(event, id) {
     const index = list.findIndex((item) => item.id === id)
     if(index > -1) {
         const path = m3u8VideoDownloadListDB.data.downloadList[index].filePath;
-        if(path && fs.existsSync(path)) {
-            fs.unlinkSync(path)
-        }
+        deleteDirectory(path)
         m3u8VideoDownloadListDB.data.downloadList.splice(index, 1)
         await m3u8VideoDownloadListDB.write()
     }
@@ -99,9 +98,15 @@ export async function checkDownloadUrlNotExist(event, url, name) {
     const index = list.findIndex((item) => item.m3u8Url === url || item.name === name)
     const loadingIndex = loadingList.findIndex((item) => item.m3u8Url === url || item.name === name)
     if(index > -1) {
-        return list[index]
+        return {
+            item: list[index],
+            type: 'finish'
+        }
     } else if(loadingIndex > -1) {
-        return loadingList[loadingIndex]
+        return {
+            item: loadingList[loadingIndex],
+            type: 'loading'
+        }
     } else {
         return {}
     }

@@ -108,7 +108,8 @@ export function getFilesNameInDir (dirPath) {
 }
 
 /**
- * 删除目录下所有文件
+ * 删除文件夹或者文件。
+ * 删除文件夹，包含文件夹下面的文件和文件夹
  * */
 export function deleteDirectory (dir) {
     if(fs.existsSync(dir)) {

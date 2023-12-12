@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-[300px]">
     <div class="grid gap-4" v-if="list.length > 0">
-      <div v-for="item in list" class="border rounded-md px-4 py-2 h-fit" :id="item.id">
+      <div v-for="item in list" class="border rounded-md px-4 py-2 h-fit hover:bg-gray-100 hover:border-blue-400" :id="item.id">
         <div class="flex items-center justify-between">
           <div>
             <div>{{item.name}}</div>
