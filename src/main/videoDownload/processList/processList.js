@@ -6,6 +6,8 @@ import shortId from "shortid";
 import {createWork, updateWork} from '../videoType/m3u8Video/workManager';
 import {sendTips} from "../../util/source/electronOperations";
 import path from "path";
+import {startDownloadM3u8Video} from "../videoType/m3u8Video/m3u8Video";
+import {startDownloadMagnetVideo} from "../videoType/magnet/magnet";
 
 const basePath = app.getPath('userData')
 const processUrlsPath = path.resolve(basePath, 'm3u8Video', 'processUrls');
@@ -14,7 +16,7 @@ makeDir(processUrlsPath)
 
 ipcMain.handle('get-m3u8-loading-list', getLoadingList)
 ipcMain.handle('delete-m3u8-loading-list', deleteLoadingRecordAndFile)
-ipcMain.handle('start-download-one-loading', startDownloadLoading)
+ipcMain.handle('start-download-video', startDownloadVideo)
 ipcMain.handle('pause-m3u8-download-Video', pauseDownloadVideo)
 ipcMain.handle('continue-m3u8-download-Video', continueDownloadVideo)
 /**
@@ -118,21 +120,22 @@ async function deleteRecordAndFile(item, index, callType) {
  * @param id
  * @returns {Promise<void>}
  */
-export async function startDownloadLoading(event, id) {
+
+export async function startDownloadVideo(event, id) {
     const list = m3u8VideoDownloadingListDB.data.loadingList
     const index = list.findIndex((item) => item.id === id)
     if(index > -1) {
         const item = m3u8VideoDownloadingListDB.data.loadingList[index];
-        const string = fs.readFileSync(item.urlPath, 'utf-8')
-        const json = global.JSON.parse(string)
-        item.totalUrls = json.totalUrls
-        item.m3u8Data = json.m3u8Data
         item.isStart = true
         item.message = {
             status: 'success',
             content: `开始下载中...`
         }
-        createWork(item)
+        if(item.type === 'magnet') {
+            startDownloadMagnetVideo(item)
+        } else {
+            startDownloadM3u8Video(item)
+        }
     }
 }
 
@@ -164,6 +167,7 @@ export async function continueDownloadVideo(event, id) {
         createWork(item)
     }
 }
+
 
 /**
  * 保存暂停时数据

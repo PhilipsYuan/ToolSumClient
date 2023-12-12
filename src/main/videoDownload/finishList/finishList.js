@@ -24,7 +24,8 @@ export async function newFinishedRecord (data) {
         filePath: data.filePath,
         m3u8Url: data.m3u8Url,
         id: id,
-        date: date
+        date: date,
+        type: data.type || 'm3u8'
     }
     m3u8VideoDownloadListDB.data.downloadList.unshift(json)
     await m3u8VideoDownloadListDB.write()

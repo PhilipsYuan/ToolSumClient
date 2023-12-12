@@ -16,7 +16,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     createM3u8DownloadTask: (url, name, outPath) => ipcRenderer.invoke('create-m3u8-download-task',  url, name, outPath),
     getM3u8LoadingList: () => ipcRenderer.invoke('get-m3u8-loading-list'),
     deleteM3u8LoadingList: (id) => ipcRenderer.invoke('delete-m3u8-loading-list', id),
-    startDownloadM3u8Video: (id) => ipcRenderer.invoke('start-download-one-loading', id),
+    startDownloadVideo: (id) => ipcRenderer.invoke('start-download-video', id),
     pauseM3u8DownloadVideo: (id) => ipcRenderer.invoke('pause-m3u8-download-Video', id),
     continueM3u8DownloadVideo: (id) => ipcRenderer.invoke('continue-m3u8-download-Video', id),
     goToDirectory: (path) => ipcRenderer.invoke('go-to-directory', path),

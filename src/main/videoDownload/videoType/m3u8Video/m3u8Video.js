@@ -5,6 +5,7 @@ import {getFileInfo, makeDir} from "../../../util/fs"
 import {newLoadingRecord} from '../../processList/processList';
 import axios from '../../../util/source/axios'
 import path from "path";
+import {createWork} from "./workManager";
 
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
@@ -227,4 +228,15 @@ function checkOutputFileNotExist(event, path) {
 function checkDownloadFileNotExist(event, name, downloadPath) {
     const outputPath = path.resolve(downloadPath, `${name}.mp4`);
     return checkOutputFileNotExist(null, outputPath)
+}
+
+/**
+ * 开始下载M3u8Video
+ */
+export function startDownloadM3u8Video(item) {
+    const string = fs.readFileSync(item.urlPath, 'utf-8')
+    const json = global.JSON.parse(string)
+    item.totalUrls = json.totalUrls
+    item.m3u8Data = json.m3u8Data
+    createWork(item)
 }

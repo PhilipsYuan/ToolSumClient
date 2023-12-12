@@ -57,6 +57,7 @@ export default {
   data() {
     return {
       list: [],
+      intervalList: null
     }
   },
   async mounted() {
@@ -64,7 +65,7 @@ export default {
     addService("getM3u8LoadingList", this.getLoadingList.bind(this))
     addService("m3u8VideoDownloadSuccess", this.m3u8VideoDownloadSuccess.bind(this))
     addService('deleteM3u8LoadingSuccess', this.deleteSuccess.bind(this))
-    setInterval(async () => {
+    this.intervalList = setInterval(async () => {
       await this.getLoadingList()
     }, 1000)
   },
@@ -72,7 +73,7 @@ export default {
     async startDownload(item) {
       if(item.message.content !== '合成中...' && this.checkoutDownloadingLimit()) {
         if(item.pause === false && item.isStart === false) {
-          await window.electronAPI.startDownloadM3u8Video(item.id)
+          await window.electronAPI.startDownloadVideo(item.id)
         }  else {
           await window.window.electronAPI.continueM3u8DownloadVideo(item.id)
           await this.getLoadingList()
@@ -140,6 +141,9 @@ export default {
         return true
       }
     }
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalList)
   }
 }
 </script>
