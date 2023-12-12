@@ -1,8 +1,8 @@
 import {app, BrowserWindow, ipcMain} from "electron";
-import puppeteer from "../../util/source/puppeteer-core";
-import {sendTips} from "../../util/source/electronOperations";
+import puppeteer from "../../../util/source/puppeteer-core";
+import {sendTips} from "../../../util/source/electronOperations";
 import path from "path";
-import {addWindow, deleteWindow, getWindow} from "../../service";
+import {addWindow, deleteWindow, getWindow} from "../../../service";
 
 ipcMain.handle('get-search-result', searchResourceByKey)
 ipcMain.handle('open-search-window', openSearchWindow)

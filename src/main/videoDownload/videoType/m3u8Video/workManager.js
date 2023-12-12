@@ -1,8 +1,8 @@
 import {Worker} from 'worker_threads'
 import {app} from "electron";
-import {sendTips} from "../../util/source/electronOperations";
-import {deleteLoadingRecordAndFile, savePauseDownloadInfo} from "../processList/processList";
-import {newFinishedRecord} from "../finishList/finishList";
+import {sendTips} from "../../../util/source/electronOperations";
+import {deleteLoadingRecordAndFile, savePauseDownloadInfo} from "../../processList/processList";
+import {newFinishedRecord} from "../../finishList/finishList";
 import path from 'path';
 
 const basePath = app.getPath('userData');

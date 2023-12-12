@@ -3,7 +3,7 @@ import {app, ipcMain} from "electron";
 import {deleteDirectory, makeDir} from "../../util/fs";
 import fs from "fs";
 import shortId from "shortid";
-import {createWork, updateWork} from '../create/workManager';
+import {createWork, updateWork} from '../videoType/m3u8Video/workManager';
 import {sendTips} from "../../util/source/electronOperations";
 import path from "path";
 
@@ -33,17 +33,17 @@ function getLoadingList () {
  * @returns {string|*}
  */
 export async function newLoadingRecord (data) {
-    const urlPath = path.resolve(processUrlsPath, `${data.name}.txt`);
     const id = shortId.generate()
+    const type = data.type || 'm3u8'
     const json = {
         id: id,
         name: data.name,
         m3u8Url: data.m3u8Url,
+        type: type,
         message: {
             status: 'success',
             content: '未开始进行下载'
         },
-        urlPath: urlPath,
         // 判断是否在进行中
         pausing: false,
         pause: false,
@@ -51,8 +51,12 @@ export async function newLoadingRecord (data) {
         successTsNum: 0,
         outputPath: data.outputPath
     }
-    await createProcessFile(urlPath, data.totalUrls, data.m3u8Data)
-    // 暂停时存储的json太大了。需要分文件存储
+    if(type === 'm3u8') {
+        const urlPath = path.resolve(processUrlsPath, `${data.name}.txt`);
+        json.urlPath = urlPath
+        // 暂停时存储的json太大了。需要分文件存储
+        await createProcessFile(urlPath, data.totalUrls, data.m3u8Data)
+    }
     m3u8VideoDownloadingListDB.data.loadingList.unshift(json)
     await m3u8VideoDownloadingListDB.write()
 }

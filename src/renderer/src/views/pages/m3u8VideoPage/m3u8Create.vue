@@ -112,8 +112,7 @@ export default {
         if(hasBenefit) {
           if(await this.checkDownloadCondition()) {
             this.createLoading = true
-            const result = await window.electronAPI.createM3u8DownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
-            console.log(result)
+            const result = await window.electronAPI.createVideoDownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
             if(result === 'success') {
               useService('getM3u8LoadingList')
               this.changeTab('loading')
@@ -138,7 +137,8 @@ export default {
       } else if(!(this.form.name && this.form.m3u8Url)) {
         this.$message.error("请先输入链接和文件名称，再进行下载")
         return false
-      } else if(!(this.isUrl(this.form.m3u8Url) || /m3u8Video[/|\\]tempM3u8Url/.test(this.form.m3u8Url))){
+      } else if(!(this.isUrl(this.form.m3u8Url) || /m3u8Video[/|\\]tempM3u8Url/.test(this.form.m3u8Url)
+      || /magnet:/.test(this.form.m3u8Url))){
         this.$message.error("链接格式不正确, 请确认链接正确后，再进行下载！")
         return false
       } else {

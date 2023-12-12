@@ -1,5 +1,5 @@
 import {app, BrowserWindow} from "electron";
-import puppeteer from "../../../util/source/puppeteer-core";
+import puppeteer from "../../../../util/source/puppeteer-core";
 
 export async function getTXDownloadLink(htmlUrl) {
     let m3u8Url = null

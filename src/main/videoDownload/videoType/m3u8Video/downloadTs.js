@@ -1,10 +1,10 @@
-import {splitArray} from '../../util/array';
+import {splitArray} from '../../../util/array';
 import fs from "fs";
-import Throttle from "../../util/source/throttle";
+import Throttle from "../../../util/source/throttle";
 import childProcess from "child_process";
-import {deleteDirectory} from "../../util/fs";
+import {deleteDirectory} from "../../../util/fs";
 import {parentPort} from 'worker_threads';
-import axios from '../../util/source/axios'
+import axios from '../../../util/source/axios'
 import os from "os";
 import path from "path";
 import { batchNum } from "./m3u8Config";

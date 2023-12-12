@@ -1,9 +1,9 @@
 import {app, ipcMain} from "electron";
 import fs from "fs";
-import {getSecretKeys, getCorrectM3u8File, getPlayList, getXMap} from "../../util/m3u8Parse"
-import {getFileInfo, makeDir} from "../../util/fs"
-import {newLoadingRecord} from '../processList/processList';
-import axios from '../../util/source/axios'
+import {getSecretKeys, getCorrectM3u8File, getPlayList, getXMap} from "../../../util/m3u8Parse"
+import {getFileInfo, makeDir} from "../../../util/fs"
+import {newLoadingRecord} from '../../processList/processList';
+import axios from '../../../util/source/axios'
 import path from "path";
 
 const basePath = app.getPath('userData');
@@ -15,7 +15,7 @@ ipcMain.handle('create-m3u8-download-task', createM3u8DownloadTask);
 /**
  * 创建m3u8下载任务
  */
-async function createM3u8DownloadTask(event, url, name, outPath) {
+export async function createM3u8DownloadTask(event, url, name, outPath) {
     if(/m3u8Video[/|\\]tempM3u8Url/.test(url)) {
         return createOtherM3u8DownloadTask(url, name, outPath)
     } else {

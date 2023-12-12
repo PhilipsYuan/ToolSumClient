@@ -2,8 +2,8 @@ import {BrowserWindow} from "electron";
 import fs from 'fs';
 import path from "path";
 import { app } from 'electron'
-import {makeDir} from "../../../util/fs";
-import puppeteer from "../../../util/source/puppeteer-core";
+import {makeDir} from "../../../../util/fs";
+import puppeteer from "../../../../util/source/puppeteer-core";
 const basePath = app.getPath('userData')
 const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
 makeDir(tempM3u8UrlPath)

@@ -1,7 +1,34 @@
-import {app, BrowserWindow} from "electron";
-import puppeteer from "../../../util/source/puppeteer-core";
+import {ipcMain, app, BrowserWindow} from "electron";
+import puppeteer from '../../../util/source/puppeteer-core';
+import { getTXDownloadLink } from './analysisByPlatform/tengxunVideo';
+import { getMgTvDownloadLink } from "./analysisByPlatform/mgtv";
+import { getBiliTVDownloadLink } from "./analysisByPlatform/bilibiliTV";
 
-export async function getBiliTVDownloadLink(htmlUrl) {
+ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
+
+/**
+ * 从一个网页里分析出可以下载link(m3u8url)
+ * @returns {Promise<void>}
+ */
+async function getDownloadLinkFromUrl(event, htmlUrl) {
+    try{
+        if(/v\.qq\.com/.test(htmlUrl)) {
+            return await getTXDownloadLink(htmlUrl)
+        } else if(/mgtv\.com/.test(htmlUrl)) {
+            return await getMgTvDownloadLink(htmlUrl)
+        } else if(/bilibili\.com/.test(htmlUrl)) {
+            return await getBiliTVDownloadLink(htmlUrl)
+        } else {
+            return await getNormalM3u8Link(htmlUrl)
+        }
+    } catch (e) {
+        console.log(e)
+        return "error"
+    }
+
+}
+
+async function getNormalM3u8Link(htmlUrl) {
     let m3u8Url = null
     const browser = await pie.connect(app, puppeteer);
     const window = new BrowserWindow({
@@ -15,21 +42,17 @@ export async function getBiliTVDownloadLink(htmlUrl) {
         }
     });
     const page = await global.pie.getPage(browser, window)
-    await page.setViewport({"width": 475, "height": 867, "isMobile": false})
+    await page.setViewport({"width": 475, "height": 867, "isMobile": true})
 
-    page.on('response', async response => {
+    async function responseFun (response) {
         const url = response.url()
-        if(url == htmlUrl) {
-            setTimeout(async () => {
-                const content = await page.content();
-                console.log(content)
-                const info = content.match(/window._playinfo/)
-                console.log(info)
-
-            }, 1000)
-
+        if (/\.m3u8/.test(url)) {
+            const text = await response.text()
+            if(/#EXT-X-ENDLIST/.test(text))
+                m3u8Url = url
         }
-    });
+    }
+    page.on('response', responseFun);
 
     try {
         return await window.loadURL(htmlUrl, {
@@ -41,6 +64,7 @@ export async function getBiliTVDownloadLink(htmlUrl) {
                     const interval = setInterval(() => {
                         console.log(`检测次数：${index + 1}`)
                         if (m3u8Url || index > 10) {
+                            page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
                             resolve(m3u8Url)

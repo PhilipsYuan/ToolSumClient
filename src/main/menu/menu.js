@@ -1,7 +1,7 @@
 import {Menu, app} from "electron";
 import {m3u8VideoDownloadingListDB} from "../db/db";
 import { sendTips } from "../util/source/electronOperations";
-import {updateWork} from "../m3u8Video/create/workManager";
+import {updateWork} from "../videoDownload/videoType/m3u8Video/workManager";
 
 const template = [
     {
@@ -11,12 +11,12 @@ const template = [
             accelerator: 'Cmd+Q',
             click: closeTaskBeforeQuit
         },
-            // {
-            //     label: '打开控制台',
-            //     click: () => {
-            //         global.mainWindow.webContents.openDevTools()
-            //     }
-            // }
+            {
+                label: '打开控制台',
+                click: () => {
+                    global.mainWindow.webContents.openDevTools()
+                }
+            }
         ]
     },
     {

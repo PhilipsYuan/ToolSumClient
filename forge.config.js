@@ -62,7 +62,7 @@ module.exports = {
             config: 'vite.preload.config.mjs',
           },
           {
-            entry: 'src/main/m3u8Video/create/downloadTs.js',
+            entry: 'src/main/videoDownload/videoType/m3u8Video/downloadTs.js',
             config: 'vite.preload.config.mjs',
           },
         ],
