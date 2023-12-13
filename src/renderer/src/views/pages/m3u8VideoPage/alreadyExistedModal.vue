@@ -11,10 +11,10 @@
         资源在已经下载中存在了，请更换个资源！
       </div>
       <el-form ref="formRef">
-        <el-form-item label="名称:" prop="masterName">
-          <div class="" :class="{'text-red-500': item.name === inputName}">{{ item.name }}</div>
+        <el-form-item label="已存在名称:" prop="masterName">
+          <div class="text-lg text-gray-900" :class="{'text-red-500': item.name === inputName}">{{ item.name }}</div>
         </el-form-item>
-        <el-form-item label="m3u8链接:" prop="masterName">
+        <el-form-item label="链接:" prop="masterName">
           <div class="text-gray-400 break-all"
                :class="{'text-red-500': item.m3u8Url === inputUrl}">{{ item.m3u8Url }}
           </div>
@@ -56,7 +56,13 @@ export default {
       }
       this.cancelFun()
       setTimeout(() => {
-        document.getElementById(this.item.id).scrollIntoView()
+        const dom = document.getElementById(this.item.id)
+        dom.scrollIntoView()
+        dom.style.borderColor = 'red'
+        setTimeout(() => {
+          dom.style.borderColor = ''
+        }, 3000)
+        // document.getElementById(this.item.id).scrollIntoView()
       }, 100)
     },
     cancelFun() {
