@@ -2,10 +2,11 @@ import {app, ipcMain} from "electron";
 import fs from "fs";
 import {getSecretKeys, getCorrectM3u8File, getPlayList, getXMap} from "../../../util/m3u8Parse"
 import {deleteDirectory, getFileInfo, makeDir} from "../../../util/fs"
-import {newLoadingRecord} from '../../processList/processList';
+import {createProcessFile, newLoadingRecord} from '../../processList/processList';
 import axios from '../../../util/source/axios'
 import path from "path";
 import {createWork, updateWork} from "./workManager";
+import {m3u8VideoDownloadingListDB} from "../../../db/db";
 
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
@@ -281,6 +282,21 @@ export async function pauseM3u8DownloadVideo(item) {
     item.pause = true
     item.pausing = true
     updateWork(item)
+}
+
+/**
+ * 保存暂停时数据
+ * @returns {Promise<void>}
+ */
+export async function savePauseDownloadInfo(record) {
+    const list = m3u8VideoDownloadingListDB.data.loadingList
+    const index = list.findIndex((item) => item.id === record.id)
+    if(index > -1) {
+        list[index].batchIndex = record.batchIndex
+        await createProcessFile(record.urlPath, record.totalUrls, record.m3u8Data)
+        list[index].pausing = false
+    }
+    await m3u8VideoDownloadingListDB.write()
 }
 
 export async function continueM3u8DownloadVideo(item) {

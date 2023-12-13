@@ -2,6 +2,8 @@ import {Menu, app} from "electron";
 import {m3u8VideoDownloadingListDB} from "../db/db";
 import { sendTips } from "../util/source/electronOperations";
 import {updateWork} from "../videoDownload/videoType/m3u8Video/workManager";
+import {pauseMagnetDownloadVideo} from "../videoDownload/videoType/magnet/magnet";
+import {pauseM3u8DownloadVideo} from "../videoDownload/videoType/m3u8Video/m3u8Video";
 
 const template = [
     {
@@ -47,10 +49,12 @@ export function closeTaskBeforeQuit(isQuit, windowToClose) {
     sendTips('close-app-before-task-tip', '暂停下载任务中，完成暂停后关闭！')
     const list = m3u8VideoDownloadingListDB.data.loadingList
     const downloadingItems = list.filter((item) => item.isStart && !item.pause)
-    downloadingItems.forEach((item) => {
-        item.pause = true
-        item.pausing = true
-        updateWork(item)
+    downloadingItems.forEach(async (item) => {
+        if(item.type === 'magnet') {
+            await pauseMagnetDownloadVideo(item)
+        } else {
+            await pauseM3u8DownloadVideo(item)
+        }
     })
     const interval = setInterval(() => {
         const index = list.findIndex((item) => (item.isStart && !item.pause) || (item.pause && item.pausing))

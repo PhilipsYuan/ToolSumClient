@@ -4,6 +4,7 @@ import {newFinishedRecord} from "../../finishList/finishList";
 import {sendTips} from "../../../util/source/electronOperations";
 import path from "path";
 import {deleteDirectory} from "../../../util/fs";
+import {m3u8VideoDownloadingListDB} from "../../../db/db";
 
 const client = new WebTorrent()
 
@@ -52,6 +53,7 @@ export async function pauseMagnetDownloadVideo(item) {
         client.remove(torrentList[item.id])
         delete torrentList[item.id]
     }
+    await m3u8VideoDownloadingListDB.write()
 }
 
 /**

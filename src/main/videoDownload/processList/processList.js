@@ -3,7 +3,6 @@ import {app, ipcMain} from "electron";
 import { makeDir} from "../../util/fs";
 import fs from "fs";
 import shortId from "shortid";
-import {createWork} from '../videoType/m3u8Video/workManager';
 import {sendTips} from "../../util/source/electronOperations";
 import path from "path";
 import {
@@ -146,7 +145,6 @@ export async function pauseDownloadVideo(event, id) {
         } else {
             await pauseM3u8DownloadVideo(item)
         }
-
     }
 }
 
@@ -166,19 +164,4 @@ export async function continueDownloadVideo(event, id) {
             await continueM3u8DownloadVideo(item)
         }
     }
-}
-
-/**
- * 保存暂停时数据
- * @returns {Promise<void>}
- */
-export async function savePauseDownloadInfo(record) {
-    const list = m3u8VideoDownloadingListDB.data.loadingList
-    const index = list.findIndex((item) => item.id === record.id)
-    if(index > -1) {
-        list[index].batchIndex = record.batchIndex
-        await createProcessFile(record.urlPath, record.totalUrls, record.m3u8Data)
-        list[index].pausing = false
-    }
-    await m3u8VideoDownloadingListDB.write()
 }
