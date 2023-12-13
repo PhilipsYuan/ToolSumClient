@@ -1,11 +1,11 @@
 import {app, ipcMain} from "electron";
 import fs from "fs";
 import {getSecretKeys, getCorrectM3u8File, getPlayList, getXMap} from "../../../util/m3u8Parse"
-import {getFileInfo, makeDir} from "../../../util/fs"
+import {deleteDirectory, getFileInfo, makeDir} from "../../../util/fs"
 import {newLoadingRecord} from '../../processList/processList';
 import axios from '../../../util/source/axios'
 import path from "path";
-import {createWork} from "./workManager";
+import {createWork, updateWork} from "./workManager";
 
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
@@ -238,5 +238,51 @@ export function startDownloadM3u8Video(item) {
     const json = global.JSON.parse(string)
     item.totalUrls = json.totalUrls
     item.m3u8Data = json.m3u8Data
+    createWork(item)
+}
+
+/**
+ * 删除loading的记录和列表
+ */
+export async function deleteM3u8loadingRecordAndFile(item) {
+    if(item.isStart && !item.pause) {
+        await pauseM3u8DownloadVideo(item)
+        const interval = setInterval(async () => {
+            if(item.isStart && item.pause && !item.pausing) {
+                clearInterval(interval);
+                await deleteRecordAndFile(item)
+            }
+        },500)
+    } else {
+        await deleteRecordAndFile(item)
+    }
+}
+
+/**
+ * 删除记录和相关的文件
+ * @param item
+ * @param index
+ * @returns {Promise<void>}
+ */
+async function deleteRecordAndFile(item) {
+    const urlPath = item.urlPath;
+    const tempPath = path.resolve(tempSourcePath, item.name);
+    deleteDirectory(tempPath)
+    if(urlPath && fs.existsSync(urlPath)) {
+        fs.unlinkSync(urlPath)
+    }
+}
+
+/**
+ * 暂停下载视频
+ * @returns {Promise<void>}
+ */
+export async function pauseM3u8DownloadVideo(item) {
+    item.pause = true
+    item.pausing = true
+    updateWork(item)
+}
+
+export async function continueM3u8DownloadVideo(item) {
     createWork(item)
 }

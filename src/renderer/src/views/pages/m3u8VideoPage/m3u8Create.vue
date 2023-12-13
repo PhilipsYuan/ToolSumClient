@@ -56,7 +56,6 @@
               <el-icon class="ml-4"><QuestionFilled class="text-gray-400" /></el-icon>
             </template>
           </el-popover>
-          <el-button :disabled="createLoading" @click="downloadMagnet">test</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -143,7 +142,6 @@ export default {
         return false
       } else {
         const m3u8UrlIsNotDownloaded = await window.electronAPI.checkDownloadUrlNotExist(this.form.m3u8Url, this.form.name)
-        console.log(m3u8UrlIsNotDownloaded)
         if(m3u8UrlIsNotDownloaded.item) {
           this.$refs.alreadyExistedModal.openModal(m3u8UrlIsNotDownloaded.item, this.form.m3u8Url, this.form.name, m3u8UrlIsNotDownloaded.type)
           return false

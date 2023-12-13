@@ -3,21 +3,71 @@ import {deleteLoadingRecordAndFile, newLoadingRecord} from "../../processList/pr
 import {newFinishedRecord} from "../../finishList/finishList";
 import {sendTips} from "../../../util/source/electronOperations";
 import path from "path";
+import {deleteDirectory} from "../../../util/fs";
+
+const client = new WebTorrent()
+
+const torrentList = {}
+
 
 export async function createMagnetDownloadTask(event, url, name, outPath) {
+    const outputPath = path.resolve(outPath, name);
     await newLoadingRecord({
         type: 'magnet',
         name: name,
         m3u8Url: url,
-        outputPath: outPath
+        outputPath: outputPath
     })
     return 'success'
 }
 
+/**
+ * 开始进行下载
+ * @param item
+ */
 export function startDownloadMagnetVideo(item) {
-    const client = new WebTorrent()
+    addTorrent(item)
+}
+
+/**
+ * 删除magnet的下载一半的内容
+ * 如果是，暂停一半时，进行删除，需要删除下载一半的文件
+ * 如果是完成删除时，则不需要删除文件
+ * @param item
+ */
+export function deleteMagnetLoadingRecordAndFile(item, callType) {
+    if(callType === 'delete') {
+        deleteDirectory(item.outputPath)
+    }
+}
+
+/**
+ * 暂停下载视频
+ * @returns {Promise<void>}
+ */
+export async function pauseMagnetDownloadVideo(item) {
+    const torrent = torrentList[item.id]
+    if(torrent) {
+        item.pause = true
+        client.remove(torrentList[item.id])
+        delete torrentList[item.id]
+    }
+}
+
+/**
+ * 继续进行下载
+ * @returns {Promise<void>}
+ */
+export async function continueMagnetDownloadVideo(item) {
+    addTorrent(item)
+}
+
+/**
+ * 增加torrent下载
+ */
+function addTorrent(item) {
     client.add(item.m3u8Url, { path: item.outputPath }, function (torrent) {
-        item.outputPath = path.resolve(item.outputPath, torrent.name);
+        torrentList[item.id] = torrent
         // 监听下载进度事件
         torrent.on('download', function (bytes) {
             const progress = Math.round(torrent.progress * 100 * 100) / 100;
@@ -43,7 +93,6 @@ export function startDownloadMagnetVideo(item) {
 }
 
 function createMagnetDownloadTaskDemo() {
-    console.log('here')
     const client = new WebTorrent()
     const torrentId = 'magnet:?xt=urn:btih:08ada5a7a6183aae1e09d831df6748d566095a10&dn=Sintel&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&ws=https%3A%2F%2Fwebtorrent.io%2Ftorrents%2F&xs=https%3A%2F%2Fwebtorrent.io%2Ftorrents%2Fsintel.torrent'
     // 启动下载任务

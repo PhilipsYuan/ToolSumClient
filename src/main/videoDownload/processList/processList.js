@@ -1,13 +1,23 @@
 import { m3u8VideoDownloadingListDB } from "../../db/db";
 import {app, ipcMain} from "electron";
-import {deleteDirectory, makeDir} from "../../util/fs";
+import { makeDir} from "../../util/fs";
 import fs from "fs";
 import shortId from "shortid";
-import {createWork, updateWork} from '../videoType/m3u8Video/workManager';
+import {createWork} from '../videoType/m3u8Video/workManager';
 import {sendTips} from "../../util/source/electronOperations";
 import path from "path";
-import {startDownloadM3u8Video} from "../videoType/m3u8Video/m3u8Video";
-import {startDownloadMagnetVideo} from "../videoType/magnet/magnet";
+import {
+    continueM3u8DownloadVideo,
+    deleteM3u8loadingRecordAndFile,
+    pauseM3u8DownloadVideo,
+    startDownloadM3u8Video
+} from "../videoType/m3u8Video/m3u8Video";
+import {
+    continueMagnetDownloadVideo,
+    deleteMagnetLoadingRecordAndFile,
+    pauseMagnetDownloadVideo,
+    startDownloadMagnetVideo
+} from "../videoType/magnet/magnet";
 
 const basePath = app.getPath('userData')
 const processUrlsPath = path.resolve(basePath, 'm3u8Video', 'processUrls');
@@ -85,34 +95,17 @@ export async function deleteLoadingRecordAndFile(event, id, callType = 'delete')
     const index = list.findIndex((item) => item.id === id)
     if(index > -1) {
         const item = m3u8VideoDownloadingListDB.data.loadingList[index]
-        if(item.isStart && !item.pause) {
-            await pauseDownloadVideo(null, id)
-            const interval = setInterval(async () => {
-                if(item.isStart && item.pause && !item.pausing) {
-                    clearInterval(interval);
-                    await deleteRecordAndFile(item, index, callType)
-                }
-            },500)
+        if(item.type === 'magnet') {
+            await deleteMagnetLoadingRecordAndFile(item, callType)
         } else {
-            await deleteRecordAndFile(item, index, callType)
+            await deleteM3u8loadingRecordAndFile(item)
         }
+        m3u8VideoDownloadingListDB.data.loadingList.splice(index, 1)
+        await m3u8VideoDownloadingListDB.write()
+        sendTips("delete-m3u8-loading-success", callType)
     }
 }
 
-/**
- * 删除记录和列表
- */
-async function deleteRecordAndFile(item, index, callType) {
-    const urlPath = item.urlPath;
-    const tempPath = path.resolve(tempSourcePath, item.name);
-    deleteDirectory(tempPath)
-    if(urlPath && fs.existsSync(urlPath)) {
-        fs.unlinkSync(urlPath)
-    }
-    m3u8VideoDownloadingListDB.data.loadingList.splice(index, 1)
-    await m3u8VideoDownloadingListDB.write()
-    sendTips("delete-m3u8-loading-success", callType)
-}
 
 /**
  * 开始下载资源
@@ -148,9 +141,12 @@ export async function pauseDownloadVideo(event, id) {
     const index = list.findIndex((item) => item.id === id)
     if(index > -1) {
         const item = m3u8VideoDownloadingListDB.data.loadingList[index];
-        item.pause = true
-        item.pausing = true
-        updateWork(item)
+        if(item.type === 'magnet') {
+            await pauseMagnetDownloadVideo(item)
+        } else {
+            await pauseM3u8DownloadVideo(item)
+        }
+
     }
 }
 
@@ -164,10 +160,13 @@ export async function continueDownloadVideo(event, id) {
     if(index > -1) {
         const item = m3u8VideoDownloadingListDB.data.loadingList[index];
         item.pause = false
-        createWork(item)
+        if(item.type === 'magnet') {
+            await continueMagnetDownloadVideo(item)
+        } else {
+            await continueM3u8DownloadVideo(item)
+        }
     }
 }
-
 
 /**
  * 保存暂停时数据
