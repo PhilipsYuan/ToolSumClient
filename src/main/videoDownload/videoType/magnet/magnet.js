@@ -3,23 +3,51 @@ import {deleteLoadingRecordAndFile, newLoadingRecord} from "../../processList/pr
 import {newFinishedRecord} from "../../finishList/finishList";
 import {sendTips} from "../../../util/source/electronOperations";
 import path from "path";
-import {deleteDirectory} from "../../../util/fs";
+import {deleteDirectory, makeDir} from "../../../util/fs";
 import {m3u8VideoDownloadingListDB} from "../../../db/db";
-
+import shortId from "shortid";
+import {app} from "electron";
+import { TorrentDownloader } from './TorrentDownloader'
+import fs from 'fs'
+import parseTorrent from '../../../util/source/parse-torrent'
 const client = new WebTorrent()
-
 const torrentList = {}
-
+const basePath = app.getPath('userData');
+const tempTorrentPath = path.resolve(basePath, 'm3u8Video', 'tempTorrent')
+makeDir(tempTorrentPath)
 
 export async function createMagnetDownloadTask(event, url, name, outPath) {
     const outputPath = path.resolve(outPath, name);
-    await newLoadingRecord({
+    const id = shortId.generate()
+    const json = {
+        id: id,
         type: 'magnet',
         name: name,
         m3u8Url: url,
+        message: {
+            status: 'success',
+            content: '未开始进行下载'
+        },
+        // 判断是否在进行中
+        pausing: false,
+        pause: false,
+        isStart: false,
         outputPath: outputPath
-    })
+    }
+    const torrentPath = await createTorrentFile(url)
+    json.torrentPath = torrentPath
+    await newLoadingRecord(json)
     return 'success'
+}
+
+async function createTorrentFile(magnetUrl) {
+    const magInfo = parseTorrent(magnetUrl)
+    const infoHash = magInfo.infoHash.toUpperCase()
+    const torrentDownloader = new TorrentDownloader()
+    const torrentInfo = await torrentDownloader.downloadTorrent(infoHash)
+    const torrentPath = path.resolve(tempTorrentPath, `${infoHash}.torrent`)
+    fs.writeFileSync(torrentPath, torrentInfo)
+    return torrentPath
 }
 
 /**
@@ -68,8 +96,13 @@ export async function continueMagnetDownloadVideo(item) {
  * 增加torrent下载
  */
 function addTorrent(item) {
-    client.add(item.m3u8Url, { path: item.outputPath }, function (torrent) {
+    client.add(item.torrentPath, { path: item.outputPath }, function (torrent) {
+        console.log('3333')
         torrentList[item.id] = torrent
+        console.log(torrent.name)
+        torrent.files.forEach(function (file) {
+            console.log(file.name)
+        })
         // 监听下载进度事件
         torrent.on('download', function (bytes) {
             const progress = Math.round(torrent.progress * 100 * 100) / 100;
@@ -92,6 +125,12 @@ function addTorrent(item) {
             sendTips('m3u8-download-video-success', item.id)
         })
     })
+    client.on('torrent', function (torrent) {
+        console.log('here')
+    })
+    client.on('error', function (err) {
+        console.log(err)
+    })
 }
 
 function createMagnetDownloadTaskDemo() {
@@ -111,7 +150,6 @@ function createMagnetDownloadTaskDemo() {
         // 下载完成事件处理函数
         torrent.on('done', function () {
             console.log('Download completed')
-
             // 关闭客户端连接（可选）
             client.destroy()
         })

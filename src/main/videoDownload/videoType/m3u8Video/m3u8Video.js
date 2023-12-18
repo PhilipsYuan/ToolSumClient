@@ -2,11 +2,12 @@ import {app, ipcMain} from "electron";
 import fs from "fs";
 import {getSecretKeys, getCorrectM3u8File, getPlayList, getXMap} from "../../../util/m3u8Parse"
 import {deleteDirectory, getFileInfo, makeDir} from "../../../util/fs"
-import {createProcessFile, newLoadingRecord} from '../../processList/processList';
+import { newLoadingRecord} from '../../processList/processList';
 import axios from '../../../util/source/axios'
 import path from "path";
 import {createWork, updateWork} from "./workManager";
 import {m3u8VideoDownloadingListDB} from "../../../db/db";
+import shortId from "shortid";
 
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
@@ -44,7 +45,7 @@ async function createOtherM3u8DownloadTask(url, name, outPath) {
                     item, url, number: index + 1, cookie: info.cookie
                 }
             })
-            await newLoadingRecord({
+            await createNewLoadingRecord({
                 name: name,
                 m3u8Url: url,
                 m3u8Data: m3u8Data,
@@ -93,7 +94,7 @@ function createNormalM3u8DownloadTask(url, name, outPath) {
                                 item, url, number: index + 1
                             }
                         })
-                        await newLoadingRecord({
+                        await createNewLoadingRecord({
                             name: name,
                             m3u8Url: url,
                             m3u8Data: m3u8Data,
@@ -110,6 +111,32 @@ function createNormalM3u8DownloadTask(url, name, outPath) {
         console.log(e)
         return 'failure'
     }
+}
+
+ async function createNewLoadingRecord(data) {
+    const id = shortId.generate()
+    const json = {
+        id: id,
+        name: data.name,
+        m3u8Url: data.m3u8Url,
+        type: 'm3u8',
+        message: {
+            status: 'success',
+            content: '未开始进行下载'
+        },
+        // 判断是否在进行中
+        pausing: false,
+        pause: false,
+        isStart: false,
+        successTsNum: 0,
+        outputPath: data.outputPath
+    }
+     const processUrlsPath = path.resolve(basePath, 'm3u8Video', 'processUrls');
+     const urlPath = path.resolve(processUrlsPath, `${data.name}.txt`);
+     json.urlPath = urlPath
+     // 暂停时存储的json太大了。需要分文件存储
+     await createProcessFile(urlPath, data.totalUrls, data.m3u8Data)
+     newLoadingRecord(json)
 }
 
 /**
@@ -301,4 +328,16 @@ export async function savePauseDownloadInfo(record) {
 
 export async function continueM3u8DownloadVideo(item) {
     createWork(item)
+}
+
+/**
+ * 独立文件处理下载过程中的总共Urls
+ * @returns {Promise<void>}
+ */
+export async function createProcessFile (path, totalUrls, m3u8Data) {
+    const json = {
+        totalUrls,
+        m3u8Data
+    }
+    await fs.writeFileSync(path, global.JSON.stringify(json), "utf-8")
 }
