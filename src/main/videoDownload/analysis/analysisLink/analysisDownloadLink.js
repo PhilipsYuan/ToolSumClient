@@ -67,7 +67,7 @@ async function getNormalM3u8Link(htmlUrl) {
                             page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
-                            resolve(m3u8Url)
+                            resolve({videoUrl: m3u8Url})
                         } else {
                             index++
                         }

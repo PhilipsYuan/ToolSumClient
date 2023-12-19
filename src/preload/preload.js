@@ -23,7 +23,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     openDirectoryAndFile: (path) => ipcRenderer.invoke('open-directory-and-file', path),
     getSearchResult: (key) => ipcRenderer.invoke('get-search-result', key),
     openSearchWindow: (key) => ipcRenderer.invoke('open-search-window', key),
-    createVideoDownloadTask: (url, name, outPath) => ipcRenderer.invoke('create-video-download-task', url, name, outPath),
+    createVideoDownloadTask: (url, name, outPath, audioUrl) => ipcRenderer.invoke('create-video-download-task', url, name, outPath, audioUrl),
 
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),

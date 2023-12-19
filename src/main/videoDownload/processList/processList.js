@@ -15,6 +15,7 @@ import {
     pauseMagnetDownloadVideo,
     startDownloadMagnetVideo
 } from "../videoType/magnet/magnet";
+import {startDownloadBiliVideo} from "../videoType/bilibiliVideo/bilibiliVideo";
 
 const basePath = app.getPath('userData')
 const processUrlsPath = path.resolve(basePath, 'm3u8Video', 'processUrls');
@@ -88,6 +89,8 @@ export async function startDownloadVideo(event, id) {
         }
         if(item.type === 'magnet') {
             startDownloadMagnetVideo(item)
+        } else if(item.type === 'biliTV') {
+            startDownloadBiliVideo(item)
         } else {
             startDownloadM3u8Video(item)
         }

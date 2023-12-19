@@ -11,6 +11,7 @@ import shortId from "shortid";
 
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
+makeDir(tempSourcePath)
 
 ipcMain.handle('check-download-file-not-exist', checkDownloadFileNotExist);
 ipcMain.handle('create-m3u8-download-task', createM3u8DownloadTask);

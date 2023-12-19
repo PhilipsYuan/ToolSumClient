@@ -79,7 +79,8 @@ export default {
       form: {
         htmlUrl: "",
         m3u8Url: "",
-        name: ""
+        name: "",
+        audioUrl: ''
       },
       downloadButtonStatus: false,
       downloadPath: "11",
@@ -111,7 +112,7 @@ export default {
         if(hasBenefit) {
           if(await this.checkDownloadCondition()) {
             this.createLoading = true
-            const result = await window.electronAPI.createVideoDownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath)
+            const result = await window.electronAPI.createVideoDownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath, this.form.audioUrl)
             if(result === 'success') {
               useService('getM3u8LoadingList')
               this.changeTab('loading')
@@ -201,14 +202,20 @@ export default {
           content: "网页解析中...（可能需要1-2分钟，请耐心等待） ",
           status: 'success'
         }
-        const m3u8Url = await window.electronAPI.getDownloadLinkFromUrl(this.form.htmlUrl)
-        if(m3u8Url === 'error') {
+        const info = await window.electronAPI.getDownloadLinkFromUrl(this.form.htmlUrl)
+        if(info === 'error') {
           this.message = {
             content: "网页加载不成功，请先确定网页在浏览器上是否正常打开！",
             status: 'error'
           }
-        } else if(m3u8Url) {
-          this.form.m3u8Url = m3u8Url
+        } else if(info.videoUrl) {
+          this.form.m3u8Url = info.videoUrl
+          if(info.audioUrl) {
+            this.form.audioUrl = info.audioUrl
+          }
+          if(info.title) {
+            this.form.name = info.title
+          }
           this.message = {
             content: "网页解析完成，发现可下载的链接。",
             status: 'success'

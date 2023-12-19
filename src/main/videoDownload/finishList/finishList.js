@@ -28,6 +28,9 @@ export async function newFinishedRecord (data) {
         date: date,
         type: data.type || 'm3u8'
     }
+    if(data.audioUrl) {
+        json.audioUrl = data.audioUrl
+    }
     m3u8VideoDownloadListDB.data.downloadList.unshift(json)
     await m3u8VideoDownloadListDB.write()
 }
