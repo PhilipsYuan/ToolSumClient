@@ -15,7 +15,11 @@ import {
     pauseMagnetDownloadVideo,
     startDownloadMagnetVideo
 } from "../videoType/magnet/magnet";
-import {startDownloadBiliVideo} from "../videoType/bilibiliVideo/bilibiliVideo";
+import {
+    continueBiliTVDownloadVideo,
+    pauseBiliTVDownloadVideo,
+    startDownloadBiliVideo
+} from "../videoType/bilibiliVideo/bilibiliVideo";
 
 const basePath = app.getPath('userData')
 const processUrlsPath = path.resolve(basePath, 'm3u8Video', 'processUrls');
@@ -108,6 +112,8 @@ export async function pauseDownloadVideo(event, id) {
         const item = m3u8VideoDownloadingListDB.data.loadingList[index];
         if(item.type === 'magnet') {
             await pauseMagnetDownloadVideo(item)
+        } else if(item.type === 'biliTV') {
+            await pauseBiliTVDownloadVideo(item)
         } else {
             await pauseM3u8DownloadVideo(item)
         }
@@ -126,6 +132,8 @@ export async function continueDownloadVideo(event, id) {
         item.pause = false
         if(item.type === 'magnet') {
             await continueMagnetDownloadVideo(item)
+        } else if(item.type === 'biliTV') {
+            await continueBiliTVDownloadVideo(item)
         } else {
             await continueM3u8DownloadVideo(item)
         }
