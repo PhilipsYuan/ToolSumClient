@@ -18,7 +18,6 @@ export async function getBiliTVDownloadLink(htmlUrl) {
             const audioUrl =
                 info?.data?.dash?.audio?.[0]?.baseUrl ?? info?.data?.dash?.audio?.[0]?.backupUrl?.[0];
             const title = data.match(/title="(.*?)"/)?.[1]?.replaceAll?.(/\\|\/|:|\*|\?|"|<|>|\|/g, '');
-
             if (videoUrl && audioUrl) {
                 return { videoUrl, audioUrl, title };
             }

@@ -1,6 +1,6 @@
 import {ipcMain, app, BrowserWindow} from "electron";
 import puppeteer from '../../../util/source/puppeteer-core';
-import { getTXDownloadLink } from './analysisByPlatform/tengxunVideo';
+import { getTencentTVDownloadLink } from './analysisByPlatform/tencentTV/tencentTV';
 import { getMgTvDownloadLink } from "./analysisByPlatform/mgtv";
 import { getBiliTVDownloadLink } from "./analysisByPlatform/bilibiliTV";
 
@@ -13,7 +13,7 @@ ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
 async function getDownloadLinkFromUrl(event, htmlUrl) {
     try{
         if(/v\.qq\.com/.test(htmlUrl)) {
-            return await getTXDownloadLink(htmlUrl)
+            return await getTencentTVDownloadLink(htmlUrl)
         } else if(/mgtv\.com/.test(htmlUrl)) {
             return await getMgTvDownloadLink(htmlUrl)
         } else if(/bilibili\.com/.test(htmlUrl)) {

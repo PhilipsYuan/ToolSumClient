@@ -2574,6 +2574,11 @@ env-paths@^2.2.0:
   resolved "https://registry.npmmirror.com/env-paths/-/env-paths-2.2.1.tgz#420399d416ce1fbe9bc0a07c62fa68d67fd0f8f2"
   integrity sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==
 
+env@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.npmmirror.com/env/-/env-0.0.2.tgz#50c19f307b129a45845b6b686df5b39dd40d1cf0"
+  integrity sha512-yP8LfjO4ughSHD/3HgLPinWzexmaOGvRfs2TFx0SZhOm7j1xPi9evjuGcLiNVHIGLmcsgMak4eDbBzlYqGIVxw==
+
 err-code@^2.0.2:
   version "2.0.3"
   resolved "https://registry.npmmirror.com/err-code/-/err-code-2.0.3.tgz#23c2f3b756ffdfc608d30e27c9a941024807e7f9"
@@ -6830,6 +6835,11 @@ videostream@^3.2.2:
     mp4-stream "^3.0.0"
     pump "^3.0.0"
     range-slice-stream "^2.0.0"
+
+vite-plugin-wasm@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.npmmirror.com/vite-plugin-wasm/-/vite-plugin-wasm-3.3.0.tgz#2908ef2529bf8f33f4e549c8c6fda26ad273ca15"
+  integrity sha512-tVhz6w+W9MVsOCHzxo6SSMSswCeIw4HTrXEi6qL3IRzATl83jl09JVO1djBqPSwfjgnpVHNLYcaMbaDX5WB/pg==
 
 vite@^4.1.1, vite@^4.2.1:
   version "4.5.0"
