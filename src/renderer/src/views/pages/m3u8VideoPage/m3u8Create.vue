@@ -208,6 +208,11 @@ export default {
             content: "网页加载不成功，请先确定网页在浏览器上是否正常打开！",
             status: 'error'
           }
+        } else if(info === 'noFound') {
+          this.message = {
+            content: "网页解析不成功，可以将地址上报给我们，我们会努力解析，并在最新的版本中支持！",
+            status: 'error'
+          }
         } else if(info.videoUrl) {
           this.form.m3u8Url = info.videoUrl
           if(info.audioUrl) {
