@@ -9,7 +9,7 @@ export async function getBiliTVDownloadLink(htmlUrl) {
                 referer: 'https://www.bilibili.com',
             },
         })
-        .then(({ data }) => {
+        .then(async ({ data }) => {
             const playInfo = getInfoFromPlayInfo(data)
             if(playInfo) {
                 if(playInfo === 'error') {
@@ -18,9 +18,14 @@ export async function getBiliTVDownloadLink(htmlUrl) {
                     return playInfo
                 }
             } else {
-                const nextInfo = getInfoFromNextData(data)
+                const epId = htmlUrl.match(/ep(\d+)?/)[1]
+                const nextInfo = await getInfoFromNextData(data, epId)
                 if(nextInfo) {
-                    return Promise.resolve('aaa')
+                    if(nextInfo === 'error') {
+                        return Promise.resolve('error')
+                    } else {
+                        return nextInfo
+                    }
                 } else {
                     return Promise.resolve('noFound')
                 }
@@ -47,7 +52,44 @@ function getInfoFromPlayInfo(data) {
     }
 }
 
-function getInfoFromNextData(data) {
-    const infoString = data.match(/<script id="__NEXT_DATA__" type="application\/json">({.*})<\/script><script>/)?.[1]
-    console.log('222', data)
+function getInfoFromNextData(data, epId) {
+    const matchData = data.replace(/[\n|\t]/g, '').replace(/ /g, '')
+    const infoString = matchData.match(/<scriptid="__NEXT_DATA__"type="application\/json">(.*)<\/script>/)?.[1]
+    const info = infoString ? JSON.parse(infoString) : null;
+    if(info) {
+        const episodes = info?.props?.pageProps?.dehydratedState?.queries?.[0]?.state?.data?.seasonInfo?.mediaInfo?.episodes
+        const epiItem = episodes.find((item) => item.ep_id == epId)
+        const avid = epiItem.aid;
+        const cid = epiItem.cid;
+        const qn = 0
+        const fnver = 0
+        const fourk = 1
+        const from_client = 'BROWSER'
+        const ep_id = epId
+        const drm_tech_type = 2
+        const fnval = 4048
+        return axios.get('https://api.bilibili.com/pgc/player/web/v2/playurl?support_multi_audi=true', {
+            params: { avid, cid, qn, fnver, fourk, fnval, from_client, ep_id, drm_tech_type },
+        })
+            .then((res) => {
+                const videoInfo = res?.data?.result?.video_info
+                if(videoInfo) {
+                    const videoUrl =
+                        videoInfo?.dash?.video?.[0]?.baseUrl
+                        ?? (videoInfo?.dash?.video?.[0]?.backupUrl?.[0] ?? videoInfo?.dash?.video?.[0]?.backup_url?.[0]);
+                    const audioUrl =
+                        videoInfo?.dash?.audio?.[0]?.baseUrl
+                        ?? (videoInfo?.dash?.audio?.[0]?.backupUrl?.[0] ?? videoInfo?.dash?.audio?.[0]?.backup_url?.[0]);
+                    const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0];
+                    if (videoUrl && audioUrl) {
+                        return {videoUrl, audioUrl, title};
+                    }
+                } else {
+                    return 'error'
+                }
+            })
+            .catch((e) => {
+                return 'error'
+            })
+    }
 }
