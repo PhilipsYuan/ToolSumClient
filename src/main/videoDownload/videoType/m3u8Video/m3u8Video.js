@@ -81,7 +81,8 @@ function createNormalM3u8DownloadTask(url, name, outPath) {
                     if (data) {
                         const urlObject = new URL(url);
                         const host = `${urlObject.protocol}//${urlObject.host}`
-                        const m3u8Data = await downloadSecretKey(data, host, tempPath, urlObject.pathname)
+                        let m3u8Data = await downloadSecretKey(data, host, tempPath, urlObject.pathname)
+                        m3u8Data = await downloadMap(m3u8Data, host, tempPath, urlObject.pathname)
                         const urls = getPlayList(data)
                         const formatUrls = urls.map((item, index) => {
                             let url = ''
@@ -212,7 +213,7 @@ async function downloadMap(data, host, tempPath, pathname, cookie) {
                 }
             }
 
-            const headers = getHeaders(urlItem.url)
+            const headers = getHeaders(url)
             headers["Content-Type"] = "application/octet-stream"
             if(cookie) {
                 headers.Cookie = cookie

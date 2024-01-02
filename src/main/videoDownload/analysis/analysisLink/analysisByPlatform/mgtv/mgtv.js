@@ -1,7 +1,5 @@
 import axios from '../../../../../util/source/axios'
 
-// https://www.mgtv.com/b/605259/20318139.html?fpa=1756&fpos=&lastp=ch_home&cpid=5
-
 export async function getMgTvDownloadLink(htmlUrl) {
     const videoId = getTVId(htmlUrl)
     return axios.get("https://pcweb.api.mgtv.com/video/streamList", {
@@ -31,10 +29,16 @@ export async function getMgTvDownloadLink(htmlUrl) {
                     return item.disp
                 })
                 if(matchItem && matchItem.disp && matchItem.disp.info) {
-                    console.log('here', matchItem.disp.info)
                     return {videoUrl: matchItem.disp.info}
+                } else {
+                    return "error"
                 }
+            } else {
+                return "error"
             }
+        })
+        .catch(() => {
+            return 'error'
         })
 }
 
