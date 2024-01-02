@@ -24,12 +24,13 @@ export async function getMgTvDownloadLink(htmlUrl) {
     })
         .then((res) => {
             const json = res.data
+            const title = [json?.data?.info?.title, json?.data?.info?.series].join('-')
             if(json.data && json.data.stream_h265 && json.data.stream_h265.length > 0) {
                 const matchItem = json.data.stream_h265.find((item) => {
                     return item.disp
                 })
                 if(matchItem && matchItem.disp && matchItem.disp.info) {
-                    return {videoUrl: matchItem.disp.info}
+                    return {videoUrl: matchItem.disp.info, title}
                 } else {
                     return "error"
                 }
