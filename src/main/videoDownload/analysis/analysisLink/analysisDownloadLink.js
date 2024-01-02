@@ -1,7 +1,7 @@
 import {ipcMain, app, BrowserWindow} from "electron";
 import puppeteer from '../../../util/source/puppeteer-core';
 import { getTencentTVDownloadLink } from './analysisByPlatform/tencentTV/tencentTV';
-import { getMgTvDownloadLink } from "./analysisByPlatform/mgtv";
+import { getMgTvDownloadLink } from "./analysisByPlatform/mgtv/mgtv";
 import { getBiliTVDownloadLink } from "./analysisByPlatform/bilibiliTV";
 
 ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)

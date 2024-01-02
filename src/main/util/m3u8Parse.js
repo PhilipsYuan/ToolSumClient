@@ -1,15 +1,19 @@
 import {sendTips} from './source/electronOperations'
 import axios from './source/axios'
+import { getHeaders } from './httpHeaders'
 
 export function getCorrectM3u8File(url) {
+    const headers = getHeaders(url)
     return axios.get(url, {
-        timeout: 60000
+        timeout: 60000,
+        headers
     })
         .then(async (res) => {
             const result = checkM3u8FileHasAnotherM3u8(res.data, url)
              if(result) {
                  return axios.get(result, {
-                     timeout: 30000
+                     timeout: 30000,
+                     headers
                  })
                      .then(async (res) => {
                          return res.data

@@ -8,6 +8,7 @@ import path from "path";
 import {createWork, updateWork} from "./workManager";
 import {m3u8VideoDownloadingListDB} from "../../../db/db";
 import shortId from "shortid";
+import {getHeaders} from "../../../util/httpHeaders";
 
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
@@ -163,9 +164,8 @@ async function downloadSecretKey(data, host, tempPath, pathname, cookie) {
                 }
             }
 
-            const headers = {
-                "Content-Type": "application/octet-stream",
-            }
+            const headers = getHeaders(url)
+            headers["Content-Type"] = "application/octet-stream"
             if(cookie) {
                 headers.Cookie = cookie
             }
@@ -212,9 +212,8 @@ async function downloadMap(data, host, tempPath, pathname, cookie) {
                 }
             }
 
-            const headers = {
-                "Content-Type": "application/octet-stream",
-            }
+            const headers = getHeaders(urlItem.url)
+            headers["Content-Type"] = "application/octet-stream"
             if(cookie) {
                 headers.Cookie = cookie
             }
