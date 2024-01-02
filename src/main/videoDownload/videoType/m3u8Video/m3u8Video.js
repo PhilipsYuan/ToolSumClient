@@ -8,6 +8,7 @@ import path from "path";
 import {createWork, updateWork} from "./workManager";
 import {m3u8VideoDownloadingListDB} from "../../../db/db";
 import shortId from "shortid";
+import {getHeaders} from "../../../util/httpHeaders";
 
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
@@ -80,7 +81,8 @@ function createNormalM3u8DownloadTask(url, name, outPath) {
                     if (data) {
                         const urlObject = new URL(url);
                         const host = `${urlObject.protocol}//${urlObject.host}`
-                        const m3u8Data = await downloadSecretKey(data, host, tempPath, urlObject.pathname)
+                        let m3u8Data = await downloadSecretKey(data, host, tempPath, urlObject.pathname)
+                        m3u8Data = await downloadMap(m3u8Data, host, tempPath, urlObject.pathname)
                         const urls = getPlayList(data)
                         const formatUrls = urls.map((item, index) => {
                             let url = ''
@@ -163,9 +165,8 @@ async function downloadSecretKey(data, host, tempPath, pathname, cookie) {
                 }
             }
 
-            const headers = {
-                "Content-Type": "application/octet-stream",
-            }
+            const headers = getHeaders(url)
+            headers["Content-Type"] = "application/octet-stream"
             if(cookie) {
                 headers.Cookie = cookie
             }
@@ -212,9 +213,8 @@ async function downloadMap(data, host, tempPath, pathname, cookie) {
                 }
             }
 
-            const headers = {
-                "Content-Type": "application/octet-stream",
-            }
+            const headers = getHeaders(url)
+            headers["Content-Type"] = "application/octet-stream"
             if(cookie) {
                 headers.Cookie = cookie
             }

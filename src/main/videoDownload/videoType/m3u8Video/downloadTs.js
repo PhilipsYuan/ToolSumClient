@@ -8,6 +8,7 @@ import axios from '../../../util/source/axios'
 import os from "os";
 import path from "path";
 import { batchNum } from "./m3u8Config";
+import { getHeaders } from "../../../util/httpHeaders";
 
 const CancelToken = axios.CancelToken
 const source = CancelToken.source()
@@ -151,9 +152,8 @@ async function loopDownloadTs(notLoadUrls, m3u8Data, tempPath, loadingRecord) {
 }
 
 async function getFileAndStore(urlItem, tempPath, loadingRecord) {
-    const headers = {
-        "Content-Type": "application/octet-stream",
-    }
+    const headers = getHeaders(urlItem.url)
+    headers["Content-Type"] = "application/octet-stream"
     if(urlItem.cookie) {
         headers.Cookie = urlItem.cookie
     }
