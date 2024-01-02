@@ -34,6 +34,15 @@ export async function getMgTvDownloadLink(htmlUrl) {
                 } else {
                     return "error"
                 }
+            } else if(json.data && json.data.stream && json.data.stream.length > 0) {
+                const matchItem = json.data.stream.find((item) => {
+                    return item.disp
+                })
+                if(matchItem && matchItem.disp && matchItem.disp.info) {
+                    return {videoUrl: matchItem.disp.info, title}
+                } else {
+                    return "error"
+                }
             } else {
                 return "error"
             }
