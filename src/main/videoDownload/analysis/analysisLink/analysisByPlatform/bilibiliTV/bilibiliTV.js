@@ -1,4 +1,4 @@
-import axios from "../../../../util/source/axios"
+import axios from "../../../../../util/source/axios"
 
 export async function getBiliTVDownloadLink(htmlUrl) {
     return axios
