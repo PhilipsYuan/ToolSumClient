@@ -14,17 +14,14 @@
         <el-button class="!ml-0" @click="selfSearchContent" :loading="loading" :disabled="loading">手动搜索</el-button>
       </template>
     </el-popover>
-    <search-dialog ref="searchDialog" />
   </div>
 </template>
 
 <script>
-import searchDialog from "../../components/searchDialog.vue";
 import { addService} from "../../../service/service";
 
 export default {
   name: "search",
-  components: { searchDialog },
   data() {
     return {
       searchText: '',
@@ -54,9 +51,7 @@ export default {
     async selfSearchContent() {
       this.$refs.popover.hide()
       if(this.searchText) {
-        // this.loading = true;
         await window.electronAPI.openSearchWindow(this.searchText)
-        // this.$refs.searchDialog.openModal(this.searchText)
       } else {
         this.$message.error('请输入电影名称！')
       }
