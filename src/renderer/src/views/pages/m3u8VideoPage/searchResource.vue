@@ -59,7 +59,7 @@ export default {
     getUserChooseSearchPageUrl(link) {
       this.loading = false;
       if(link) {
-        this.$emit('setHtmlUrl', link, this.searchText)
+        this.$emit('setHtmlUrl', link, '')
       } else {
         this.$emit('setHtmlUrl', '', '')
       }

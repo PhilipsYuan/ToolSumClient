@@ -7,7 +7,7 @@ export function getNormalM3u8Link(htmlUrl) {
     const promise2 = getTitle(htmlUrl)
     return Promise.all([promise1, promise2])
         .then((results) => {
-            if(results[0] === 'error') {
+            if(results[0] === 'error' || results[1] === 'error') {
                 return 'error'
             } else {
                 return {title: results[1], videoUrl: results[0]}
@@ -17,17 +17,14 @@ export function getNormalM3u8Link(htmlUrl) {
 
 export function getTitle(htmlUrl) {
     return axios
-        .get(htmlUrl, {
-            headers: {
-                'User-Agent':
-                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36',
-            },
-        })
+        .get(htmlUrl)
         .then((res) => {
             const data = res.data
             const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0];
-            const matchTitle = title.split(' ')[0]
-            return matchTitle
+            return title
+        })
+        .catch(() => {
+            return 'error'
         })
 }
 
