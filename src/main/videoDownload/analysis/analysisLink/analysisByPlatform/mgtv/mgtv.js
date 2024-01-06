@@ -24,7 +24,7 @@ export async function getMgTvDownloadLink(htmlUrl) {
     })
         .then((res) => {
             const json = res.data
-            const title = [json?.data?.info?.title, json?.data?.info?.series].join('-')
+            const title = [json?.data?.info?.title, json?.data?.info?.series].join('-').trim()
             if(json.data && json.data.stream_h265 && json.data.stream_h265.length > 0) {
                 const matchItem = json.data.stream_h265.find((item) => {
                     return item.disp

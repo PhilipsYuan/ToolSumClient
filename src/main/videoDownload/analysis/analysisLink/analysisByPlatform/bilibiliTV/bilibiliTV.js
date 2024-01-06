@@ -80,7 +80,7 @@ function getInfoFromNextData(data, epId) {
                     const audioUrl =
                         videoInfo?.dash?.audio?.[0]?.baseUrl
                         ?? (videoInfo?.dash?.audio?.[0]?.backupUrl?.[0] ?? videoInfo?.dash?.audio?.[0]?.backup_url?.[0]);
-                    const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0];
+                    const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0].trim();
                     if (videoUrl && audioUrl) {
                         return {videoUrl, audioUrl, title};
                     }

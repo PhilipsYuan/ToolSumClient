@@ -7,7 +7,6 @@ const fsExtra = require('fs-extra');
 const arguments = process.argv.splice(2);
 
 const platformAndArch = arguments[0] || os.platform() + '-' + os.arch();
-console.log(platformAndArch)
 const platform = arguments[1] || os.platform()
 const binary = platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg';
 const sourcePath = path.resolve(__dirname, '../','ffmpegPlatforms', platformAndArch, binary);

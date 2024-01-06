@@ -99,7 +99,7 @@ function getVid(htmlUrl) {
             const data = res.data;
             const tvId = data.match(/"tvId":(\d+),"albumId"/)[1]
             const vid = data.match(/"vid":"(.*?)",/)[1]
-            const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0];
+            const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0].trim();
             return {tvId, vid, title}
         })
         .catch((e) => {

@@ -20,7 +20,7 @@ export function getTitle(htmlUrl) {
         .get(htmlUrl)
         .then((res) => {
             const data = res.data
-            const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0];
+            const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0].trim();
             return title
         })
         .catch(() => {

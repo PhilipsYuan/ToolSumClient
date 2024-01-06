@@ -18,7 +18,6 @@ function getDefaultExportFromCjs (x) {
 const arrayRemove = require$$0;
 const bencode = require$$1;
 const BitField = require$$2;
-console.log(require$$2.BitField3)
 const crypto = require$$3;
 const debug = require$$4('bittorrent-protocol');
 const randombytes = require$$5;

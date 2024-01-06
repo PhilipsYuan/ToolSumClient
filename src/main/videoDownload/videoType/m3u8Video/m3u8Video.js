@@ -1,7 +1,7 @@
 import {app, ipcMain} from "electron";
 import fs from "fs";
 import {getSecretKeys, getCorrectM3u8File, getPlayList, getXMap} from "../../../util/m3u8Parse"
-import {deleteDirectory, makeDir} from "../../../util/fs"
+import {deleteDirectory, makeDir, getFileInfo} from "../../../util/fs"
 import { newLoadingRecord} from '../../processList/processList';
 import axios from '../../../util/source/axios'
 import path from "path";
@@ -21,11 +21,57 @@ ipcMain.handle('create-m3u8-download-task', createM3u8DownloadTask);
  * 创建m3u8下载任务
  */
 export async function createM3u8DownloadTask(event, url, name, outPath) {
-    return createNormalM3u8DownloadTask(url, name, outPath)
+    if(/m3u8Video[/|\\]tempM3u8Url/.test(url)) {
+        return createOtherM3u8DownloadTask(url, name, outPath)
+    } else {
+        return createNormalM3u8DownloadTask(url, name, outPath)
+    }
+}
+
+
+/**
+ * 存储在本地的m3u8文件进行解析
+ */
+async function createOtherM3u8DownloadTask(url, name, outPath) {
+    try {
+        const outputPath = path.resolve(outPath, `${name}.mp4`);
+        if (checkOutputFileNotExist(null, outputPath)) {
+            const tempPath = path.resolve(tempSourcePath, name);
+            makeDir(tempPath)
+            const info = JSON.parse(getFileInfo(url))
+            const m3u8Data = await downloadSecretKey(info.text, info.host, tempPath, null, info.cookie)
+            const urls = getPlayList(info.text)
+            const formatUrls = urls.map((item, index) => {
+                let url = ''
+                if (/^http/.test(item)) {
+                    url = item
+                } else {
+                    url = info.host + item
+                }
+                return {
+                    item, url, number: index + 1, cookie: info.cookie
+                }
+            })
+            await createNewLoadingRecord({
+                name: name,
+                m3u8Url: url,
+                m3u8Data: m3u8Data,
+                totalUrls: formatUrls,
+                outputPath: outputPath
+            })
+            return 'success'
+        } else {
+            return 'failure'
+        }
+    } catch (e) {
+        console.log(e)
+        return 'failure'
+    }
+
 }
 
 /**
- * 最基础的https的m3u8文件的处理
+ * https的链接m3u8地址的处理
  * @param url
  * @returns {*}
  */
@@ -256,8 +302,12 @@ async function deleteRecordAndFile(item) {
     const urlPath = item.urlPath;
     const tempPath = path.resolve(tempSourcePath, item.name);
     deleteDirectory(tempPath)
+    console.log(urlPath)
     if(urlPath && fs.existsSync(urlPath)) {
         fs.unlinkSync(urlPath)
+    }
+    if(/m3u8Video[/|\\]tempM3u8Url/.test(item.m3u8Url) && fs.existsSync(item.m3u8Url)) {
+        fs.unlinkSync(item.m3u8Url)
     }
 }
 
