@@ -6,6 +6,7 @@ export async function getMgTvDownloadLink(htmlUrl) {
         params: {
             "auth_mode": 1,
             "definitionType": 2,
+            // 系数决定清晰度： 3：720px 4:1080p
             "definition": 3,
             "fileSourceType": 1,
             video_id: videoId,

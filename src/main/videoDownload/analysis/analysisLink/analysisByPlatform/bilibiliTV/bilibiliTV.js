@@ -61,28 +61,44 @@ function getInfoFromNextData(data, epId) {
         const epiItem = episodes.find((item) => item.ep_id == epId)
         const avid = epiItem.aid;
         const cid = epiItem.cid;
-        const qn = 0
+        // 决定 质量，
+        const qn = 80
         const fnver = 0
         const fourk = 1
         const from_client = 'BROWSER'
         const ep_id = epId
         const drm_tech_type = 2
         const fnval = 4048
+        const gaia_source = ''
+        const session = 'c12064d51d13af1754d925c8b7fd7092'
         return axios.get('https://api.bilibili.com/pgc/player/web/v2/playurl?support_multi_audi=true', {
-            params: { avid, cid, qn, fnver, fourk, fnval, from_client, ep_id, drm_tech_type },
+            params: { avid, cid, qn, fnver, fourk, fnval, from_client, ep_id, drm_tech_type, session, gaia_source },
+            headers: {
+                'User-Agent':
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36',
+                referer: 'https://www.bilibili.com',
+            },
         })
             .then((res) => {
-                const videoInfo = res?.data?.result?.video_info
-                if(videoInfo) {
-                    const videoUrl =
-                        videoInfo?.dash?.video?.[0]?.baseUrl
-                        ?? (videoInfo?.dash?.video?.[0]?.backupUrl?.[0] ?? videoInfo?.dash?.video?.[0]?.backup_url?.[0]);
-                    const audioUrl =
-                        videoInfo?.dash?.audio?.[0]?.baseUrl
-                        ?? (videoInfo?.dash?.audio?.[0]?.backupUrl?.[0] ?? videoInfo?.dash?.audio?.[0]?.backup_url?.[0]);
-                    const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0].trim();
-                    if (videoUrl && audioUrl) {
-                        return {videoUrl, audioUrl, title};
+                const dashInfo = res?.data?.result?.video_info?.dash
+                if(dashInfo) {
+                    if(dashInfo.video && dashInfo.video.length > 0 && dashInfo.audio && dashInfo.audio.length > 0){
+                        const largeVideo = dashInfo.video.reduce(function(max, item) {
+                            return item.size > max.size ? item : max;
+                        });
+                        const videoUrl = largeVideo.baseUrl ?? (largeVideo.backupUrl?.[0] ?? largeVideo.backup_url?.[0]);
+                        const largeAudio = dashInfo.audio.reduce(function(max, item) {
+                            return item.size > max.size ? item : max;
+                        });
+                        const audioUrl = largeAudio.baseUrl ?? (largeAudio.backupUrl?.[0] ?? largeAudio.backup_url?.[0]);
+                        const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0].trim();
+                        if (videoUrl && audioUrl) {
+                            return {videoUrl, audioUrl, title};
+                        } else {
+                            return 'error'
+                        }
+                    } else {
+                        return 'error'
                     }
                 } else {
                     return 'error'

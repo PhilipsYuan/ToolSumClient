@@ -18,7 +18,8 @@ export async function getIQiYiTVDownloadLink (htmlUrl) {
     const bobCode = bob.replace(/:/g, '%3A').replace(/,/g, '%2C').replace(/{/g, '%7B').replace(/"/g, '%22').replace(/}/g, '%7D')
     const params = {
         tvid: tvId, // 需要处理
-        bid: '600', // 资源的格式
+        // 资源的质量
+        bid: '600',
         vid: '', // 需要处理
         src: '01080031010000000000',
         vt: 0,
