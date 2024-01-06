@@ -20,7 +20,8 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
         } else if(/bilibili\.com/.test(htmlUrl)) {
             return await getBiliTVDownloadLink(htmlUrl)
         } else if(/iqiyi\.com/.test(htmlUrl)) {
-            return await getIQiYiTVDownloadLink(htmlUrl)
+            const aa = await getIQiYiTVDownloadLink(htmlUrl)
+            return aa
         } else {
             return await getNormalM3u8Link(htmlUrl)
         }

@@ -10097,11 +10097,5 @@ function detail (module, exports, __webpack_require__) {
 export function getVf(str) {
     const json = {}
     detail(null, json)
-    // console.log('31cd4a1724cb77facad659e68ba82bcb')
-    // console.log(json.mmc(str))
     return json.mmc(str)
-    // console.log(aa.mmc(string))
 }
-
-// 31cd4a1724cb77facad659e68ba82bcb
-// test('/dash?tvid=7840870351087700&bid=300&vid=&src=01080031010000000000&vt=0&rs=1&uid=&ori=pcw&ps=0&k_uid=80f0bd95358b2c98c3107bd7091ebd5b&pt=0&d=0&s=&lid=0&cf=0&ct=0&authKey=06adccecd383a8be7e01193c90cea056&k_tag=1&dfp=a0ecf8e4c6312b4cb6b07659066e7caca9279d3d666b49de92ddf17cab892223b9&locale=zh_cn&pck=&k_err_retries=0&up=&sr=1&qd_v=5&tm=1704440130924&qdy=u&qds=0&ppt=0&k_ft1=706436220846852&k_ft4=1162321298202628&k_ft2=262335&k_ft5=134217729&k_ft6=128&k_ft7=755499012&fr_300=120_120_120_120_120_120&fr_500=120_120_120_120_120_120&fr_600=120_120_120_120_120_120&fr_800=120_120_120_120_120_120&fr_1020=120_120_120_120_120_120&bop=%7B%22version%22%3A%2210.0%22%2C%22dfp%22%3A%22a0ecf8e4c6312b4cb6b07659066e7caca9279d3d666b49de92ddf17cab892223b9%22%2C%22b_ft1%22%3A8%7D&ut=0')

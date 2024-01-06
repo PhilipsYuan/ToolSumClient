@@ -221,6 +221,10 @@ function combineVideo(tempPath, outputPath, loadingRecord) {
         maxBuffer: 5 * 1024 * 1024,
         shell: true
     });
+    exec_1.on('error', (error) => {
+        console.log('合成失败')
+        console.log(error)
+    })
     exec_1.stderr.on('data', (info) => {
         console.log('2222222：' + info)
     });
