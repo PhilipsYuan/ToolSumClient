@@ -1,5 +1,5 @@
 import {ipcMain, app, BrowserWindow} from "electron";
-import { getTencentTVDownloadLink } from './analysisByPlatform/tencentTV/tencentTV';
+import { getTencentTVDownloadLink } from './analysisByPlatform/tencentTvBack/tencentTVBack';
 import { getMgTvDownloadLink } from "./analysisByPlatform/mgtv/mgtv";
 import { getBiliTVDownloadLink } from "./analysisByPlatform/bilibiliTV/bilibiliTV";
 import { getNormalM3u8Link} from "./analysisByPlatform/normalM3u8/normalM3u8";
@@ -13,15 +13,14 @@ ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
  */
 async function getDownloadLinkFromUrl(event, htmlUrl) {
     try{
-        if(/v\.qq\.com/.test(htmlUrl)) {
-            return await getTencentTVDownloadLink(htmlUrl)
-        } else if(/mgtv\.com/.test(htmlUrl)) {
+        if(/mgtv\.com/.test(htmlUrl)) {
             return await getMgTvDownloadLink(htmlUrl)
         } else if(/bilibili\.com/.test(htmlUrl)) {
             return await getBiliTVDownloadLink(htmlUrl)
         } else if(/iqiyi\.com/.test(htmlUrl)) {
-            const aa = await getIQiYiTVDownloadLink(htmlUrl)
-            return aa
+            return await getIQiYiTVDownloadLink(htmlUrl)
+        } else if(/v\.qq\.com/.test(htmlUrl)) {
+            return await getTencentTVDownloadLink(htmlUrl)
         } else {
             return await getNormalM3u8Link(htmlUrl)
         }

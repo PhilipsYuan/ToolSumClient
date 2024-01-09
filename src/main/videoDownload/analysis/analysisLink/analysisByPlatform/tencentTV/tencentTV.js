@@ -4,29 +4,24 @@ import axios from "../../../../../util/source/axios"
 export async function getTencentTVDownloadLink(htmlUrl) {
     const adparam = getAdparam(htmlUrl);
     const buid = 'vinfoad';
-    console.log('buid', buid)
-    const vinfoParam = getVinfoParam(htmlUrl);
-    console.log('vinfoParam', vinfoParam)
+    const vinfoparam = getVinfoParam(htmlUrl);
+    // console.log('vinfoParam', vinfoParam)
 
     const sspAdParam = getSspAdParam(htmlUrl)
-    console.log('adparam', adparam)
+    console.log('sspAdParam', JSON.stringify(sspAdParam))
     const apiUrl = 'https://vd6.l.qq.com/proxyhttp'
-    return axios.get(apiUrl, {
+    return axios.post(apiUrl, {
+        adparam,
+        buid,
+        // adparam: 'adType=preAd&vid=v00468qjf9x&sspKey=quqs',
+        // sspAdParam,
+        // lcAdCookie: 'o_minduid=fVwFGT6WO7fSM_Kxkmy2k-a_8A_-yPY1; appuser=2C97CF079D0779DA; ad_session_id=dyalygcwbkh2c; Lturn=446; LKBturn=931; LPVLturn=780; LZCturn=220; LPSJturn=634; LBSturn=382; LVINturn=857; LPHLSturn=320; LDERturn=68; LPPBturn=799; LZTturn=713',
+        sspAdParam: '{"ad_scene":1,"pre_ad_params":{"ad_scene":1,"user_type":0,"video":{"base":{"vid":"v00468qjf9x","cid":"mzc00200u8ec6k4"},"is_live":false,"type_id":2,"referer":"","url":"https://v.qq.com/x/cover/mzc00200u8ec6k4/v00468qjf9x.html","flow_id":"929b4a8a5cd88f20ccfb0ad4a9e89d67","refresh_id":"c24c445eb2fbf5c58ce62c3c5875443d_1704679468","fmt":"fhd"},"platform":{"guid":"37c8fb814907dcf7","channel_id":0,"site":"web","platform":"in","from":0,"device":"pc","play_platform":10201,"pv_tag":"","support_click_scan_integration":true},"player":{"version":"1.30.2","plugin":"3.4.34","switch":1,"play_type":"0"},"token":{"type":0,"vuid":0,"vuser_session":"","app_id":"","open_id":"","access_token":""}}}',
+        vinfoparam: 'charge=0&otype=ojson&defnpayver=7&spau=1&spaudio=64&spwm=1&sphls=2&host=v.qq.com&refer=https%3A%2F%2Fv.qq.com%2Fx%2Fcover%2Fmzc00200u8ec6k4%2Fv00468qjf9x.html&ehost=https%3A%2F%2Fv.qq.com%2Fx%2Fcover%2Fmzc00200u8ec6k4%2Fv00468qjf9x.html&sphttps=1&encryptVer=9.2&cKey=8alBjVWLaRK1O81Orq2-LnCjnpb8Ocr0cPTcX60pzEul_f4uOWcoUmJMR8Gu77I5O1tC3BIG3moPCp7VHCeQghpmp7rG5tiHjLv_PnnatnPaZfOXktuBpd_IjbY_9NKe3V33_IMO58knFjOj-NmZhE-NjjawCzIHH6ORd8JBnDgsk_VKYDnwTGrhuLoxaemxuyx9-KN7KuuWUYWksGXkUJYnQqXKgvocvCDoQBrA1BuIgjfLp43cmgP-uznjzwSQ1MjCSuzbutdm6naXkOY9v_stgHmjfV3wx4D-7khhCIYycsXZ0JD4ub7u1vS9o5kLKNhigqA385zkM5y9kdohlahO1pXsdPlILeC8K6IW1om4tUcSYW4ji6IIFi0UxEMnE-N3aKdHfbo70YMs9OYogpb4DqPP6ci84QGf04Bx0t0IjZbMAkaYh6Wms331tvFELLm4-yKZdpgERQ9j8TjPzRRN9-6J5gwWT4y8HuzFJtWHAbXq0IOqA8k3VFmoXgDlCJ-KET6OxsBQzIUFBQUFBT3Mt9I&clip=4&guid=37c8fb814907dcf7&flowid=929b4a8a5cd88f20ccfb0ad4a9e89d67&platform=10201&sdtfrom=v1010&appVer=1.30.2&unid=&auth_from=&auth_ext=&vid=v00468qjf9x&defn=fhd&fhdswitch=0&dtype=3&spsrt=2&tm=1704681723&lang_code=0&logintoken=&spvvpay=1&spadseg=3&spav1=15&hevclv=28&spsfrhdr=100&spvideo=1028&spm3u8tag=67&spmasterm3u8=3&drm=40'
+    }, {
         headers: {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36¬",
             referer: 'https://v.qq.com',
-        },
-        params: {
-            // buid: buid,
-            // adparam: adparam,
-            // vinfoparam: vinfoParam,
-            // // sspAdParam: JSON.stringify(sspAdParam),
-            // lcAdCookie: "o_minduid=fVwFGT6WO7fSM_Kxkmy2k-a_8A_-yPY1; appuser=2C97CF079D0779DA; ad_session_id=dyalygcwbkh2c; LZCturn=791; LPSJturn=643; LBSturn=157; LVINturn=429; LPHLSturn=408; LDERturn=784; full_screen_cid_pause_times=1; full_screen_pause_times=1; LZTturn=167; Lturn=937; LKBturn=192; LPVLturn=189; LPLFturn=598; LPPBturn=705",
-        "vinfoparam": "charge=0&otype=ojson&defnpayver=7&spau=1&spaudio=64&spwm=1&sphls=2&host=v.qq.com&refer=https%3A%2F%2Fv.qq.com%2Fx%2Fcover%2Fmzc00200ekm0uc8%2Fj00468dc2og.html&ehost=https%3A%2F%2Fv.qq.com%2Fx%2Fcover%2Fmzc00200ekm0uc8%2Fj00468dc2og.html&sphttps=1&encryptVer=9.2&cKey=TCPOougB5j21yM1Orq2-LnCjnpb8Ocr0cPTcQCJJzEul_f4uOWcoUmJPR8Gy77I5O1tX1UZQwWr_Cp7VHCeQghpmp7rG5tiHjLv_PnnatnPaZfOXktuBpd_IneU2p5GW0V3r_IMO58kyFjOj-NmZhE-NjjawCzIHH6ORd8JBnDgsk_VKYDnwTGrhuLoxaemxuyx9-KN7KuuWUYWwiX7uSsBkDK_qlv9BvC71ChrA2gKogC-Pt8O57nCcynqx0HGX1bmdCrCHjbMFjEGHpOlwtqN-ln2XYBblxoK743tKEttzPdfN1Lz_quvvxbulqoUFecB0wfll-YS9Ofj5h9p41aZWnIzrfuBZY6SvHftP2Mir5BxcJDUCm-YaFnBR1wI8SecmJekIcokpkphz7bhow-z9eZHVqpK-6FPRhNoy34lI5tz8EgLDgPf35Xn4tvNMJu-t9nauZpMEFFphoTTPzxRE86_Bt14RSoG7Go_pZoDaUuC0lJ7rD5xlAmOBeUlTCB_gZ2CQ559ml3Rc9pnbg4ARNV24KWIJeetNSAQEBAR76Kqz&clip=4&guid=37c8fb814907dcf7&flowid=1c5ff69e99a1d0c304affffe98a46e93&platform=10201&sdtfrom=v1010&appVer=1.30.1&unid=&auth_from=&auth_ext=&vid=j00468dc2og&defn=fhd&fhdswitch=0&dtype=3&spsrt=2&tm=1703210907&lang_code=0&logintoken=&spvvpay=1&spadseg=3&spav1=15&hevclv=28&spsfrhdr=100&spvideo=1028&spm3u8tag=67&spmasterm3u8=3&drm=40",
-        "buid": "vinfoad",
-        // "sspAdParam": "{\"ad_scene\":1,\"pre_ad_params\":{\"ad_scene\":1,\"user_type\":0,\"video\":{\"base\":{\"vid\":\"j00468dc2og\",\"cid\":\"mzc00200ekm0uc8\"},\"is_live\":false,\"type_id\":3,\"referer\":\"https://v.qq.com/\",\"url\":\"https://v.qq.com/x/cover/mzc00200ekm0uc8/j00468dc2og.html\",\"flow_id\":\"1c5ff69e99a1d0c304affffe98a46e93\",\"refresh_id\":\"851f4c68497cd4e013512a9bdb562e72_1703144964\",\"fmt\":\"fhd\"},\"platform\":{\"guid\":\"37c8fb814907dcf7\",\"channel_id\":0,\"site\":\"web\",\"platform\":\"in\",\"from\":0,\"device\":\"pc\",\"play_platform\":10201,\"pv_tag\":\"\",\"support_click_scan_integration\":true},\"player\":{\"version\":\"1.29.13\",\"plugin\":\"3.4.33\",\"switch\":1,\"play_type\":\"0\"},\"token\":{\"type\":0,\"vuid\":0,\"vuser_session\":\"\",\"app_id\":\"\",\"open_id\":\"\",\"access_token\":\"\"}}}",
-        "adparam": "adType=preAd&vid=j00468dc2og&sspKey=ocdl",
-        // "lcAdCookie": "o_minduid=fVwFGT6WO7fSM_Kxkmy2k-a_8A_-yPY1; appuser=2C97CF079D0779DA; ad_session_id=dyalygcwbkh2c; LPLFturn=599; Lturn=941; LKBturn=196; LPVLturn=193; LZCturn=795; LPSJturn=647; LBSturn=161; LVINturn=433; LPHLSturn=412; LDERturn=788; LPPBturn=709; LZTturn=171"
         }
     })
         .then((res) => {
@@ -38,7 +33,7 @@ export async function getTencentTVDownloadLink(htmlUrl) {
 function getAdparam (htmlUrl) {
     const adType = "preAd";
     const vid = getVid(htmlUrl)
-    const sspKey = 'ghuc';
+    const sspKey = 'quqs';
     return `adType=${adType}&vid=${vid}&sspKey=${sspKey}`
 }
 
@@ -102,6 +97,14 @@ function getCid(htmlUrl) {
     return cid
 }
 
+function createGUID(e) {
+    void 0 === e && (e = 32);
+    for (var t = e || 32, o = "", i = 1; i <= t; i++) {
+        o += Math.floor(16 * Math.random()).toString(16)
+    }
+    return o
+}
+
 function getSspAdParam(htmlUrl) {
      return {
          "ad_scene": 1,
@@ -133,16 +136,4 @@ function getSspAdParam(htmlUrl) {
              "token": {"type": 0, "vuid": 0, "vuser_session": "", "app_id": "", "open_id": "", "access_token": ""}
          }
      }
-}
-
-function createGUID(a) {
-    a = a || 32;
-    for (var b = "", c = 1; c <= a; c++) {
-        var d = Math.floor(16 * Math.random()).toString(16);
-        b += d
-    }
-    return b
-
-    return A[i(154)][i(138)]([0, 2, , 3]),
-        [4, null === (t = (e = this[i(163)][i(157)])[i(165)]) || void 0 === t ? void 0 : t[i(161)](e, this[i(163)])];
 }
