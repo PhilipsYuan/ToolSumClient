@@ -7,7 +7,7 @@ import os from "os";
 import childProcess from "child_process";
 import {deleteDirectory, makeDir} from "../../../util/fs";
 import {newFinishedRecord} from "../../finishList/finishList";
-import {sendTips} from "../../../util/source/electronOperations";
+import {sendTips} from "../../../util/electronOperations";
 import fs from 'fs'
 import {m3u8VideoDownloadingListDB} from "../../../db/db";
 

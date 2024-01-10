@@ -24,6 +24,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getSearchResult: (key) => ipcRenderer.invoke('get-search-result', key),
     openSearchWindow: (key) => ipcRenderer.invoke('open-search-window', key),
     createVideoDownloadTask: (url, name, outPath, audioUrl) => ipcRenderer.invoke('create-video-download-task', url, name, outPath, audioUrl),
+    checkFileIsExist: (filePath) => ipcRenderer.invoke('check-file-is-exist', filePath),
 
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),

@@ -1,6 +1,6 @@
 import {app, BrowserWindow, ipcMain} from "electron";
 import puppeteer from "../../../util/source/puppeteer-core";
-import {sendTips} from "../../../util/source/electronOperations";
+import {sendTips} from "../../../util/electronOperations";
 import path from "path";
 import {addWindow, deleteWindow, getWindow} from "../../../service";
 

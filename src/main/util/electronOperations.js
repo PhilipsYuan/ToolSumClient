@@ -4,6 +4,8 @@ import fs from "fs";
 ipcMain.handle('open-directory-dialog', openDirectoryDialog)
 ipcMain.handle('go-to-directory', goToDirectory)
 ipcMain.handle('open-directory-and-file', openDirectoryAndFile)
+ipcMain.handle('check-file-is-exist', checkFileIsExist)
+
 /**
  * 后端向前端推送信息
  * @param name
@@ -55,4 +57,12 @@ export async function openDirectoryAndFile(event, path) {
         return 'failure'
     }
 
+}
+
+/**
+ * 检测某个文件是否存在
+ * @returns {Promise<void>}
+ */
+export function checkFileIsExist(event, filePath) {
+    return fs.existsSync(filePath)
 }
