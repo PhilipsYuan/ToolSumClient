@@ -112,6 +112,12 @@ export default {
         if(hasBenefit) {
           if(await this.checkDownloadCondition()) {
             this.createLoading = true
+            if(/m3u8Video[/|\\]tempM3u8Url/.test(this.form.m3u8Url)) {
+              const isExist = await window.electronAPI.checkFileIsExist(this.form.m3u8Url)
+              if(!isExist) {
+                await this.startAnalysis()
+              }
+            }
             const result = await window.electronAPI.createVideoDownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath, this.form.audioUrl)
             if(result === 'success') {
               useService('getM3u8LoadingList')
@@ -252,9 +258,6 @@ export default {
       }
       this.form.htmlUrl = url;
       this.form.name = name || '';
-    },
-    downloadMagnet() {
-      window.electronAPI.createMagnetDownloadTask()
     }
   }
 }

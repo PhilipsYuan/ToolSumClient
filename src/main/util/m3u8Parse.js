@@ -1,4 +1,4 @@
-import {sendTips} from './source/electronOperations'
+import {sendTips} from './electronOperations'
 import axios from './source/axios'
 import { getHeaders } from './httpHeaders'
 

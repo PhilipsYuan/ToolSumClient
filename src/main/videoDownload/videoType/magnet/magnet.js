@@ -1,7 +1,7 @@
 import WebTorrent from '../../../util/source/webtorrent'
 import {deleteLoadingRecordAndFile, newLoadingRecord} from "../../processList/processList";
 import {newFinishedRecord} from "../../finishList/finishList";
-import {sendTips} from "../../../util/source/electronOperations";
+import {sendTips} from "../../../util/electronOperations";
 import path from "path";
 import {deleteDirectory, makeDir} from "../../../util/fs";
 import {m3u8VideoDownloadingListDB} from "../../../db/db";

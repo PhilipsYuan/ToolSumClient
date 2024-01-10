@@ -1,7 +1,7 @@
 import { m3u8VideoDownloadingListDB } from "../../db/db";
 import {app, ipcMain} from "electron";
 import { makeDir} from "../../util/fs";
-import {sendTips} from "../../util/source/electronOperations";
+import {sendTips} from "../../util/electronOperations";
 import path from "path";
 import {
     continueM3u8DownloadVideo,

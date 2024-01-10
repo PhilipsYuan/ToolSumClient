@@ -47,12 +47,15 @@ async function getM3u8Link(htmlUrl) {
     async function responseFun (response) {
         const url = response.url()
         if(/qq\.com\/proxyhttp/.test(url)) {
-            const json = await response.json()
-            const json2 = JSON.parse(json.vinfo)
-            if(json2?.vl?.vi[0].ul?.m3u8) {
-                const vid = getVid(htmlUrl)
-                m3u8Url = await createM3u8Url(json2?.vl?.vi[0].ul?.m3u8, vid, json2?.vl?.vi[0].ul.ui[0].url)
-                title = json2?.vl?.vi[0].ti
+            const post = JSON.parse(response.request().postData())
+            if(post.buid === 'vinfoad') {
+                const json = await response.json()
+                const json2 = JSON.parse(json.vinfo)
+                if(json2?.vl?.vi[0].ul?.m3u8) {
+                    const vid = getVid(htmlUrl)
+                    m3u8Url = await createM3u8Url(json2?.vl?.vi[0].ul?.m3u8, vid, json2?.vl?.vi[0].ul.ui[0].url)
+                    title = json2?.vl?.vi[0].ti
+                }
             }
         }
     }

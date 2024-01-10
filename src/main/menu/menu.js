@@ -1,6 +1,6 @@
 import {Menu, app} from "electron";
 import {m3u8VideoDownloadingListDB} from "../db/db";
-import { sendTips } from "../util/source/electronOperations";
+import { sendTips } from "../util/electronOperations";
 import {updateWork} from "../videoDownload/videoType/m3u8Video/workManager";
 import {pauseMagnetDownloadVideo} from "../videoDownload/videoType/magnet/magnet";
 import {pauseM3u8DownloadVideo} from "../videoDownload/videoType/m3u8Video/m3u8Video";

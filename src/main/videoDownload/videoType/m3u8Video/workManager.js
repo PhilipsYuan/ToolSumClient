@@ -1,6 +1,6 @@
 import {Worker} from 'worker_threads'
 import {app} from "electron";
-import {sendTips} from "../../../util/source/electronOperations";
+import {sendTips} from "../../../util/electronOperations";
 import {deleteLoadingRecordAndFile} from "../../processList/processList";
 import {newFinishedRecord} from "../../finishList/finishList";
 import { savePauseDownloadInfo } from "./m3u8Video"
