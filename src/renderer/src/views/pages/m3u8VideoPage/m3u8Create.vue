@@ -77,7 +77,7 @@ export default {
     return {
       isLogin: false,
       form: {
-        htmlUrl: "",
+        htmlUrl: "https://v.qq.com/x/cover/mzc00200whsp9r6/a0047l69jnp.html",
         m3u8Url: "",
         name: "",
         audioUrl: ''

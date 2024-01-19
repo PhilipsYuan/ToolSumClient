@@ -4,6 +4,7 @@ import path from "path";
 import {makeDir} from "../../../../../util/fs";
 import fs from "fs";
 import {getPlayList} from "../../../../../util/m3u8Parse";
+import { decryptProcess } from "./getVinFo";
 
 /**
  * 如果是免费的视频，m3u8文件在proxyhttp直接获取。
@@ -51,6 +52,11 @@ async function getM3u8Link(htmlUrl) {
             if(post.buid === 'vinfoad') {
                 const json = await response.json()
                 const json2 = JSON.parse(json.vinfo)
+
+                if(json2.anc) {
+                    const result = await decryptProcess(json.vinfo)
+                    console.log(result)
+                }
                 if(json2?.vl?.vi[0].ul?.m3u8) {
                     const vid = getVid(htmlUrl)
                     m3u8Url = await createM3u8Url(json2?.vl?.vi[0].ul?.m3u8, vid, json2?.vl?.vi[0].ul.ui[0].url)
