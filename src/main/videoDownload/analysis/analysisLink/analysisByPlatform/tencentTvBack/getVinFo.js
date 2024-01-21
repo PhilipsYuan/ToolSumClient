@@ -709,17 +709,14 @@ async function func2(param1, param2, data) {
 }
 
 async function func3(param1, param2, data) {
-    console.log(11111, param1, param2)
     const key1 = toUint8Array2(param1)
     const key2 = toUint8Array2(param2)
     const aa = await subtle.importKey('raw', key1, {"name": "AES-CBC"}, false, ["decrypt"]);
-
     const bb = await subtle.decrypt(
         { name: "AES-CBC", iv: key2 },
         aa,
         data
     )
-    console.log(111111111)
     return bb
 }
 
@@ -727,7 +724,6 @@ export async function decryptProcess (vinfo) {
     const playData = JSON.parse(vinfo)
     const playJson = JSON.parse(fromUint8Array(toUint8Array(playData.anc)))
     const rcUnit8Array = toUint8Array(playJson.rc)
-
     const rcArrayBuffer = await func1(rcUnit8Array)
     const rcInfo = fromUint8Array(rcArrayBuffer)
     const param1 = JSON.parse(rcInfo).algo_params[0]
@@ -737,34 +733,68 @@ export async function decryptProcess (vinfo) {
     const m5hAlgo = algListJson.find((item) => item.algo_id === 'm5h0zchrh5')
     const m5hKey1 = m5hAlgo.algo_params[0];
     const m5hKey2 = m5hAlgo.algo_params[1];
-    const jsonList = await func3(m5hKey1, m5hKey2, toUint8Array(playJson.anc))
-    // 转换数据
     const otherAlgo = algListJson.find((item) => item.algo_id !== 'm5h0zchrh5')
-    const { wasmInstance, dataView, un167} = await generateWasm()
+    // 转换数据
     let result = null
-    if(otherAlgo.algo_params.length < 2) {
+    if(otherAlgo) {
+        const { wasmInstance, dataView, un167} = await generateWasm()
+        if(otherAlgo.algo_params.length < 2) {
+            const m5hIndex = algListJson.findIndex((item) => item.algo_id === 'm5h0zchrh5')
+            if(m5hIndex == 0) {
+                const key24 = otherAlgo.algo_params[0]
+                const key24Array = stringToUint8Array(key24, 24)
+                setBufferValue(dataView, key24Array, 69176)
+                const resultUint8Array = toUint8Array(playJson.anc)
+                setBufferValue(dataView, resultUint8Array, 69208)
+                wasmInstance.j73(24)
+                wasmInstance.j73(resultUint8Array.length)
+                const value2 = wasmInstance.T15(69208, resultUint8Array.length, 69176)
+                const jsonList = new Uint8Array(un167).slice(value2, value2 + resultUint8Array.length)
+                result = await func3(m5hKey1, m5hKey2, jsonList)
+            } else {
+                const jsonList = await func3(m5hKey1, m5hKey2, toUint8Array(playJson.anc))
+                const key24 = otherAlgo.algo_params[0]
+                const key24Array = stringToUint8Array(key24, 24)
+                setBufferValue(dataView, key24Array, 69176)
+                const resultUint8Array = new Uint8Array(jsonList)
+                setBufferValue(dataView, resultUint8Array, 69208)
+                wasmInstance.j73(24)
+                wasmInstance.j73(resultUint8Array.length)
+                const value2 = wasmInstance.T15(69208, resultUint8Array.length, 69176)
+                result = new Uint8Array(un167).slice(value2, value2 + resultUint8Array.length)
+            }
 
-        const key24 = otherAlgo.algo_params[0]
-        const key24Array = stringToUint8Array(key24, 24)
-        setBufferValue(dataView, key24Array, 69176)
-        const resultUint8Array = new Uint8Array(jsonList)
-        // setBufferValue(dataView, resultUint8Array, 69208)
-        const value2 = wasmInstance.T15(69208, resultUint8Array.length, 69176)
-        // const mm = wasmInstance.nMY(69176)
-        // wasmInstance.nMY(69208)
-        // wasmInstance.nMY(128104)
-        result = new Uint8Array(un167).slice(value2, value2 + resultUint8Array.length)
+        } else {
+            const m5hIndex = algListJson.findIndex((item) => item.algo_id === 'm5h0zchrh5')
+            if(m5hIndex == 0) {
+                const key40 = otherAlgo.algo_params[0]
+                const key20 = otherAlgo.algo_params[1]
+                const key40Array = stringToUint8Array(key40, 40)
+                const key20Array = stringToUint8Array(key20, 20)
+                setBufferValue(dataView, key40Array, 69176)
+                setBufferValue(dataView, key20Array, 69224)
+                const resultUint8Array = toUint8Array(playJson.anc)
+                setBufferValue(dataView, resultUint8Array, 69248)
+                const value2 = wasmInstance.FhV(69248, resultUint8Array.length, 69176, 69224)
+                const jsonList = new Uint8Array(un167).slice(value2, value2 + resultUint8Array.length)
+                result = await func3(m5hKey1, m5hKey2, jsonList)
+            } else {
+                const jsonList = await func3(m5hKey1, m5hKey2, toUint8Array(playJson.anc))
+                const key40 = otherAlgo.algo_params[0]
+                const key20 = otherAlgo.algo_params[1]
+                const key40Array = stringToUint8Array(key40, 40)
+                const key20Array = stringToUint8Array(key20, 20)
+                setBufferValue(dataView, key40Array, 69176)
+                setBufferValue(dataView, key20Array, 69224)
+                const resultUint8Array = new Uint8Array(jsonList)
+                setBufferValue(dataView, resultUint8Array, 69248)
+                const value2 = wasmInstance.FhV(69248, resultUint8Array.length, 69176, 69224)
+                result = new Uint8Array(un167).slice(value2, value2 + resultUint8Array.length)
+            }
+        }
     } else {
-        const key40 = otherAlgo.algo_params[0]
-        const key20 = otherAlgo.algo_params[1]
-        const key40Array = stringToUint8Array(key40, 40)
-        const key20Array = stringToUint8Array(key20, 20)
-        setBufferValue(dataView, key40Array, 69176)
-        setBufferValue(dataView, key20Array, 69224)
-        const resultUint8Array = new Uint8Array(jsonList)
-        setBufferValue(dataView, resultUint8Array, 69248)
-        const value2 = wasmInstance.FhV(69248, resultUint8Array.length, 69176, 69224)
-        result = new Uint8Array(un167).slice(value2, value2 + resultUint8Array.length)
+        const jsonList = await func3(m5hKey1, m5hKey2, toUint8Array(playJson.anc))
+        result = fromUint8Array(jsonList)
     }
     return fromUint8Array(result)
 }
