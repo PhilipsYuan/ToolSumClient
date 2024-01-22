@@ -15,7 +15,6 @@ export async function getIQiYiTVDownloadLink (htmlUrl) {
     const { tvId, vid, title, payMark } = await getVid(htmlUrl)
     if(payMark == 1) {
         const result  = await axios.get('http://localhost:8083/mini/systemConfig/ic')
-        console.log(result.data.result.cookie)
         return getFreeVideo(tvId, title, result.data.result.cookie)
     } else  if(payMark == 0) {
         return getFreeVideo(tvId, title)
