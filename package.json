@@ -61,6 +61,7 @@
     "unbzip2-stream": "^1.4.3",
     "unplugin-auto-import": "^0.16.4",
     "unplugin-vue-components": "^0.25.0",
+    "video.js": "^8.9.0",
     "vite": "^4.2.1",
     "vite-plugin-wasm": "^3.3.0",
     "vue": "^3.2.47",

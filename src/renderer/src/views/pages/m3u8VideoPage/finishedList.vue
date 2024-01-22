@@ -38,7 +38,8 @@
                 </el-icon>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item v-if="item.isExist" @click="openVideoFile(item.filePath)">播放</el-dropdown-item>
+                    <el-dropdown-item v-if="item.isExist" @click="playVideo(item.filePath)">播放</el-dropdown-item>
+                    <el-dropdown-item v-if="item.isExist" @click="openVideoFile(item.filePath)">系统默认播放</el-dropdown-item>
                     <el-dropdown-item @click="copyLink(item.m3u8Url)">复制资源链接</el-dropdown-item>
                     <el-dropdown-item @click="deleteRecord(item.id)">删除记录</el-dropdown-item>
                     <el-dropdown-item @click="deleteRecordAndFile(item.id)" v-if="item.isExist">删除记录和文件
@@ -76,6 +77,9 @@ export default {
        this.$message.error("无法打开，文件已经丢失！")
        await this.getFinishList()
      }
+    },
+    playVideo(filePath) {
+      window.electronAPI.openVideoPlayPage(filePath);
     },
     async openVideoFile(filePath) {
       const result = await window.electronAPI.openDirectoryAndFile(filePath)

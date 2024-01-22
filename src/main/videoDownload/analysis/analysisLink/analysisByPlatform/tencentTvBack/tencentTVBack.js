@@ -4,6 +4,7 @@ import path from "path";
 import {makeDir} from "../../../../../util/fs";
 import fs from "fs";
 import {getPlayList} from "../../../../../util/m3u8Parse";
+import { decryptProcess } from "./getVinFo";
 
 /**
  * 如果是免费的视频，m3u8文件在proxyhttp直接获取。
@@ -39,7 +40,7 @@ async function getM3u8Link(htmlUrl) {
             allowRunningInsecureContent: true,
             experimentalFeatures: true,
             webviewTag: true,
-            autoplayPolicy: "document-user-activation-required"
+            autoplayPolicy: "user-gesture-required"
         }
     });
     const page = await global.pie.getPage(browser, window)
@@ -51,8 +52,14 @@ async function getM3u8Link(htmlUrl) {
             if(post.buid === 'vinfoad') {
                 const json = await response.json()
                 const json2 = JSON.parse(json.vinfo)
-                if(json2?.vl?.vi[0].ul?.m3u8) {
-                    const vid = getVid(htmlUrl)
+                const vid = getVid(htmlUrl)
+                if(json2.anc) {
+                    const result = await decryptProcess(json.vinfo) || ''
+                    const m3u8String = result.match(/(#EXTM3U.*#EXT-X-ENDLIST)/)[1].replace(/\\n/g, '\n').replace(/\\u0026/g, '&');
+                    const host = result.match(/"ui":\[{"url":"([^"]*)"/)[1];
+                    m3u8Url = await createM3u8Url(m3u8String, vid, host)
+                    title = result.match(/"ti":"([^"]*)"/)[1]
+                } else if(json2?.vl?.vi[0].ul?.m3u8) {
                     m3u8Url = await createM3u8Url(json2?.vl?.vi[0].ul?.m3u8, vid, json2?.vl?.vi[0].ul.ui[0].url)
                     title = json2?.vl?.vi[0].ti
                 }
@@ -74,7 +81,7 @@ async function getM3u8Link(htmlUrl) {
                     let index = 0
                     const interval = setInterval(() => {
                         console.log(`检测次数：${index + 1}`)
-                        if (m3u8Url || index > 10) {
+                        if (m3u8Url || index > 4) {
                             page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
