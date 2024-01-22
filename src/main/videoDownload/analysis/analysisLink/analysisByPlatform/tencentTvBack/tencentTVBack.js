@@ -40,7 +40,7 @@ async function getM3u8Link(htmlUrl) {
             allowRunningInsecureContent: true,
             experimentalFeatures: true,
             webviewTag: true,
-            autoplayPolicy: "document-user-activation-required"
+            autoplayPolicy: "user-gesture-required"
         }
     });
     const page = await global.pie.getPage(browser, window)
@@ -81,7 +81,7 @@ async function getM3u8Link(htmlUrl) {
                     let index = 0
                     const interval = setInterval(() => {
                         console.log(`检测次数：${index + 1}`)
-                        if (m3u8Url || index > 1) {
+                        if (m3u8Url || index > 4) {
                             page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
