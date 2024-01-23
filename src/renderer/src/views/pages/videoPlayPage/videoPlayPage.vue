@@ -2,11 +2,12 @@
   <div>
     here
     <video ref="myVideo" width="640" height="264"></video>
+    <el-button >清空</el-button>
   </div>
 </template>
 
 <script>
-import 'video.js/dist/video-js.min.css'
+import 'video.js/dist/video-js.css'
 import videoJs from 'video.js'
 // import 'video.js/dist/lang/zh-CN'
 import {getUrlParams} from "../../../utils/url";
@@ -31,14 +32,14 @@ export default {
         autoplay: false,
         controls: true,
         preload: 'auto',
-        playbackRates: [0.2, 0.5, 1, 1.5, 2, 2.5, 3],
-        language: 'zh-CN',
-        controlBar: {
-          remainingTimeDisplay: {
-            displayNegative: false
-          }
-        },
-        autoSetup: false,
+        // playbackRates: [0.2, 0.5, 1, 1.5, 2, 2.5, 3],
+        // language: 'zh-CN',
+        // controlBar: {
+        //   remainingTimeDisplay: {
+        //     displayNegative: false
+        //   }
+        // },
+        // autoSetup: false,
         // controlBar: {
         //   skipButtons: {
         //     backward: 10

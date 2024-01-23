@@ -77,7 +77,7 @@ export default {
     return {
       isLogin: false,
       form: {
-        htmlUrl: "",
+        htmlUrl: "https://www.iqiyi.com/v_1xh7nzm6vlk.html?vfrm=new_personalcenter&vfrmblk=record_all_week&vfrmrst=click_picture",
         m3u8Url: "",
         name: "",
         audioUrl: ''
