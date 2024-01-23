@@ -14,6 +14,7 @@ makeDir(m3u8UrlMgPath)
 export async function getIQiYiTVDownloadLink (htmlUrl) {
     const { tvId, vid, title, payMark } = await getVid(htmlUrl)
     if(payMark == 1) {
+        // 获取vip视频
         const result  = await axios.get('http://localhost:8083/mini/systemConfig/ic')
         return getFreeVideo(tvId, title, result.data.result.cookie)
     } else  if(payMark == 0) {
@@ -21,14 +22,6 @@ export async function getIQiYiTVDownloadLink (htmlUrl) {
     } else {
         return 'error'
     }
-    return getFreeVideo(tvId, title)
-}
-
-/**
- * 获取vip视频
- */
-function getVipVideo() {
-
 }
 
 /**
