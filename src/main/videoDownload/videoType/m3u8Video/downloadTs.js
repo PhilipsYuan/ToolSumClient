@@ -153,11 +153,16 @@ async function loopDownloadTs(notLoadUrls, m3u8Data, tempPath, loadingRecord) {
 
 async function getFileAndStore(urlItem, tempPath, loadingRecord) {
     const headers = getHeaders(urlItem.url)
+    const {url: perfectUrl, range} = convertPerfectUrl(urlItem.url)
     headers["Content-Type"] = "application/octet-stream"
+    if(range) {
+        headers["Accept-Ranges"] = 'bytes';
+        headers["Range"] = `bytes=${range}`;
+    }
     if(urlItem.cookie) {
         headers.Cookie = urlItem.cookie
     }
-    return axios.get(urlItem.url, {
+    return axios.get(perfectUrl, {
         cancelToken: source.token,
         timeout: 10000,
         responseType: "arraybuffer",
@@ -250,4 +255,19 @@ function updateProcessPercent(loadingRecord, num) {
         value: loadingRecord.successTsNum
     })
     sendProcess(loadingRecord)
+}
+
+/**
+ * 矫正Url
+ */
+function convertPerfectUrl(url) {
+    if(/&mediaRange=/.test(url)) {
+        const match = url.match(/&mediaRange=(\d+and\d+)/)
+        const matchString = match[0]
+        const range = match[1].replace('and', '-')
+        const perfectUrl = url.replace(matchString, '')
+        return { url: perfectUrl, range}
+    } else {
+        return {url}
+    }
 }

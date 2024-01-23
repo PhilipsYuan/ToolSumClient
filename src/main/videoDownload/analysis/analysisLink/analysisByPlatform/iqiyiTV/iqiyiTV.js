@@ -7,6 +7,7 @@ import path from "path";
 import dayjs from 'dayjs'
 import host from "../../../../../../renderer/src/utils/const/host";
 import {makeDir} from "../../../../../util/fs";
+import { mpdToM3u8 } from './mpdToM3u8'
 const basePath = app.getPath('userData')
 const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
 makeDir(tempM3u8UrlPath)
@@ -100,8 +101,15 @@ function getFreeVideo(tvId, title, cookie) {
             const videos = res.data.data?.program?.video
             if(videos) {
                 const text = videos.find((item) => item.m3u8).m3u8
-                const m3u8Url = await createM3u8Url(text, tvId)
-                return {videoUrl: m3u8Url, title: title}
+                if(/<SegmentList/.test(text)) {
+                    const m3u8String = await mpdToM3u8(text)
+                    const m3u8Url = await createM3u8Url(m3u8String, tvId)
+                    return {videoUrl: m3u8Url, title: title}
+                } else {
+                    const m3u8Url = await createM3u8Url(text, tvId)
+                    return {videoUrl: m3u8Url, title: title}
+                }
+
             } else {
                 return 'error'
             }
