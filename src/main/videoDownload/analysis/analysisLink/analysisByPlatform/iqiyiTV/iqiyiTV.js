@@ -4,6 +4,8 @@ import { getVf } from "./mmc";
 import { app } from 'electron'
 import fs from 'fs';
 import path from "path";
+import dayjs from 'dayjs'
+import host from "../../../../../../renderer/src/utils/const/host";
 import {makeDir} from "../../../../../util/fs";
 const basePath = app.getPath('userData')
 const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
@@ -11,12 +13,14 @@ makeDir(tempM3u8UrlPath)
 const m3u8UrlMgPath = path.resolve(tempM3u8UrlPath, 'iqiyi')
 makeDir(m3u8UrlMgPath)
 
+let cookieInfo = null
+
 export async function getIQiYiTVDownloadLink (htmlUrl) {
     const { tvId, vid, title, payMark } = await getVid(htmlUrl)
     if(payMark == 1) {
         // 获取vip视频
-        const result  = await axios.get('http://localhost:8083/mini/systemConfig/ic')
-        return getFreeVideo(tvId, title, result.data.result.cookie)
+        const cookie  = await getCookieInfo()
+        return getFreeVideo(tvId, title, cookie)
     } else  if(payMark == 0) {
         return getFreeVideo(tvId, title)
     } else {
@@ -36,7 +40,7 @@ function getFreeVideo(tvId, title, cookie) {
     const bobCode = bob.replace(/:/g, '%3A').replace(/,/g, '%2C').replace(/{/g, '%7B').replace(/"/g, '%22').replace(/}/g, '%7D')
     const params = {
         tvid: tvId, // 需要处理
-        bid: '600', // 资源的格式
+        bid: '800', // 资源的格式
         vid: '', // 需要处理
         src: '01080031010000000000',
         vt: 0,
@@ -142,3 +146,25 @@ async function createM3u8Url(m3u8Text, id) {
     return filePath
 }
 
+/**
+ * 获取iqiyi的cookie
+ * @returns {Promise<*>}
+ */
+async function getCookieInfo() {
+    const currentTime = dayjs().format('YYYY-MM-DD')
+    if(cookieInfo && dayjs(currentTime).isBefore(dayjs(cookieInfo.expiredTime))
+    && dayjs(currentTime).isBefore(dayjs(cookieInfo.saveTime))) {
+        return cookieInfo.cookie;
+    } else {
+        const response = await axios.get(`${host.server}mini/systemConfig/ic`)
+        const cookie = response.data.result.cookie
+        const expiredTime = response.data.result.expiredTime
+        const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
+        cookieInfo = {
+            cookie,
+            expiredTime,
+            saveTime
+        }
+        return cookie;
+    }
+}
