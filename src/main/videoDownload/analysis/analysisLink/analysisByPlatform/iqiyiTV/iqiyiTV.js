@@ -4,6 +4,8 @@ import { getVf } from "./mmc";
 import { app } from 'electron'
 import fs from 'fs';
 import path from "path";
+import dayjs from 'dayjs'
+import host from "../../../../../../renderer/src/utils/const/host";
 import {makeDir} from "../../../../../util/fs";
 const basePath = app.getPath('userData')
 const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
@@ -11,14 +13,34 @@ makeDir(tempM3u8UrlPath)
 const m3u8UrlMgPath = path.resolve(tempM3u8UrlPath, 'iqiyi')
 makeDir(m3u8UrlMgPath)
 
+let cookieInfo = null
+
 export async function getIQiYiTVDownloadLink (htmlUrl) {
-    const { tvId, vid, title } = await getVid(htmlUrl)
+    const { tvId, vid, title, payMark } = await getVid(htmlUrl)
+    if(payMark == 1) {
+        // 获取vip视频
+        const cookie  = await getCookieInfo()
+        return getFreeVideo(tvId, title, cookie)
+    } else  if(payMark == 0) {
+        return getFreeVideo(tvId, title)
+    } else {
+        return 'error'
+    }
+}
+
+/**
+ * 获取免费视频
+ * @param tvId
+ * @param title
+ * @returns {*}
+ */
+function getFreeVideo(tvId, title, cookie) {
     const authKey =  auth('')
     const bob = '{"version":"10.0","dfp":"a0ecf8e4c6312b4cb6b07659066e7caca9279d3d666b49de92ddf17cab892223b9","b_ft1":8}'
     const bobCode = bob.replace(/:/g, '%3A').replace(/,/g, '%2C').replace(/{/g, '%7B').replace(/"/g, '%22').replace(/}/g, '%7D')
     const params = {
         tvid: tvId, // 需要处理
-        bid: '600', // 资源的格式
+        bid: '800', // 资源的格式
         vid: '', // 需要处理
         src: '01080031010000000000',
         vt: 0,
@@ -68,7 +90,12 @@ export async function getIQiYiTVDownloadLink (htmlUrl) {
     temp = temp.substring(0, temp.length-1)
     const vfString = getVf(temp)
     const search = temp + '&vf=' + vfString
-    return axios.get(`https://cache.video.iqiyi.com${search}`)
+    const apiURL = `https://cache.video.iqiyi.com${search}`
+    const headers = {}
+    if(cookie) {
+        headers.Cookie = cookie
+    }
+    return axios.get(apiURL, { headers })
         .then(async (res) => {
             const videos = res.data.data?.program?.video
             if(videos) {
@@ -85,7 +112,6 @@ export async function getIQiYiTVDownloadLink (htmlUrl) {
         })
 }
 
-
 function getVid(htmlUrl) {
     return axios
         .get(htmlUrl, {
@@ -99,8 +125,9 @@ function getVid(htmlUrl) {
             const data = res.data;
             const tvId = data.match(/"tvId":(\d+),"albumId"/)[1]
             const vid = data.match(/"vid":"(.*?)",/)[1]
-            const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0].trim();
-            return {tvId, vid, title}
+            const title = data.match(/\.name="([^"]*)"/)[1];
+            const payMark = data.match(/"payMark":(\d+),/)[1];
+            return {tvId, vid, title, payMark}
         })
         .catch((e) => {
             return null
@@ -119,3 +146,25 @@ async function createM3u8Url(m3u8Text, id) {
     return filePath
 }
 
+/**
+ * 获取iqiyi的cookie
+ * @returns {Promise<*>}
+ */
+async function getCookieInfo() {
+    const currentTime = dayjs().format('YYYY-MM-DD')
+    if(cookieInfo && dayjs(currentTime).isBefore(dayjs(cookieInfo.expiredTime))
+    && dayjs(currentTime).isBefore(dayjs(cookieInfo.saveTime))) {
+        return cookieInfo.cookie;
+    } else {
+        const response = await axios.get(`${host.server}mini/systemConfig/ic`)
+        const cookie = response.data.result.cookie
+        const expiredTime = response.data.result.expiredTime
+        const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
+        cookieInfo = {
+            cookie,
+            expiredTime,
+            saveTime
+        }
+        return cookie;
+    }
+}
