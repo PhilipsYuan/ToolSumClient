@@ -2,6 +2,7 @@ import {ipcMain} from "electron";
 import { createM3u8DownloadTask } from "./videoType/m3u8Video/m3u8Video";
 import { createMagnetDownloadTask } from "./videoType/magnet/magnet"
 import { createBiliVideoDownloadTask } from "./videoType/bilibiliVideo/bilibiliVideo"
+import { createMpdVideoDownloadTask } from './videoType/mpdVideo/mpdVideo'
 import {makeDir} from "../util/fs";
 
 ipcMain.handle('create-video-download-task', createVideoDownloadTask);

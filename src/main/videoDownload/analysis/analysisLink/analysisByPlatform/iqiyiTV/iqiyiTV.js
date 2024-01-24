@@ -103,7 +103,7 @@ function getFreeVideo(tvId, title, cookie) {
                 const text = videos.find((item) => item.m3u8).m3u8
                 if(/<SegmentList/.test(text)) {
                     const m3u8String = await mpdToM3u8(text)
-                    const m3u8Url = await createM3u8Url(m3u8String, tvId)
+                    const m3u8Url = await createMpd(text, tvId)
                     return {videoUrl: m3u8Url, title: title}
                 } else {
                     const m3u8Url = await createM3u8Url(text, tvId)
@@ -150,7 +150,16 @@ async function createM3u8Url(m3u8Text, id) {
         text: m3u8Text
     }
     const filePath = path.resolve(m3u8UrlMgPath, `${id}.m3u8`)
-    await fs.writeFileSync(path.resolve(m3u8UrlMgPath, `${id}.m3u8`), JSON.stringify(json), "utf-8")
+    await fs.writeFileSync(filePath, JSON.stringify(json), "utf-8")
+    return filePath
+}
+
+/**
+ * 创建本地的mpd
+ */
+async function createMpd(mpdText, id) {
+    const filePath = path.resolve(m3u8UrlMgPath, `${id}.mpd`)
+    await fs.writeFileSync(filePath, mpdText, "utf-8")
     return filePath
 }
 
