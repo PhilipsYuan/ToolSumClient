@@ -7,6 +7,7 @@ import path from "path";
 import dayjs from 'dayjs'
 import host from "../../../../../../renderer/src/utils/const/host";
 import {makeDir} from "../../../../../util/fs";
+import { removeUrlParams } from "../../../../../util/url";
 import { mpdToM3u8 } from './mpdToM3u8'
 const basePath = app.getPath('userData')
 const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
@@ -16,7 +17,8 @@ makeDir(m3u8UrlMgPath)
 
 let cookieInfo = null
 
-export async function getIQiYiTVDownloadLink (htmlUrl) {
+export async function getIQiYiTVDownloadLink (url) {
+    const htmlUrl = removeUrlParams(url)
     const { tvId, vid, title, payMark } = await getVid(htmlUrl)
     if(payMark == 1) {
         // 获取vip视频
@@ -41,7 +43,8 @@ function getFreeVideo(tvId, title, cookie) {
     const bobCode = bob.replace(/:/g, '%3A').replace(/,/g, '%2C').replace(/{/g, '%7B').replace(/"/g, '%22').replace(/}/g, '%7D')
     const params = {
         tvid: tvId, // 需要处理
-        bid: '800', // 资源的格式
+        // 600:720p 800: 1080p, 800 后格式是mpd，现在还没有破解。
+        bid: '600', // 资源的格式
         vid: '', // 需要处理
         src: '01080031010000000000',
         vt: 0,
@@ -102,8 +105,9 @@ function getFreeVideo(tvId, title, cookie) {
             if(videos) {
                 const text = videos.find((item) => item.m3u8).m3u8
                 if(/<SegmentList/.test(text)) {
-                    const m3u8String = await mpdToM3u8(text)
-                    const m3u8Url = await createM3u8Url(m3u8String, tvId)
+                    const m3u8Url = await createMpdUrl(text, tvId)
+                    // const m3u8String = await mpdToM3u8(text)
+                    // const m3u8Url = await createM3u8Url(m3u8String, tvId)
                     return {videoUrl: m3u8Url, title: title}
                 } else {
                     const m3u8Url = await createM3u8Url(text, tvId)
@@ -129,17 +133,26 @@ function getVid(htmlUrl) {
                 referer: 'https://www.iqiyi.com',
             },
         })
-        .then((res) => {
+        .then(async (res) => {
             const data = res.data;
-            const tvId = data.match(/"tvId":(\d+),"albumId"/)[1]
-            const vid = data.match(/"vid":"(.*?)",/)[1]
-            const title = data.match(/\.name="([^"]*)"/)[1];
-            const payMark = data.match(/"payMark":(\d+),/)[1];
+            let tvId = data.match(/"tvId":(\d+),"albumId"/)?.[1]
+            const vid = data.match(/"vid":"(.*?)",/)?.[1] || ''
+            let title = data.match(/\.name="([^"]*)"/)?.[1];
+            if(!title) {
+                title = data.match(/name":"([^"]+)","playUrl"/)?.[1] || data.match(/<title>([^<]*)<\/title>/)?.[1]
+            }
+            const payMark = data.match(/"payMark":(\d+),/)?.[1] || '';
             return {tvId, vid, title, payMark}
         })
         .catch((e) => {
             return null
         })
+}
+
+async function createMpdUrl(m3u8Text, id) {
+    const filePath = path.resolve(m3u8UrlMgPath, `${id}.mpd`)
+    await fs.writeFileSync(path.resolve(m3u8UrlMgPath, `${id}.mpd`), m3u8Text, "utf-8")
+    return filePath
 }
 
 /**
