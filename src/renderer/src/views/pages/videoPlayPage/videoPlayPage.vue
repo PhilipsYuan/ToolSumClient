@@ -1,85 +1,50 @@
 <template>
-  <div>
-    here
-    <video ref="myVideo" width="640" height="264"></video>
-    <el-button >清空</el-button>
+  <div class="absolute left-0 right-0 bottom-0 top-0">
+    <div class="bg-gray-100 pl-4 pr-4 h-10 py-2 w-full" :class="{'!pl-20': isMac}" style="-webkit-app-region: drag;">
+      <div class="w-full text-center">
+        {{videoName}}
+      </div>
+    </div>
+    <div class="w-full h-[calc(100%-40px)]">
+      <video v-if="videoSrc" ref="myVideo" controls
+             class="video-js vjs-default-skin w-full h-full object-fill">
+        <source :src="videoSrc" />
+      </video>
+    </div>
+
   </div>
 </template>
 
 <script>
 import 'video.js/dist/video-js.css'
 import videoJs from 'video.js'
-// import 'video.js/dist/lang/zh-CN'
+import zhCNJson from  'video.js/dist/lang/zh-CN.json'
 import {getUrlParams} from "../../../utils/url";
-
+videoJs.addLanguage('zh-CN', zhCNJson)
 export default {
   name: "videoPlayPage",
   data() {
     return {
       videoSrc: '',
-      player: null
+      player: null,
+      videoName: '',
+      isMac: false,
     }
   },
   mounted() {
+    this.isMac = /macintosh|mac os x/i.test(navigator.userAgent);
     const params = getUrlParams(window.location.href)
     this.videoSrc = `file://${params.view}`
-    this.setVideoConfig()
+    this.videoName = params.name
+    this.$nextTick(() => {
+      this.setVideoConfig()
+    })
   },
   methods: {
     setVideoConfig() {
-      const videoOptions = {
-        bigPlayButton: true,
-        autoplay: false,
-        controls: true,
-        preload: 'auto',
-        // playbackRates: [0.2, 0.5, 1, 1.5, 2, 2.5, 3],
-        // language: 'zh-CN',
-        // controlBar: {
-        //   remainingTimeDisplay: {
-        //     displayNegative: false
-        //   }
-        // },
-        // autoSetup: false,
-        // controlBar: {
-        //   skipButtons: {
-        //     backward: 10
-        //   },
-        //   children: [
-        //     {name: 'playToggle'}, // 播放按钮
-        //     {name: 'currentTimeDisplay'}, // 当前已播放时间
-        //     {name: 'progressControl'}, // 播放进度条
-        //     {name: 'durationDisplay'}, // 总时间
-        //     {name: 'audioTrackButton'},
-        //     { // 倍数播放
-        //       name: 'playbackRateMenuButton',
-        //     },
-        //     {
-        //       name: 'volumePanel', // 音量控制
-        //       inline: false, // 不使用水平方式
-        //     },
-        //   ],
-        //   fullscreenToggle: true,
-        //   playToggle: {
-        //     replay: true
-        //   }
-        // },
-        sources: this.videoSrc,
-      }
-      this.player = videoJs(this.$refs.myVideo, videoOptions, () => {
-        // this表示videojs实例
-        // 可在这里对videosjs操作
-        console.log(this);
+      this.player = videoJs(this.$refs.myVideo);
+    },
 
-        // //   例：创建按钮
-        // const button = p.getChild('ControlBar').addChild('button', {
-        //   controlText: '按钮',
-        //   className: 'vjs-visible-text',
-        //   clickHandler: function (event) {
-        //     videojs.log('1');
-        //   }
-        // });
-      });
-    }
   }
 }
 </script>

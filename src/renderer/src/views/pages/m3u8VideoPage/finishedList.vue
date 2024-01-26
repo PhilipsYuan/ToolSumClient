@@ -38,7 +38,7 @@
                 </el-icon>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item v-if="item.isExist" @click="playVideo(item.filePath)">播放</el-dropdown-item>
+                    <el-dropdown-item v-if="item.isExist" @click="playVideo(item.filePath, item.name)">播放</el-dropdown-item>
                     <el-dropdown-item v-if="item.isExist" @click="openVideoFile(item.filePath)">系统默认播放</el-dropdown-item>
                     <el-dropdown-item @click="copyLink(item.m3u8Url)">复制资源链接</el-dropdown-item>
                     <el-dropdown-item @click="deleteRecord(item.id)">删除记录</el-dropdown-item>
@@ -78,8 +78,8 @@ export default {
        await this.getFinishList()
      }
     },
-    playVideo(filePath) {
-      window.electronAPI.openVideoPlayPage(filePath);
+    playVideo(filePath, videoName) {
+      window.electronAPI.openVideoPlayPage(filePath, videoName);
     },
     async openVideoFile(filePath) {
       const result = await window.electronAPI.openDirectoryAndFile(filePath)
