@@ -13,10 +13,9 @@
 ### iqiyi待解决的问题
 1. 验证下，只用cookie可否在多台设备上下载
 2. cookie的时间(3个月)是否真的好用
-3. 需要将cookie的接口，进行加密和解密  -- 这个不做了，因为它可以通过抓包，看到
-4. 需要将cookie记住，减少跟服务器的请求。-- 实现了
-5. 调节bid参数，选择视频的清晰度
+3. 调节bid参数，选择视频的清晰度 800的清晰度，
 
 
 
 /Users/smart-philip/philip/project/selfProject/ToolSumClient/ffmpegPlatforms/darwin-x64/ffmpeg -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -i 2448711522834300.mpd -c copy output.mp4
+
