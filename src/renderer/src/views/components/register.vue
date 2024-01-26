@@ -176,7 +176,7 @@ export default {
               })
               .catch(() => {
                 this.requestLoading = false
-                this.$message.success('注册失败，稍后再试，或者给我们发送邮件(1016027198@qq.com)，我们会尽快修复，并通知您！')
+                this.$message.success('注册失败，稍后再试，或者给我们发送邮件(xiaohualun1@gmail.com)，我们会尽快修复，并通知您！')
               })
         }
       });
@@ -197,12 +197,12 @@ export default {
                 this.changeCodeButton()
                 this.$message.success('验证码已发送，请注意查收！');
               } else {
-                this.$message.error('邮件发送失败, 请给我们发送邮件(1016027198@qq.com)，我们会尽快修复，并通知您！')
+                this.$message.error('邮件发送失败, 请给我们发送邮件(xiaohualun1@gmail.com)，我们会尽快修复，并通知您！')
               }
             })
             .catch(() => {
               this.requestLoading = false
-              this.$message.error('邮件发送失败, 请给我们发送邮件(1016027198@qq.com)，我们会尽快修复，并通知您！')
+              this.$message.error('邮件发送失败, 请给我们发送邮件(xiaohualun1@gmail.com)，我们会尽快修复，并通知您！')
             })
       }
     },

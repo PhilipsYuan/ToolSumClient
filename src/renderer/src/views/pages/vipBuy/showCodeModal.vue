@@ -13,7 +13,7 @@
         <div class="text-center text-xs text-gray-500">请在<span class="text-red-500">15</span>分钟内支付，一旦付款成功，概不对款，请谨慎支付</div>
         <div class="text-center mt-1 text-lg text-red-500 font-medium">{{downTime}}</div>
       </div>
-      <div class="text-xs">P.S. 出现付款成功后，没有收到权益，请给我们发邮件(1016027198@qq.com)，备注：用户名或者邮箱地址，购买会员类型，
+      <div class="text-xs">P.S. 出现付款成功后，没有收到权益，请给我们发邮件(xiaohualun1@gmail.com)，备注：用户名或者邮箱地址，购买会员类型，
         以及微信支付截图, 我们会尽快确认问题，并给您下发权益。</div>
       <div class="mt-6 px-5 py-2 flex items-center justify-end">
         <div class="text-xs text-gray-500 mr-2">个人信息也可以支付此订单</div>

@@ -47,7 +47,7 @@
             <div><img src="./h-4.png"/></div>
             <div><div class="help-answer-index">4</div>
               如果您没有找到m3u8格式的，可能此网站不是m3u8格式的视频，您可以通过邮件将网址发送给我们，并注明：此网址不能解析。<br />
-              我们会在收到您的反馈后，去分析，争取在以后更新的软件版本里支持它。我们的邮箱地址：1016027198@qq.com。
+              我们会在收到您的反馈后，去分析，争取在以后更新的软件版本里支持它。我们的邮箱地址：xiaohualun1@gmail.com。
             </div>
           </div>
         </el-collapse-item>
