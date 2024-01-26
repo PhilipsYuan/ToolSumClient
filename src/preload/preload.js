@@ -40,7 +40,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     deleteM3u8LoadingSuccess: (callback) => ipcRenderer.on('delete-m3u8-loading-success', callback),
     getUserChooseSearchPageUrl:(callback) => ipcRenderer.on('get-user-choose-search-page-url', callback),
     sendSearchPageUrlLoadFail: (callback) => ipcRenderer.on('search-page-url-load-Fail', callback),
-    changeSearchPageUrl: (callback) => ipcRenderer.on('change-search-page-url', callback)
+    changeSearchPageUrl: (callback) => ipcRenderer.on('change-search-page-url', callback),
+    changeVideoPlayItem: (callback) => ipcRenderer.on('change-video-play-item', callback)
 })
 
 window.addEventListener('DOMContentLoaded', () => {

@@ -31,3 +31,7 @@ window.electronAPI.sendSearchPageUrlLoadFail(async (event) => {
 window.electronAPI.changeSearchPageUrl(async (event, url) => {
     useService('changeSearchPageUrl', url)
 })
+
+window.electronAPI.changeVideoPlayItem(async(event, videoPath, videoName) => {
+    useService('changeVideoPlayItem', videoPath, videoName)
+})

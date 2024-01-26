@@ -6,7 +6,7 @@
       </div>
     </div>
     <div class="w-full h-[calc(100%-40px)]">
-      <video v-if="videoSrc" ref="myVideo" controls
+      <video v-if="videoSrc" ref="myVideo" controls autoplay
              class="video-js vjs-default-skin w-full h-full object-fill">
         <source :src="videoSrc" />
       </video>
@@ -20,6 +20,7 @@ import 'video.js/dist/video-js.css'
 import videoJs from 'video.js'
 import zhCNJson from  'video.js/dist/lang/zh-CN.json'
 import {getUrlParams} from "../../../utils/url";
+import { addService } from "../../../service/service";
 videoJs.addLanguage('zh-CN', zhCNJson)
 export default {
   name: "videoPlayPage",
@@ -32,6 +33,7 @@ export default {
     }
   },
   mounted() {
+    addService('changeVideoPlayItem', this.changeVideoPlayItem.bind(this))
     this.isMac = /macintosh|mac os x/i.test(navigator.userAgent);
     const params = getUrlParams(window.location.href)
     this.videoSrc = `file://${params.view}`
@@ -44,7 +46,11 @@ export default {
     setVideoConfig() {
       this.player = videoJs(this.$refs.myVideo);
     },
-
+    changeVideoPlayItem(videoPath, videoName) {
+      this.videoSrc = `file://${videoPath}`
+      this.videoName = videoName
+      this.player.src(this.videoSrc)
+    }
   }
 }
 </script>

@@ -35,5 +35,6 @@ export async function openVideoPlayPage(event, videoPath, videoName) {
         }
     } else {
         selfVideoPlayWindow.window.focus()
+        selfVideoPlayWindow.window.webContents.send('change-video-play-item', videoPath, videoName)
     }
 }
