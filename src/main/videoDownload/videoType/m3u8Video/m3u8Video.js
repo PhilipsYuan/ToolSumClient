@@ -302,7 +302,6 @@ async function deleteRecordAndFile(item) {
     const urlPath = item.urlPath;
     const tempPath = path.resolve(tempSourcePath, item.name);
     deleteDirectory(tempPath)
-    console.log(urlPath)
     if(urlPath && fs.existsSync(urlPath)) {
         fs.unlinkSync(urlPath)
     }

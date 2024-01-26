@@ -11,12 +11,12 @@
         </template>
       </el-input>
     </div>
-    <div class="overflow-auto h-[calc(100vh-243px)] px-4 py-4 rounded-md bg-gray-50" id="m3u8-finish-list-frame">
+    <div v-if="list.length > 0" class="overflow-auto h-[calc(100vh-243px)] px-4 py-4 rounded-md bg-gray-50" id="m3u8-finish-list-frame">
       <el-card v-for="item in list" class="hover:bg-gray-100 hover:border-blue-400 !rounded-md mb-4 last:mb-0" :id="item.id" :body-style="{'padding': '8px 20px'}">
         <div class="flex justify-between items-center gap-3">
-          <div class="font-medium text-base truncate">
+          <div class="font-medium text-base truncate h-[44px]" :class="{'leading-[44px]': /tempM3u8Url/.test(item.m3u8Url)}">
             {{ item.name }}
-            <div class="text-xs text-gray-400 truncate">{{item.m3u8Url}}</div>
+            <div v-if="!/tempM3u8Url/.test(item.m3u8Url)" class="text-xs text-gray-400 truncate">{{item.m3u8Url}}</div>
           </div>
           <div>
             <div class="flex gap-3 items-center w-[190px]" :class="{'w-[265px]': !item.isExist}">
@@ -40,7 +40,7 @@
                   <el-dropdown-menu>
                     <el-dropdown-item v-if="item.isExist" @click="playVideo(item.filePath, item.name)">播放</el-dropdown-item>
                     <el-dropdown-item v-if="item.isExist" @click="openVideoFile(item.filePath)">系统默认播放</el-dropdown-item>
-                    <el-dropdown-item @click="copyLink(item.m3u8Url)">复制资源链接</el-dropdown-item>
+                    <el-dropdown-item v-if="!/tempM3u8Url/.test(item.m3u8Url)" @click="copyLink(item.m3u8Url)">复制资源链接</el-dropdown-item>
                     <el-dropdown-item @click="deleteRecord(item.id)">删除记录</el-dropdown-item>
                     <el-dropdown-item @click="deleteRecordAndFile(item.id)" v-if="item.isExist">删除记录和文件
                     </el-dropdown-item>
@@ -51,6 +51,9 @@
           </div>
         </div>
       </el-card>
+    </div>
+    <div v-if="list.length === 0" class="overflow-auto h-[calc(100vh-243px)] px-4 py-4 rounded-md bg-gray-50">
+      <el-empty description="暂无数据" />
     </div>
   </div>
 </template>
