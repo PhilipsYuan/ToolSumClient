@@ -1,5 +1,5 @@
 import {BrowserWindow, ipcMain} from "electron";
-import {addWindow, getWindow} from "../../service";
+import {addWindow, deleteWindow, getWindow} from "../../service";
 import path from "path";
 
 ipcMain.handle('open-video-play-page', openVideoPlayPage)
@@ -27,6 +27,9 @@ export async function openVideoPlayPage(event, videoPath, videoName) {
         });
         // window.webContents.openDevTools();
         addWindow("selfVideoPlayWindow", window, '')
+        window.on('closed', () => {
+            deleteWindow("selfVideoPlayWindow")
+        })
         if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
             await window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}`)
         } else {
