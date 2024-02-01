@@ -16,12 +16,3 @@ fsExtra.emptyDirSync(`${__dirname}/../public`);
 
 // 将ffmpeg执行文件复制过去
 fs.copyFileSync(sourcePath, targetPath)
-
-
-/**
- * 将腾讯的ckey.wasm 复制过去
- */
-const sourceWasmPath = path.resolve(__dirname, '../', 'src', 'main', 'videoDownload', 'analysis',
-    'analysisLink', 'analysisByPlatform', 'tencentTV', 'tx-ckey.wasm')
-const targetWasmPath = path.resolve(__dirname, '../', 'public', 'tx-ckey.wasm')
-fs.copyFileSync(sourceWasmPath, targetWasmPath)
