@@ -5,7 +5,8 @@ export async function generateWasm(appVer, vid, guid, htmlStr, tm) {
     let result = null
     const importObject = {
         "0kc": {
-            '3xA': (a, b, c) => {},
+            '3xA': (a, b, c) => {
+            },
             '4PW': (a, b, c) => {
                 result.copyWithin(a, b, b+c)
             },
@@ -21,32 +22,32 @@ export async function generateWasm(appVer, vid, guid, htmlStr, tm) {
     const wasmInstance = wasmModule.instance.exports
     un167 = wasmInstance.LRm.buffer
     const dataView = new DataView(un167)
-    wasmInstance.j73(14)
+    const number1 = wasmInstance.j73(14)
     const versionUint8Array = stringToUint8Array(appVer, 14)
-    setBufferValue(dataView, versionUint8Array, 69176)
-    wasmInstance.j73(19)
+    setBufferValue(dataView, versionUint8Array, number1)
+    const number2 = wasmInstance.j73(19)
     const vidUint8Array = stringToUint8Array(vid, 19)
-    setBufferValue(dataView, vidUint8Array, 69200)
-    wasmInstance.j73(8)
+    setBufferValue(dataView, vidUint8Array, number2)
+    const number3 = wasmInstance.j73(8)
     const voidUint8Array = stringToUint8Array('', 8)
-    setBufferValue(dataView, voidUint8Array, 69224)
-    wasmInstance.j73(24)
+    setBufferValue(dataView, voidUint8Array, number3)
+    const number4 = wasmInstance.j73(24)
     const sessionUint8Array = stringToUint8Array(guid, 24)
-    setBufferValue(dataView, sessionUint8Array, 69240)
-    wasmInstance.j73(132)
+    setBufferValue(dataView, sessionUint8Array, number4)
+    const number5 = wasmInstance.j73(132)
     const url = stringToUint8Array(htmlStr, 132)
-    setBufferValue(dataView, url, 69272)
-    wasmInstance.j73(44)
+    setBufferValue(dataView, url, number5)
+    const number6 = wasmInstance.j73(44)
     const bb = stringToUint8Array(`{"csal":["9x7k6uc7xw","m5h0zchrh5"]}`, 44)
-    setBufferValue(dataView, bb, 69408)
-    wasmInstance.j73(44)
+    setBufferValue(dataView, bb, number6)
+    const number7 = wasmInstance.j73(44)
     const cc = stringToUint8Array('{"ea":3,"spa":1,"hwdrm":0,"hwacc":1}', 44)
-    setBufferValue(dataView, cc, 69456)
-    wasmInstance.j73(46)
+    setBufferValue(dataView, cc, number7)
+    const number8 = wasmInstance.j73(46)
     const dd = stringToUint8Array('94fda1801094a8f762471ca403000007e17905', 46)
-    setBufferValue(dataView, dd, 69504)
+    setBufferValue(dataView, dd, number8)
     result = new Uint8Array(un167)
-    wasmInstance['9gI'].apply(null, [10201, 69176, 69200, 69224, 69240, 69272, 69408, 69456, 69504, tm])
+    wasmInstance['9gI'].apply(null, [10201, number1, number2, number3, number4, number5, number6, number7, number8, tm])
     return fromUint8Array(result.slice(72088, 77487))
 }
 
