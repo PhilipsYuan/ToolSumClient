@@ -7,6 +7,7 @@
     <register/>
     <reset-password/>
     <login-tip />
+    <disclaimer ref="disclaimer"/>
   </el-config-provider>
 </template>
 
@@ -20,15 +21,16 @@ import login from './views/components/login.vue';
 import register from "./views/components/register.vue";
 import resetPassword from "./views/components/resetPassword.vue";
 import loginTip from "./views/components/loginTip.vue";
+import disclaimer from "./views/components/disclaimer.vue";
 import {getUserInfo} from "./api/user";
 import {setUser} from "./service/userService";
 
 export default {
-  components: {headPart, login, register, resetPassword, loginTip},
+  components: {headPart, login, register, resetPassword, loginTip, disclaimer},
   data() {
     return {
       zhCn,
-      loadingSuccess: false
+      loadingSuccess: false,
     }
   },
   async beforeCreate() {
@@ -42,6 +44,12 @@ export default {
   },
   mounted() {
     addService('showScreenLoadingMessage', this.showScreenLoadingMessage.bind(this))
+    window.electronAPI.checkShowDisclaimer()
+        .then((result) => {
+          if(!result) {
+            this.$refs.disclaimer.open()
+          }
+        })
   },
   methods: {
     goPath(path) {
@@ -55,7 +63,6 @@ export default {
       })
       return loading
     },
-
   }
 }
 </script>

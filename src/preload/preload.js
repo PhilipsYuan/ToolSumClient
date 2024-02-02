@@ -26,6 +26,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     createVideoDownloadTask: (url, name, outPath, audioUrl) => ipcRenderer.invoke('create-video-download-task', url, name, outPath, audioUrl),
     checkFileIsExist: (filePath) => ipcRenderer.invoke('check-file-is-exist', filePath),
     openVideoPlayPage: (videoPath, videoName) => ipcRenderer.invoke('open-video-play-page', videoPath, videoName),
+    checkShowDisclaimer: () => ipcRenderer.invoke('check-show-disclaimer'),
+    getDisclaimerInfo: () => ipcRenderer.invoke('get-disclaimer-info'),
+    setAgreeDisclaimerSetting:(agree) => ipcRenderer.invoke('set-agree-disclaimer-setting', agree),
 
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),
