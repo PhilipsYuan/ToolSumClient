@@ -18,7 +18,7 @@ export async function getBiliTVDownloadLink(htmlUrl) {
                     return playInfo
                 }
             } else {
-                const epId = htmlUrl.match(/ep(\d+)?/)[1]
+                const epId = htmlUrl.match(/ep(\d+)?/)?.[1]
                 const nextInfo = await getInfoFromNextData(data, epId)
                 if(nextInfo) {
                     if(nextInfo === 'error') {
@@ -58,7 +58,7 @@ function getInfoFromNextData(data, epId) {
     const info = infoString ? JSON.parse(infoString) : null;
     if(info) {
         const episodes = info?.props?.pageProps?.dehydratedState?.queries?.[0]?.state?.data?.seasonInfo?.mediaInfo?.episodes
-        const epiItem = episodes.find((item) => item.ep_id == epId)
+        const epiItem = episodes.find((item) => item.ep_id == epId) || episodes[0]
         const avid = epiItem.aid;
         const cid = epiItem.cid;
         // 决定 质量，
@@ -66,7 +66,7 @@ function getInfoFromNextData(data, epId) {
         const fnver = 0
         const fourk = 1
         const from_client = 'BROWSER'
-        const ep_id = epId
+        const ep_id = epId || epiItem.ep_id
         const drm_tech_type = 2
         const fnval = 4048
         const gaia_source = ''
