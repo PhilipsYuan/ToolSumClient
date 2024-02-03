@@ -7,7 +7,7 @@
         <div>"{{ item.name }}"</div>名称在已经下载中存在了，请更换下名称！
       </div>
       <div v-else-if="item.m3u8Url === inputUrl" class="font-medium text-sm mb-5">
-        <div class="break-all mb-1">"{{ item.m3u8Url }}"</div>
+        <div class="break-all mb-1 max-h-[100px] overflow-auto">"{{ item.m3u8Url }}"</div>
         资源在已经下载中存在了，请更换个资源！
       </div>
       <el-form ref="formRef">
@@ -15,7 +15,7 @@
           <div class="text-lg text-gray-900" :class="{'text-red-500': item.name === inputName}">{{ item.name }}</div>
         </el-form-item>
         <el-form-item label="链接:" prop="masterName">
-          <div class="text-gray-400 break-all"
+          <div class="text-gray-400 break-all max-h-[100px] overflow-auto"
                :class="{'text-red-500': item.m3u8Url === inputUrl}">{{ item.m3u8Url }}
           </div>
         </el-form-item>

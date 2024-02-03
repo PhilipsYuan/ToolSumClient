@@ -1,6 +1,12 @@
 import axios from '../../../../../util/source/axios'
+import dayjs from "dayjs";
+import host from "../../../../../../renderer/src/utils/const/host";
+
+let cookieInfo = null
 
 export async function getMgTvDownloadLink(htmlUrl) {
+    const cookie = await getCookieInfo()
+    console.log(cookie)
     const videoId = getTVId(htmlUrl)
     return axios.get("https://pcweb.api.mgtv.com/video/streamList", {
         params: {
@@ -21,6 +27,7 @@ export async function getMgTvDownloadLink(htmlUrl) {
             'User-Agent':
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36',
             referer: 'https://www.mgtv.com',
+            Cookie: cookie
         },
     })
         .then((res) => {
@@ -59,4 +66,27 @@ export async function getMgTvDownloadLink(htmlUrl) {
  */
 function getTVId(htmlUrl) {
     return htmlUrl.match(/\/(\d+).html/)[1]
+}
+
+/**
+ * 获取mgTV的cookie
+ * @returns {Promise<*>}
+ */
+async function getCookieInfo() {
+    const currentTime = dayjs().format('YYYY-MM-DD')
+    if(cookieInfo && dayjs(currentTime).isBefore(dayjs(cookieInfo.expiredTime))
+        && dayjs(currentTime).isBefore(dayjs(cookieInfo.saveTime))) {
+        return cookieInfo.cookie;
+    } else {
+        const response = await axios.get(`${host.server}mini/systemConfig/mc`)
+        const cookie = response.data.result.cookie
+        const expiredTime = response.data.result.expiredTime
+        const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
+        cookieInfo = {
+            cookie,
+            expiredTime,
+            saveTime
+        }
+        return cookie;
+    }
 }
