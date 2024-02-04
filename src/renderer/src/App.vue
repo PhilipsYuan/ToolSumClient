@@ -8,6 +8,7 @@
     <reset-password/>
     <login-tip />
     <disclaimer ref="disclaimer"/>
+    <about-xhl />
   </el-config-provider>
 </template>
 
@@ -22,11 +23,12 @@ import register from "./views/components/register.vue";
 import resetPassword from "./views/components/resetPassword.vue";
 import loginTip from "./views/components/loginTip.vue";
 import disclaimer from "./views/components/disclaimer.vue";
+import aboutXhl from "./views/components/aboutXhl.vue";
 import {getUserInfo} from "./api/user";
 import {setUser} from "./service/userService";
 
 export default {
-  components: {headPart, login, register, resetPassword, loginTip, disclaimer},
+  components: {headPart, login, register, resetPassword, loginTip, disclaimer, aboutXhl},
   data() {
     return {
       zhCn,

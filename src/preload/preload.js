@@ -44,7 +44,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getUserChooseSearchPageUrl:(callback) => ipcRenderer.on('get-user-choose-search-page-url', callback),
     sendSearchPageUrlLoadFail: (callback) => ipcRenderer.on('search-page-url-load-Fail', callback),
     changeSearchPageUrl: (callback) => ipcRenderer.on('change-search-page-url', callback),
-    changeVideoPlayItem: (callback) => ipcRenderer.on('change-video-play-item', callback)
+    changeVideoPlayItem: (callback) => ipcRenderer.on('change-video-play-item', callback),
+    openAboutXhl: (callback) => ipcRenderer.on('open-about-xhl', callback)
 })
 
 window.addEventListener('DOMContentLoaded', () => {

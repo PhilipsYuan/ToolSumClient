@@ -35,3 +35,7 @@ window.electronAPI.changeSearchPageUrl(async (event, url) => {
 window.electronAPI.changeVideoPlayItem(async(event, videoPath, videoName) => {
     useService('changeVideoPlayItem', videoPath, videoName)
 })
+
+window.electronAPI.openAboutXhl(async(event, version) => {
+    useService('openAboutXhl', version)
+})

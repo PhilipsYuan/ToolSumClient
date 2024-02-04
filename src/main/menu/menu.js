@@ -3,15 +3,23 @@ import {m3u8VideoDownloadingListDB} from "../db/db";
 import { sendTips } from "../util/electronOperations";
 import {pauseMagnetDownloadVideo} from "../videoDownload/videoType/magnet/magnet";
 import {pauseM3u8DownloadVideo} from "../videoDownload/videoType/m3u8Video/m3u8Video";
+import packageJson from '../../../package.json'
 
 const template = [
     {
         label: '项目',
-        submenu: [ {
-            label: '退出',
-            accelerator: 'Cmd+Q',
-            click: closeTaskBeforeQuit
-        },
+        submenu: [
+            {
+                label: '关于小滑轮',
+                click: () => {
+                    global.mainWindow.webContents.send('open-about-xhl', packageJson.version)
+                }
+            },
+            {
+                label: '退出',
+                accelerator: 'Cmd+Q',
+                click: closeTaskBeforeQuit
+            },
             // {
             //     label: '打开控制台',
             //     click: () => {
