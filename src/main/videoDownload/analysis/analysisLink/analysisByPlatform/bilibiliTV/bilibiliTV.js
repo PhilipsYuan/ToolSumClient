@@ -1,4 +1,13 @@
+/**
+ * 质量控制
+ * 80： 1080p
+ * 64： 720p
+ */
 import axios from "../../../../../util/source/axios"
+import dayjs from "dayjs";
+import host from "../../../../../../renderer/src/utils/const/host";
+
+let cookieInfo = null
 
 export async function getBiliTVDownloadLink(htmlUrl) {
     return axios
@@ -52,7 +61,8 @@ function getInfoFromPlayInfo(data) {
     }
 }
 
-function getInfoFromNextData(data, epId) {
+async function getInfoFromNextData(data, epId) {
+    const cookie = await getCookieInfo()
     const matchData = data.replace(/[\n|\t]/g, '').replace(/ /g, '')
     const infoString = matchData.match(/<scriptid="__NEXT_DATA__"type="application\/json">(.*)<\/script>/)?.[1]
     const info = infoString ? JSON.parse(infoString) : null;
@@ -62,7 +72,7 @@ function getInfoFromNextData(data, epId) {
         const avid = epiItem.aid;
         const cid = epiItem.cid;
         // 决定 质量，
-        const qn = 80
+        const qn = 64
         const fnver = 0
         const fourk = 1
         const from_client = 'BROWSER'
@@ -77,6 +87,7 @@ function getInfoFromNextData(data, epId) {
                 'User-Agent':
                     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36',
                 referer: 'https://www.bilibili.com',
+                Cookie: `${cookie}; CURRENT_QUALITY=64`
             },
         })
             .then((res) => {
@@ -107,5 +118,28 @@ function getInfoFromNextData(data, epId) {
             .catch((e) => {
                 return 'error'
             })
+    }
+}
+
+/**
+ * 获取bili的cookie
+ * @returns {Promise<*>}
+ */
+async function getCookieInfo() {
+    const currentTime = dayjs().format('YYYY-MM-DD')
+    if(cookieInfo && dayjs(currentTime).isBefore(dayjs(cookieInfo.expiredTime))
+        && dayjs(currentTime).isBefore(dayjs(cookieInfo.saveTime))) {
+        return cookieInfo.cookie;
+    } else {
+        const response = await axios.get(`${host.server}mini/systemConfig/bc`)
+        const cookie = response.data.result.cookie
+        const expiredTime = response.data.result.expiredTime
+        const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
+        cookieInfo = {
+            cookie,
+            expiredTime,
+            saveTime
+        }
+        return cookie;
     }
 }
