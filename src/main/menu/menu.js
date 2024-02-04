@@ -1,7 +1,6 @@
 import {Menu, app} from "electron";
 import {m3u8VideoDownloadingListDB} from "../db/db";
 import { sendTips } from "../util/electronOperations";
-import {updateWork} from "../videoDownload/videoType/m3u8Video/workManager";
 import {pauseMagnetDownloadVideo} from "../videoDownload/videoType/magnet/magnet";
 import {pauseM3u8DownloadVideo} from "../videoDownload/videoType/m3u8Video/m3u8Video";
 
@@ -13,12 +12,12 @@ const template = [
             accelerator: 'Cmd+Q',
             click: closeTaskBeforeQuit
         },
-            {
-                label: '打开控制台',
-                click: () => {
-                    global.mainWindow.webContents.openDevTools()
-                }
-            }
+            // {
+            //     label: '打开控制台',
+            //     click: () => {
+            //         global.mainWindow.webContents.openDevTools()
+            //     }
+            // }
         ]
     },
     {
