@@ -20,12 +20,12 @@ const template = [
                 accelerator: 'Cmd+Q',
                 click: closeTaskBeforeQuit
             },
-            // {
-            //     label: '打开控制台',
-            //     click: () => {
-            //         global.mainWindow.webContents.openDevTools()
-            //     }
-            // }
+            {
+                label: '打开控制台',
+                click: () => {
+                    global.mainWindow.webContents.openDevTools()
+                }
+            }
         ]
     },
     {
