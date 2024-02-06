@@ -1,8 +1,17 @@
 <template>
   <div class="absolute left-0 right-0 bottom-0 top-0">
     <div class="bg-gray-100 pl-4 pr-4 h-10 py-2 w-full" :class="{'!pl-20': isMac}" style="-webkit-app-region: drag;">
-      <div class="w-full text-center">
-        {{videoName}}
+      <div class="flex h-6 justify-between items-center" >
+        <div></div>
+        <div class="w-full text-center">
+          {{videoName}}
+        </div>
+        <div class="flex gap-1" style="-webkit-app-region: no-drag;">
+          <div v-if="!isMac" class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg"
+               @click="closeWindow">
+            <el-icon><Close /></el-icon>
+          </div>
+        </div>
       </div>
     </div>
     <div class="w-full h-[calc(100%-40px)]">
@@ -50,7 +59,10 @@ export default {
       this.videoSrc = `file://${videoPath}`
       this.videoName = videoName
       this.player.src(this.videoSrc)
-    }
+    },
+    closeWindow() {
+      window.electronAPI.closeVideoPlayWindow()
+    },
   }
 }
 </script>

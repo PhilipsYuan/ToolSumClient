@@ -35,6 +35,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     updateMenus: () => ipcRenderer.send('update-menus'),
     confirmSearchWindow: (url) => ipcRenderer.send('confirm-search-window', url),
     closeSearchWindow: () => ipcRenderer.send('close-search-window'),
+    closeVideoPlayWindow: () => ipcRenderer.send('close-video-play-window'),
 
     // 主进程到渲染器进程
     getM3u8FileFailureTips: (callback) => ipcRenderer.on('m3u8-file-get-failure', callback),

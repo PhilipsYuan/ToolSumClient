@@ -152,7 +152,7 @@ export async function openSearchWindow(event, searchText) {
 export async function confirmSearchWindow(event, url) {
     sendTips("get-user-choose-search-page-url", url)
     const selfSearchWindow = getWindow("selfSearchWindow")
-    selfSearchWindow.window.destroy()
+    selfSearchWindow && selfSearchWindow.window.destroy()
     deleteWindow("selfSearchWindow")
 }
 
@@ -162,6 +162,6 @@ export async function confirmSearchWindow(event, url) {
  */
 export async function closeSearchWindow() {
     const selfSearchWindow = getWindow("selfSearchWindow")
-    selfSearchWindow.window.destroy()
+    selfSearchWindow && selfSearchWindow.window.destroy()
     deleteWindow("selfSearchWindow")
 }

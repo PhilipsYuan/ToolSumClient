@@ -3,6 +3,7 @@ import {addWindow, deleteWindow, getWindow} from "../../service";
 import path from "path";
 
 ipcMain.handle('open-video-play-page', openVideoPlayPage)
+ipcMain.on('close-video-play-window', closeVideoPlayWindow)
 /**
  * 打开视频播放页面
  * @returns {Promise<void>}
@@ -40,4 +41,14 @@ export async function openVideoPlayPage(event, videoPath, videoName) {
         selfVideoPlayWindow.window.focus()
         selfVideoPlayWindow.window.webContents.send('change-video-play-item', videoPath, videoName)
     }
+}
+
+/**
+ * 关闭接口
+ * @returns {Promise<void>}
+ */
+export async function closeVideoPlayWindow() {
+    const selfVideoPlayWindow = getWindow("selfVideoPlayWindow")
+    selfVideoPlayWindow && selfVideoPlayWindow.window.destroy()
+    deleteWindow("selfVideoPlayWindow")
 }
