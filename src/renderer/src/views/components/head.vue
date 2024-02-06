@@ -74,14 +74,12 @@ export default {
     loginOut () {
       userLogOut()
         .then((res) => {
-          if (res.data.code === 200) {
-            setUser(null)
-            if (this.$route.name === 'home') {
-              window.location.reload();
-            } else {
-              this.$router.push({name: 'home'})
-              window.location.reload();
-            }
+          setUser(null)
+          if (this.$route.name === 'home') {
+            window.location.reload();
+          } else {
+            this.$router.push({name: 'home'})
+            window.location.reload();
           }
         })
     },
