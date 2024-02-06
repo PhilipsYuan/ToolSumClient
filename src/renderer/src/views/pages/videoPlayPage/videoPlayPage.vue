@@ -17,7 +17,8 @@
     <div class="w-full h-[calc(100%-40px)]">
       <video v-if="videoSrc" ref="myVideo" controls autoplay
              class="video-js vjs-default-skin w-full h-full object-fill">
-        <source :src="videoSrc" />
+        <source :src="videoSrc" type="video/mp4" codecs="hevc" />
+        <source :src="videoSrc" type="video/mp4" codecs="avc1" />
       </video>
     </div>
 
