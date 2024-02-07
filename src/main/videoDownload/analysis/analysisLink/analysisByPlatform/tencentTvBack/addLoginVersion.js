@@ -2,13 +2,23 @@ import axios from "../../../../../util/source/axios";
 import dayjs from "dayjs";
 import host from "../../../../../../renderer/src/utils/const/host";
 
+// const loginInfo = {
+//     "access_token": "435733241808D1757FF11D831AB1029F",
+//     "appid": "101483052",
+//     "vusession": "GMi5jM3gr5LHO1a-6oIJtQ.M",
+//     "openid": "1C61AC7A4A631C2F87B51E578DA89234",
+//     "vuserid": "156267680",
+//     "video_guid": "37c8fb814907dcf7",
+//     "main_login": "qq"
+// }
+
 let cookieInfo = null
 
 export async function getVideoInfo(url, postData) {
     const loginInfoString = await getCookieInfo()
     const loginInfo = JSON.parse(loginInfoString)
-    postData.vinfoparam = changeVinfoparam(loginInfo, postData.vinfoparam)
-    postData.sspAdParam = changeSspAdParam(loginInfo, postData.sspAdParam)
+    postData.vinfoparam = changeVinfoparam(postData.vinfoparam, loginInfo)
+    postData.sspAdParam = changeSspAdParam(postData.sspAdParam, loginInfo)
     return axios.post(url, postData, {
         headers: {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36¬",
@@ -20,7 +30,7 @@ export async function getVideoInfo(url, postData) {
         })
 }
 
-function changeVinfoparam (loginInfo, vinfo) {
+function changeVinfoparam(vinfo, loginInfo) {
     const loginToken = encodeURIComponent(JSON.stringify(loginInfo))
     // 控制视频质量 shd： 720p， fhd： 1080p
     const aa = vinfo.replace(/defn=[^&]*&/, 'defn=fhd&')
@@ -28,7 +38,7 @@ function changeVinfoparam (loginInfo, vinfo) {
     return bb
 }
 
-function changeSspAdParam(loginInfo, sspAdParam) {
+function changeSspAdParam(sspAdParam, loginInfo) {
     const bb = JSON.parse(sspAdParam)
     const token = {
         type: 1,
