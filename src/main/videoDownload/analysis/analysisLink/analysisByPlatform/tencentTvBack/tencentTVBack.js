@@ -5,6 +5,7 @@ import {makeDir} from "../../../../../util/fs";
 import fs from "fs";
 import {getPlayList} from "../../../../../util/m3u8Parse";
 import { decryptProcess } from "./getVinFo";
+import { getVideoInfo } from './addLoginVersion'
 
 /**
  * 如果是免费的视频，m3u8文件在proxyhttp直接获取。
@@ -50,7 +51,7 @@ async function getM3u8Link(htmlUrl) {
         if(/qq\.com\/proxyhttp/.test(url)) {
             const post = JSON.parse(response.request().postData())
             if(post.buid === 'vinfoad') {
-                const json = await response.json()
+                const json = await getVideoInfo(url, post)
                 const json2 = JSON.parse(json.vinfo)
                 const vid = getVid(htmlUrl)
                 if(json2.anc) {

@@ -21,7 +21,7 @@ async function getDownloadLinkFromUrl(event, htmlUrl) {
         } else if(/iqiyi\.com/.test(htmlUrl)) {
             return await getIQiYiTVDownloadLink(htmlUrl)
         } else if(/v\.qq\.com/.test(htmlUrl)) {
-            return await test(htmlUrl)
+            return await getTencentTVDownloadLink(htmlUrl)
         } else {
             return await getNormalM3u8Link(htmlUrl)
         }

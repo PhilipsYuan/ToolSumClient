@@ -59,6 +59,7 @@ async function getVinfoParam(htmlUrl) {
     const auth_from=""
     const auth_ext=""
     const vid = getVid(htmlUrl)
+    // 控制视频质量 shd： 720p， fhd： 1080p
     const defn = "shd"
     const fhdswitch = "0"
     const dtype = "3"
