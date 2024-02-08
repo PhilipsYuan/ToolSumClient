@@ -74,6 +74,10 @@ async function getM3u8Link(htmlUrl) {
         });
     });
     try {
+        window.webContents.on('did-finish-load', () => {
+            // 将页面声音静音
+            window.webContents.setAudioMuted(true);
+        });
         return await window.loadURL(htmlUrl, {
             // userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1'
         })
