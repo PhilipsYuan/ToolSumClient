@@ -5,7 +5,7 @@ import host from "../../../../../../renderer/src/utils/const/host";
 // const loginInfo = {
 //     "access_token": "435733241808D1757FF11D831AB1029F",
 //     "appid": "101483052",
-//     "vusession": "GMi5jM3gr5LHO1a-6oIJtQ.M",
+//     "vusession": "9xUI2tNt5s0p62-IEiZ39g.M",
 //     "openid": "1C61AC7A4A631C2F87B51E578DA89234",
 //     "vuserid": "156267680",
 //     "video_guid": "37c8fb814907dcf7",
@@ -15,8 +15,11 @@ import host from "../../../../../../renderer/src/utils/const/host";
 let cookieInfo = null
 
 export async function getVideoInfo(url, postData) {
+
     const loginInfoString = await getCookieInfo()
     const loginInfo = JSON.parse(loginInfoString)
+    const vusession = await getVuSession(loginInfo)
+    loginInfo.vusession = vusession
     postData.vinfoparam = changeVinfoparam(postData.vinfoparam, loginInfo)
     postData.sspAdParam = changeSspAdParam(postData.sspAdParam, loginInfo)
     return axios.post(url, postData, {
@@ -34,7 +37,8 @@ function changeVinfoparam(vinfo, loginInfo) {
     const loginToken = encodeURIComponent(JSON.stringify(loginInfo))
     // 控制视频质量 shd： 720p， fhd： 1080p
     const aa = vinfo.replace(/defn=[^&]*&/, 'defn=fhd&')
-    const bb = aa.replace('logintoken=', `logintoken=${loginToken}`)
+    const cc = aa.replace(/guid=[^&]*&/, `guid=${loginInfo.video_guid}&`)
+    const bb = cc.replace('logintoken=', `logintoken=${loginToken}`)
     return bb
 }
 
@@ -49,7 +53,31 @@ function changeSspAdParam(sspAdParam, loginInfo) {
         access_token: loginInfo.access_token
     }
     bb.pre_ad_params.token = token
+    bb.pre_ad_params.platform.guid = loginInfo.video_guid
+    bb.pre_ad_params.user_type = 2
+    bb.pre_ad_params.video.fmt = 'fhd'
     return JSON.stringify(bb)
+}
+
+/**
+ * 获取viewSession
+ */
+async function getVuSession(loginInfo) {
+    const url = `https://pbaccess.video.qq.com/trpc.video_account_login.web_login_trpc.WebLoginTrpc/NewRefresh`
+    return axios.get(url, {
+        headers: {
+            Host: 'pbaccess.video.qq.com',
+            referer: 'https://v.qq.com/',
+            Origin: 'https://v.qq.com',
+            Cookie: `vqq_access_token=${loginInfo.access_token}; vqq_openid=${loginInfo.openid}; vqq_vuserid=${loginInfo.vuserid}; vqq_vusession=${loginInfo.vusession};`
+        }
+    })
+        .then((res) => {
+            return res.data.data.vusession
+        })
+        .catch((e)=> {
+            console.log(e)
+        })
 }
 
 
