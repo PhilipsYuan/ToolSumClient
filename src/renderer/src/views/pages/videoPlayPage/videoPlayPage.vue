@@ -14,7 +14,8 @@
         </div>
       </div>
     </div>
-    <div class="w-full h-[calc(100%-40px)]">
+    <div class="w-full h-[calc(100%-68px)]">
+      <div class="text-xs text-center text-gray-400 my-1">如出现播放失败，建议使用系统播放或者其他视频播放器（例如：迅雷影音）</div>
       <video v-if="videoSrc" ref="myVideo" controls autoplay
              class="video-js vjs-default-skin w-full h-full object-fill">
         <source :src="videoSrc" type="video/mp4" codecs="hevc" />
@@ -51,11 +52,11 @@ export default {
     this.$nextTick(() => {
       this.setVideoConfig()
     })
-    this.checkHEVCSupport()
   },
   methods: {
     setVideoConfig() {
       this.player = videoJs(this.$refs.myVideo);
+      console.log(this.player.canPlaySource())
     },
     changeVideoPlayItem(videoPath, videoName) {
       this.videoSrc = `file://${videoPath}`
@@ -64,35 +65,6 @@ export default {
     },
     closeWindow() {
       window.electronAPI.closeVideoPlayWindow()
-    },
-    checkVideoCode() {
-      const videoElement = document.createElement('video');
-      videoElement.addEventListener('loadedmetadata', function() {
-        console.log(videoElement.videoTracks)
-        const codec = videoElement.videoTracks[0].codec;
-       alert('视频编码格式:', codec);
-      });
-      videoElement.src = this.videoSrc;
-    },
-    checkHEVCSupport() {
-      const isTypeSupported = (mimeType) => {
-        const mediaSource = new MediaSource();
-        mediaSource.addEventListener('sourceopen', () => {
-          let mediaSource = this.mediaSource;
-          try {
-            let sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-            mediaSource.removeSourceBuffer(sourceBuffer);
-          } catch (error) {
-            console.log(error);
-            return false;
-          }
-          return true;
-        });
-      };
-
-      const hevcMimeType = 'video/mp4; codecs="hev1"';
-      const isHEVCSupported = isTypeSupported(hevcMimeType);
-      console.log('HEVC supported:', isHEVCSupported);
     }
   }
 }
