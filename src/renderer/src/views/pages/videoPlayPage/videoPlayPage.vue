@@ -51,6 +51,7 @@ export default {
     this.$nextTick(() => {
       this.setVideoConfig()
     })
+    this.checkHEVCSupport()
   },
   methods: {
     setVideoConfig() {
@@ -64,6 +65,35 @@ export default {
     closeWindow() {
       window.electronAPI.closeVideoPlayWindow()
     },
+    checkVideoCode() {
+      const videoElement = document.createElement('video');
+      videoElement.addEventListener('loadedmetadata', function() {
+        console.log(videoElement.videoTracks)
+        const codec = videoElement.videoTracks[0].codec;
+       alert('视频编码格式:', codec);
+      });
+      videoElement.src = this.videoSrc;
+    },
+    checkHEVCSupport() {
+      const isTypeSupported = (mimeType) => {
+        const mediaSource = new MediaSource();
+        mediaSource.addEventListener('sourceopen', () => {
+          let mediaSource = this.mediaSource;
+          try {
+            let sourceBuffer = mediaSource.addSourceBuffer(mimeType);
+            mediaSource.removeSourceBuffer(sourceBuffer);
+          } catch (error) {
+            console.log(error);
+            return false;
+          }
+          return true;
+        });
+      };
+
+      const hevcMimeType = 'video/mp4; codecs="hev1"';
+      const isHEVCSupported = isTypeSupported(hevcMimeType);
+      console.log('HEVC supported:', isHEVCSupported);
+    }
   }
 }
 </script>
