@@ -6,10 +6,11 @@ import {newFinishedRecord} from "../../finishList/finishList";
 import { savePauseDownloadInfo } from "./m3u8Video"
 
 import path from 'path';
+import {makeDir} from "../../../util/fs";
 
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
-
+makeDir(tempSourcePath)
 const works = {}
 
 /**

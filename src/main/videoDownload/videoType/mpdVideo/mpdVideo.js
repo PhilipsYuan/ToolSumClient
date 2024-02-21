@@ -5,7 +5,7 @@ import {makeDir} from "../../../util/fs";
 import {app} from "electron";
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
-
+makeDir(tempSourcePath)
 export async function createMpdVideoDownloadTask(event, url, name, outPath, audioUrl) {
     const outputPath = path.resolve(outPath, `${name}.mp4`);
     const id = shortId.generate()

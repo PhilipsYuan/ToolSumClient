@@ -15,7 +15,7 @@ const binary = os.platform() === 'win32' ? 'ffmpeg.exe' : 'ffmpeg';
 const ffmpegPath = path.resolve(__dirname, binary);
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
-
+makeDir(tempSourcePath)
 const cancelTokenList = {}
 
 export async function createBiliVideoDownloadTask(event, url, name, outPath, audioUrl) {

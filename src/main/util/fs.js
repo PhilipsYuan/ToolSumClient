@@ -30,14 +30,15 @@ export function createDir(path) {
  * @param filePath
  */
 export function mkdir (filePath) {
-    const arr = filePath.split('/')
+    const sep = path.sep
+    const arr = filePath.split(sep)
     let dir = arr[0]
     for (let i = 1; i < arr.length; i++) {
         if (!dirCache[dir] && !fs.existsSync(dir)) {
             dirCache[dir] = true
             fs.mkdirSync(dir)
         }
-        dir = dir + '/' + arr[i]
+        dir = dir + sep + arr[i]
     }
     fs.writeFileSync(filePath, '')
 }
@@ -45,16 +46,17 @@ export function mkdir (filePath) {
  * 创建多级目录
  * */
 export function makeDir (dirs) {
+    const sep = path.sep
     if (!fs.existsSync(dirs)) {
         let pathtmp
-        dirs.split('/').forEach(function (dirname) {
+        dirs.split(sep).forEach(function (dirname) {
             if (pathtmp) {
                 pathtmp = path.join(pathtmp, dirname)
             } else {
                 if (dirname) {
                     pathtmp = dirname
                 } else {
-                    pathtmp = '/'
+                    pathtmp = sep
                 }
             }
             if (!fs.existsSync(pathtmp)) {
@@ -135,22 +137,23 @@ export function deleteDirectory (dir) {
  * 拷贝文件到指定目录
  * */
 export function copyFileToPath (file, path, name) {
+    const sep = path.sep
     if (!fs.existsSync(path)) {
         makeDir(path)
     }
-    if (fs.existsSync(path + '/' + name)) {
+    if (fs.existsSync(path + sep + name)) {
         return {
             code: 100
         }
     }
     if (file) {
         let fileInfo = fs.readFileSync(file)
-        fs.writeFileSync(path + '/' + name, fileInfo)
+        fs.writeFileSync(path + sep + name, fileInfo)
         return {
             code: 200
         }
     } else {
-        fs.writeFileSync(path + '/' + name, '')
+        fs.writeFileSync(path + sep + name, '')
         return {
             code: 200
         }
