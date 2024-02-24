@@ -1,12 +1,11 @@
 import axios from '../../../../../util/source/axios'
-import dayjs from "dayjs";
+// import dayjs from "dayjs";
 import host from "../../../../../../renderer/src/utils/const/host";
 
-let cookieInfo = null
+// let cookieInfo = null
 
 export async function getMgTvDownloadLink(htmlUrl) {
     const cookie = await getCookieInfo()
-    console.log(cookie)
     const videoId = getTVId(htmlUrl)
     return axios.get("https://pcweb.api.mgtv.com/video/streamList", {
         params: {
@@ -73,20 +72,24 @@ function getTVId(htmlUrl) {
  * @returns {Promise<*>}
  */
 async function getCookieInfo() {
-    const currentTime = dayjs().format('YYYY-MM-DD')
-    if(cookieInfo && dayjs(currentTime).isBefore(dayjs(cookieInfo.expiredTime))
-        && dayjs(currentTime).isBefore(dayjs(cookieInfo.saveTime))) {
-        return cookieInfo.cookie;
-    } else {
-        const response = await axios.get(`${host.server}mini/systemConfig/mc`)
-        const cookie = response.data.result.cookie
-        const expiredTime = response.data.result.expiredTime
-        const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
-        cookieInfo = {
-            cookie,
-            expiredTime,
-            saveTime
-        }
-        return cookie;
-    }
+    const response = await axios.get(`${host.server}mini/systemConfig/mc`)
+    const cookie = response.data.result.cookie
+    return cookie;
+
+    // const currentTime = dayjs().format('YYYY-MM-DD')
+    // if(cookieInfo && dayjs(currentTime).isBefore(dayjs(cookieInfo.expiredTime))
+    //     && dayjs(currentTime).isBefore(dayjs(cookieInfo.saveTime))) {
+    //     return cookieInfo.cookie;
+    // } else {
+    //     const response = await axios.get(`${host.server}mini/systemConfig/mc`)
+    //     const cookie = response.data.result.cookie
+    //     const expiredTime = response.data.result.expiredTime
+    //     const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
+    //     cookieInfo = {
+    //         cookie,
+    //         expiredTime,
+    //         saveTime
+    //     }
+    //     return cookie;
+    // }
 }

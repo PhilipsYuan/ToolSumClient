@@ -4,18 +4,17 @@ import { getVf } from "./mmc";
 import { app } from 'electron'
 import fs from 'fs';
 import path from "path";
-import dayjs from 'dayjs'
+// import dayjs from 'dayjs'
 import host from "../../../../../../renderer/src/utils/const/host";
 import {makeDir} from "../../../../../util/fs";
 import { removeUrlParams } from "../../../../../util/url";
-import { mpdToM3u8 } from './mpdToM3u8'
 const basePath = app.getPath('userData')
 const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
 makeDir(tempM3u8UrlPath)
 const m3u8UrlMgPath = path.resolve(tempM3u8UrlPath, 'iqiyi')
 makeDir(m3u8UrlMgPath)
 
-let cookieInfo = null
+// let cookieInfo = null
 
 export async function getIQiYiTVDownloadLink (url) {
     const htmlUrl = removeUrlParams(url)
@@ -105,6 +104,7 @@ function getFreeVideo(tvId, title, cookie) {
             if(videos) {
                 const text = videos.find((item) => item.m3u8).m3u8
                 if(/<SegmentList/.test(text)) {
+                    // 这个有问题，还没有实现，在超高清的时候，会是这个格式。
                     const m3u8Url = await createMpdUrl(text, tvId)
                     // const m3u8String = await mpdToM3u8(text)
                     // const m3u8Url = await createM3u8Url(m3u8String, tvId)
@@ -120,6 +120,7 @@ function getFreeVideo(tvId, title, cookie) {
         })
         .catch((e) => {
             console.log(e)
+
             return 'error'
         })
 }
@@ -181,20 +182,23 @@ async function createMpd(mpdText, id) {
  * @returns {Promise<*>}
  */
 async function getCookieInfo() {
-    const currentTime = dayjs().format('YYYY-MM-DD')
-    if(cookieInfo && dayjs(currentTime).isBefore(dayjs(cookieInfo.expiredTime))
-    && dayjs(currentTime).isBefore(dayjs(cookieInfo.saveTime))) {
-        return cookieInfo.cookie;
-    } else {
-        const response = await axios.get(`${host.server}mini/systemConfig/ic`)
-        const cookie = response.data.result.cookie
-        const expiredTime = response.data.result.expiredTime
-        const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
-        cookieInfo = {
-            cookie,
-            expiredTime,
-            saveTime
-        }
-        return cookie;
-    }
+    const response = await axios.get(`${host.server}mini/systemConfig/ic`)
+    const cookie = response.data.result.cookie
+    return cookie;
+    // const currentTime = dayjs().format('YYYY-MM-DD')
+    // if(cookieInfo && dayjs(currentTime).isBefore(dayjs(cookieInfo.expiredTime))
+    // && dayjs(currentTime).isBefore(dayjs(cookieInfo.saveTime))) {
+    //     return cookieInfo.cookie;
+    // } else {
+    //     const response = await axios.get(`${host.server}mini/systemConfig/ic`)
+    //     const cookie = response.data.result.cookie
+    //     const expiredTime = response.data.result.expiredTime
+    //     const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
+    //     cookieInfo = {
+    //         cookie,
+    //         expiredTime,
+    //         saveTime
+    //     }
+    //     return cookie;
+    // }
 }

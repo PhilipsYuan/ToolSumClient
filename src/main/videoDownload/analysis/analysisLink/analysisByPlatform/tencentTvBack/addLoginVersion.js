@@ -1,5 +1,5 @@
 import axios from "../../../../../util/source/axios";
-import dayjs from "dayjs";
+// import dayjs from "dayjs";
 import host from "../../../../../../renderer/src/utils/const/host";
 
 // const loginInfo = {
@@ -12,10 +12,9 @@ import host from "../../../../../../renderer/src/utils/const/host";
 //     "main_login": "qq"
 // }
 
-let cookieInfo = null
+// let cookieInfo = null
 
 export async function getVideoInfo(url, postData) {
-
     const loginInfoString = await getCookieInfo()
     const loginInfo = JSON.parse(loginInfoString)
     const vusession = await getVuSession(loginInfo)
@@ -86,20 +85,24 @@ async function getVuSession(loginInfo) {
  * @returns {Promise<*>}
  */
 async function getCookieInfo() {
-    const currentTime = dayjs().format('YYYY-MM-DD')
-    if(cookieInfo && dayjs(currentTime).isBefore(dayjs(cookieInfo.expiredTime))
-        && dayjs(currentTime).isBefore(dayjs(cookieInfo.saveTime))) {
-        return cookieInfo.cookie;
-    } else {
-        const response = await axios.get(`${host.server}mini/systemConfig/qc`)
-        const cookie = response.data.result.cookie
-        const expiredTime = response.data.result.expiredTime
-        const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
-        cookieInfo = {
-            cookie,
-            expiredTime,
-            saveTime
-        }
-        return cookie;
-    }
+    const response = await axios.get(`${host.server}mini/systemConfig/qc`)
+    const cookie = response.data.result.cookie
+    return cookie;
+
+    // const currentTime = dayjs().format('YYYY-MM-DD')
+    // if(cookieInfo && dayjs(currentTime).isBefore(dayjs(cookieInfo.expiredTime))
+    //     && dayjs(currentTime).isBefore(dayjs(cookieInfo.saveTime))) {
+    //     return cookieInfo.cookie;
+    // } else {
+    //     const response = await axios.get(`${host.server}mini/systemConfig/qc`)
+    //     const cookie = response.data.result.cookie
+    //     const expiredTime = response.data.result.expiredTime
+    //     const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
+    //     cookieInfo = {
+    //         cookie,
+    //         expiredTime,
+    //         saveTime
+    //     }
+    //     return cookie;
+    // }
 }
