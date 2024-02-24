@@ -3,6 +3,7 @@ import { settingsDB } from "../db/db";
 import dayjs from "dayjs";
 import axios from "../util/source/axios";
 import host from "../../renderer/src/utils/const/host";
+import packageJson from '../../../package.json'
 
 
 ipcMain.handle('get-download-setting', getDownloadSetting)
@@ -10,6 +11,7 @@ ipcMain.handle('set-download-setting', setDownloadSetting)
 ipcMain.handle('check-show-disclaimer', checkShowDisclaimer)
 ipcMain.handle('get-disclaimer-info', getDisclaimerInfo)
 ipcMain.handle('set-agree-disclaimer-setting', setAgreeDisclaimerSetting)
+ipcMain.handle('get-current-soft-version', getCurrentSoftVersion)
 
 /**
  * 设置
@@ -109,3 +111,8 @@ async function checkShowDisclaimer() {
         return false;
     }
 }
+
+function getCurrentSoftVersion () {
+    return packageJson.version
+}
+

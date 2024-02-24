@@ -1,11 +1,13 @@
 <template>
   <div>
     <div class="h-[60px] pl-6 pr-8 py-2.5 shadow-[] flex items-center justify-between border-y border-gray-300">
-      <div>
+      <div class="flex items-center gap-4">
         <div class="inline-block align-middle h-10 cursor-pointer" @click="goToPath('home')">
           <img class="h-10" src="../../assets/favicon.ico">
         </div>
-        <div class="cursor-pointer inline-block text-xl font-medium align-middle ml-4" @click="goToPath('home')">小滑轮</div>
+        <div class="cursor-pointer inline-block text-xl font-medium align-middle" @click="goToPath('home')">小滑轮</div>
+        <el-link v-if="newVersion && currentVersion && newVersion != currentVersion"
+                 @click="goToNewVersion" type="primary" target="_blank">有新版（{{newVersion}}）</el-link>
       </div>
       <div class="flex items-center gap-3">
         <div class="list">
@@ -34,7 +36,7 @@
 
 <script>
 import { useService } from '../../service/service'
-import { getUser, setUser } from "../../service/userService";
+import {getSoftVersion, getUser, setUser} from "../../service/userService";
 import {userLogOut} from '../../api/user';
 
 export default {
@@ -46,11 +48,15 @@ export default {
     return {
       isLogin: true,
       user: null,
-      current: []
+      current: [],
+      newVersion: '',
+      currentVersion: ''
     }
   },
-  created () {
+  async created () {
     this.checkUser()
+    this.newVersion = await getSoftVersion()
+    this.currentVersion = await window.electronAPI.getCurrentSoftVersion()
   },
   methods: {
     openLogin () {
@@ -87,6 +93,9 @@ export default {
       if (name !== this.$router.currentRoute.name) {
         this.$router.push({name: name})
       }
+    },
+    goToNewVersion() {
+      window.electronAPI.openLinkByDefaultBrowser("https://www.feiaci.com/xhl/m3u8Video")
     }
   }
 }

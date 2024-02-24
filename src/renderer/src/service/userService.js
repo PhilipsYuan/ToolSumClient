@@ -1,7 +1,8 @@
-import { getUserBenefitApi } from "../api/user";
+import { getUserBenefitApi, getXHLVersion } from "../api/user";
 
 let user = null
 let userBenefit = null
+let softVersion = null
 
 export function getUser() {
     return user
@@ -33,4 +34,18 @@ export function setUserBenefit() {
                 return true
             }
         })
+}
+
+export function getSoftVersion() {
+    if (softVersion) {
+        return Promise.resolve(softVersion)
+    } else {
+        return getXHLVersion()
+            .then((res) => {
+                if (res.data.result) {
+                    softVersion = res.data.result.version
+                    return softVersion
+                }
+            })
+    }
 }

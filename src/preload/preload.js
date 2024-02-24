@@ -29,6 +29,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     checkShowDisclaimer: () => ipcRenderer.invoke('check-show-disclaimer'),
     getDisclaimerInfo: () => ipcRenderer.invoke('get-disclaimer-info'),
     setAgreeDisclaimerSetting:(agree) => ipcRenderer.invoke('set-agree-disclaimer-setting', agree),
+    getCurrentSoftVersion: () => ipcRenderer.invoke('get-current-soft-version'),
+    openLinkByDefaultBrowser: (link) => ipcRenderer.invoke('open-link-by-default-browser', link),
 
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),

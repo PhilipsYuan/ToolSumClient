@@ -5,6 +5,7 @@ ipcMain.handle('open-directory-dialog', openDirectoryDialog)
 ipcMain.handle('go-to-directory', goToDirectory)
 ipcMain.handle('open-directory-and-file', openDirectoryAndFile)
 ipcMain.handle('check-file-is-exist', checkFileIsExist)
+ipcMain.handle('open-link-by-default-browser', openLinkByDefaultBrowser)
 
 /**
  * 后端向前端推送信息
@@ -65,4 +66,11 @@ export async function openDirectoryAndFile(event, path) {
  */
 export function checkFileIsExist(event, filePath) {
     return fs.existsSync(filePath)
+}
+
+/**
+ * 用电脑默认浏览器打开链接
+ */
+export function openLinkByDefaultBrowser(event, link) {
+    shell.openExternal(link)
 }

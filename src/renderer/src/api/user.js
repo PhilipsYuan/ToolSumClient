@@ -97,6 +97,11 @@ function checkEmailIsRegister(data) {
   })
 }
 
+function getXHLVersion() {
+  let url = `${host.server}mini/systemConfig/getVersion`;
+  return axios.get(url)
+}
+
 export {
   login,
   register,
@@ -108,5 +113,6 @@ export {
   getSystemUpdateNotice,
   getUserBenefitApi,
   reduceBenefit,
-  checkEmailIsRegister
+  checkEmailIsRegister,
+  getXHLVersion
 }
