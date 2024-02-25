@@ -2669,7 +2669,7 @@ es6-promise@^3.0.2:
   resolved "https://registry.npmmirror.com/es6-promise/-/es6-promise-3.3.1.tgz#a08cdde84ccdbf34d027a1451bc91d4bcd28a613"
   integrity sha512-SOp9Phqvqn7jtEUxPWdWfWoLmyt2VaJ6MpvP9Comy1MceMXqE6bxvaTu4iaxpYYPzhny28Lc+M87/c2cPK6lDg==
 
-es6-promise@^4.0.3:
+es6-promise@^4.0.3, es6-promise@^4.2.8:
   version "4.2.8"
   resolved "https://registry.npmmirror.com/es6-promise/-/es6-promise-4.2.8.tgz#4eb21594c972bc40553d276e510539143db53e0a"
   integrity sha512-HJDGx5daxeIvxdBxvG2cb9g4tEvwIk3i8+nhX0yGrYmZUzbkdg8QbDevheDB8gd0//uPj4c1EQua8Q+MViT0/w==
@@ -3017,6 +3017,14 @@ flora-colossus@^2.0.0:
   dependencies:
     debug "^4.3.4"
     fs-extra "^10.1.0"
+
+flv-h265.js@^1.7.6:
+  version "1.7.6"
+  resolved "https://registry.npmjs.org/flv-h265.js/-/flv-h265.js-1.7.6.tgz#8d2deade52dce488cb1b33cccd26c489b69f925b"
+  integrity sha512-+UKXgls2KeVf4s8cTXndD3I7hegZKT+GYBJ+khHPqobXcCZ1IuyhXJTFi6XvF8o01B7hDU0ilYWMOQdgLPTsDg==
+  dependencies:
+    es6-promise "^4.2.8"
+    webworkify-webpack "^2.1.5"
 
 fmix@^0.1.0:
   version "0.1.0"
@@ -7113,6 +7121,11 @@ webtorrent@1.9.7:
     ut_pex "^3.0.2"
   optionalDependencies:
     utp-native "^2.5.3"
+
+webworkify-webpack@^2.1.5:
+  version "2.1.5"
+  resolved "https://registry.npmjs.org/webworkify-webpack/-/webworkify-webpack-2.1.5.tgz#bf4336624c0626cbe85cf1ffde157f7aa90b1d1c"
+  integrity sha512-2akF8FIyUvbiBBdD+RoHpoTbHMQF2HwjcxfDvgztAX5YwbZNyrtfUMgvfgFVsgDhDPVTlkbb5vyasqDHfIDPQw==
 
 whatwg-url@^5.0.0:
   version "5.0.0"

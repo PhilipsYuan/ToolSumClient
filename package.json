@@ -48,6 +48,7 @@
     "electron-reload": "^2.0.0-alpha.1",
     "element-plus": "^2.5.3",
     "env": "^0.0.2",
+    "flv-h265.js": "^1.7.6",
     "get-port": "^7.0.0",
     "lowdb": "^6.0.0",
     "modclean": "^3.0.0-beta.1",
