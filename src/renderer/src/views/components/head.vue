@@ -6,7 +6,7 @@
           <img class="h-10" src="../../assets/favicon.ico">
         </div>
         <div class="cursor-pointer inline-block text-xl font-medium align-middle" @click="goToPath('home')">小滑轮</div>
-        <el-link v-if="newVersion && currentVersion && newVersion != currentVersion"
+        <el-link v-if="newVersion && currentVersion && Number(newVersion.split('.')[2]) > Number(currentVersion.split('.')[2])"
                  @click="goToNewVersion" type="primary" target="_blank">新版本（{{newVersion}}）</el-link>
       </div>
       <div class="flex items-center gap-3">
