@@ -7,7 +7,7 @@
         </div>
         <div class="cursor-pointer inline-block text-xl font-medium align-middle" @click="goToPath('home')">小滑轮</div>
         <el-link v-if="newVersion && currentVersion && newVersion != currentVersion"
-                 @click="goToNewVersion" type="primary" target="_blank">有新版（{{newVersion}}）</el-link>
+                 @click="goToNewVersion" type="primary" target="_blank">新版本（{{newVersion}}）</el-link>
       </div>
       <div class="flex items-center gap-3">
         <div class="list">
