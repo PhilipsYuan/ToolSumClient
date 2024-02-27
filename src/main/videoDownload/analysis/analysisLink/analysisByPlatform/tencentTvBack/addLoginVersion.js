@@ -38,7 +38,8 @@ function changeVinfoparam(vinfo, loginInfo) {
     const aa = vinfo.replace(/defn=[^&]*&/, 'defn=fhd&')
     const cc = aa.replace(/guid=[^&]*&/, `guid=${loginInfo.video_guid}&`)
     const bb = cc.replace('logintoken=', `logintoken=${loginToken}`)
-    return bb
+    const dd = bb.replace(/hevclv=[^&]*&/, 'hevclv=31&')
+    return dd
 }
 
 function changeSspAdParam(sspAdParam, loginInfo) {

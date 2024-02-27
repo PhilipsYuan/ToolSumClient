@@ -33,7 +33,7 @@
               </el-icon>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item v-if="!/tempM3u8Url|bilivideo/.test(item.m3u8Url)" @click="copyLink(item.m3u8Url)">复制资源链接</el-dropdown-item>
+                  <el-dropdown-item v-if="!/tempM3u8Url|bilivideo｜mgtv\.com/.test(item.m3u8Url)" @click="copyLink(item.m3u8Url)">复制资源链接</el-dropdown-item>
                   <el-dropdown-item @click="deleteRecord(item.id)">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </template>

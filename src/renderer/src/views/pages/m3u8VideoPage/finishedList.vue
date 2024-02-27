@@ -14,9 +14,9 @@
     <div v-if="list.length > 0" class="overflow-auto h-[calc(100vh-243px)] px-4 py-4 rounded-md bg-gray-50" id="m3u8-finish-list-frame">
       <el-card v-for="item in list" class="hover:bg-gray-100 hover:border-blue-400 !rounded-md mb-4 last:mb-0" :id="item.id" :body-style="{'padding': '8px 20px'}">
         <div class="flex justify-between items-center gap-3">
-          <div class="font-medium text-base truncate h-[44px]" :class="{'leading-[44px]': /tempM3u8Url|bilivideo/.test(item.m3u8Url)}">
+          <div class="font-medium text-base truncate h-[44px]" :class="{'leading-[44px]': /tempM3u8Url|bilivideo|mgtv\.com/.test(item.m3u8Url)}">
             {{ item.name }}
-            <div v-if="!/tempM3u8Url|bilivideo/.test(item.m3u8Url)" class="text-xs text-gray-400 truncate">{{item.m3u8Url}}</div>
+            <div v-if="!/tempM3u8Url|bilivideo｜mgtv\.com/.test(item.m3u8Url)" class="text-xs text-gray-400 truncate">{{item.m3u8Url}}</div>
           </div>
           <div>
             <div class="flex gap-3 items-center w-[190px]" :class="{'w-[265px]': !item.isExist}">
