@@ -15,7 +15,7 @@ export async function getMgTvDownloadLink(htmlUrl) {
             "definition": 3,
             "fileSourceType": 1,
             video_id: videoId,
-            vf: "h265",
+            vf: "h264",
             type: 'pch5',
             _support: '10000000',
             src: 'mgtv',

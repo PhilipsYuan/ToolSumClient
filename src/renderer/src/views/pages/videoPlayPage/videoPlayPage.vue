@@ -16,7 +16,6 @@
     </div>
     <div class="w-full h-[calc(100%-68px)]">
       <div class="text-xs text-center text-gray-400 my-1">如出现播放失败，建议使用系统播放或者其他视频播放器（例如：迅雷影音）</div>
-      <video id="videoElement"></video>
       <video v-if="videoSrc" ref="myVideo" controls autoplay
              class="video-js vjs-default-skin w-full h-full object-fill">
         <source :src="videoSrc" type="video/mp4" codecs="hevc" />
@@ -33,7 +32,6 @@ import videoJs from 'video.js'
 import zhCNJson from  'video.js/dist/lang/zh-CN.json'
 import {getUrlParams} from "../../../utils/url";
 import { addService } from "../../../service/service";
-import flvjs from 'flv-h265.js'
 videoJs.addLanguage('zh-CN', zhCNJson)
 export default {
   name: "videoPlayPage",
@@ -52,10 +50,8 @@ export default {
     this.videoSrc = `file://${params.view}`
     this.videoName = params.name
     this.$nextTick(() => {
-      // this.setVideoConfig()
-      this.test()
+      this.setVideoConfig()
     })
-    this.test()
   },
   methods: {
     setVideoConfig() {
@@ -66,20 +62,6 @@ export default {
       this.videoSrc = `file://${videoPath}`
       this.videoName = videoName
       this.player.src(this.videoSrc)
-    },
-    test() {
-      if (flvjs.isSupported()) {
-        // var videoElement = this.$refs.myVideo;
-        var videoElement = document.getElementById('videoElement');
-        console.log(videoElement)
-        var flvPlayer = flvjs.createPlayer({
-          type: 'flv',
-          url: this.videoSrc
-        });
-        flvPlayer.attachMediaElement(videoElement);
-        flvPlayer.load();
-        flvPlayer.play();
-      }
     },
     closeWindow() {
       window.electronAPI.closeVideoPlayWindow()
