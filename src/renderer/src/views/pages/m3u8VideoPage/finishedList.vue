@@ -16,7 +16,7 @@
         <div class="flex justify-between items-center gap-3">
           <div class="font-medium text-base truncate h-[44px]" :class="{'leading-[44px]': /tempM3u8Url|bilivideo|mgtv\.com/.test(item.m3u8Url)}">
             {{ item.name }}
-            <div v-if="!/tempM3u8Url|bilivideo｜mgtv\.com/.test(item.m3u8Url)" class="text-xs text-gray-400 truncate">{{item.m3u8Url}}</div>
+            <div v-if="!/tempM3u8Url|bilivideo|mgtv\.com/.test(item.m3u8Url)" class="text-xs text-gray-400 truncate">{{item.m3u8Url}}</div>
           </div>
           <div>
             <div class="flex gap-3 items-center w-[190px]" :class="{'w-[265px]': !item.isExist}">
@@ -40,7 +40,7 @@
                   <el-dropdown-menu>
                     <el-dropdown-item v-if="item.isExist" @click="playVideo(item.filePath, item.name)">播放</el-dropdown-item>
                     <el-dropdown-item v-if="item.isExist" @click="openVideoFile(item.filePath)">系统默认播放</el-dropdown-item>
-                    <el-dropdown-item v-if="!/tempM3u8Url|bilivideo/.test(item.m3u8Url)" @click="copyLink(item.m3u8Url)">复制资源链接</el-dropdown-item>
+                    <el-dropdown-item v-if="!/tempM3u8Url|bilivideo|mgtv\.com/.test(item.m3u8Url)" @click="copyLink(item.m3u8Url)">复制资源链接</el-dropdown-item>
                     <el-dropdown-item @click="deleteRecord(item.id)">删除记录</el-dropdown-item>
                     <el-dropdown-item @click="deleteRecordAndFile(item.id)" v-if="item.isExist">删除记录和文件
                     </el-dropdown-item>

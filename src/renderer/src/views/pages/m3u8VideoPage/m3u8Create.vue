@@ -210,13 +210,20 @@ export default {
         }
         const info = await window.electronAPI.getDownloadLinkFromUrl(this.form.htmlUrl)
         if(info === 'error') {
-          this.message = {
-            content: "网页加载不成功，请先确定网页在浏览器上是否正常打开！",
-            status: 'error'
+          if(/qq\.com|iqiyi|mgtv\.com/.test(this.form.htmlUrl)) {
+            this.message = {
+              content: "网页加载不成功，请重新尝试, 如还不成功，可将地址发送给我们，我们会努力解析，并在最新的版本中支持！",
+              status: 'error'
+            }
+          } else {
+            this.message = {
+              content: "网页加载不成功，请先确定网页在浏览器上是否正常打开！",
+              status: 'error'
+            }
           }
         } else if(info === 'noFound') {
           this.message = {
-            content: "网页解析不成功，可以将地址上报给我们，我们会努力解析，并在最新的版本中支持！",
+            content: "网页解析不成功，可将地址发送给我们，我们会努力解析并在最新的版本中支持！",
             status: 'error'
           }
         } else if(info.videoUrl) {
@@ -232,9 +239,16 @@ export default {
             status: 'success'
           }
         } else {
-          this.message = {
-            content: "未找到下载的链接，请重新尝试或者查看使用指南自己查找下载链接。",
-            status: 'error'
+          if(/qq\.com|iqiyi|mgtv\.com/.test(this.form.htmlUrl)) {
+            this.message = {
+              content: "网页加载不成功，请重新尝试, 如还不成功，可将地址发送给我们，我们会努力解析并在最新的版本中支持！",
+              status: 'error'
+            }
+          } else {
+            this.message = {
+              content: "未找到下载的链接，请重新尝试或者查看使用指南自己查找下载链接。",
+              status: 'error'
+            }
           }
         }
         this.analysisLoading = false
