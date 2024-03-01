@@ -56,7 +56,6 @@ export default {
   methods: {
     setVideoConfig() {
       this.player = videoJs(this.$refs.myVideo);
-      console.log(this.player.canPlaySource())
     },
     changeVideoPlayItem(videoPath, videoName) {
       this.videoSrc = `file://${videoPath}`

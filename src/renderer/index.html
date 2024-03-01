@@ -7,10 +7,21 @@
     media-src * blob: 'self' http://* file://* 'unsafe-inline' 'unsafe-eval';
     style-src * 'self' 'unsafe-inline';
     img-src * 'self' data: content:;
+    worker-src * blob: 'self' http://* 'unsafe-inline' 'unsafe-eval';
     connect-src * blob:;">
 </head>
 <body>
 <div id="app"></div>
+<!--<video id="videoPlayer" class="video-js vjs-default-skin" controls playsinline autoplay="autoplay" width="500px">-->
+<!--    <source src="https://1080p.huyall.com/play/QbYNAqWd/index.m3u8" type="application/x-mpegURL" />-->
+<!--</video>-->
+<!--<script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>-->
 <script type="module" src="./src/renderer.js"></script>
+<!--<script src="https://unpkg.com/videojs-contrib-hls/dist/videojs-contrib-hls.js"></script>-->
+<!--<script>-->
+<!--    const player = videojs("videoPlayer", this.option, () => {-->
+<!--        player.play();-->
+<!--    });-->
+<!--</script>-->
 </body>
 </html>

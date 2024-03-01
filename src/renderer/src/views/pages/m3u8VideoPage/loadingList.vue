@@ -39,6 +39,11 @@
                 </svg>
               </el-icon>
             </el-tooltip>
+            <el-icon class="icon-button !text-lg !p-1 cursor-pointer"
+                     style="width: 28px !important;height:28px !important;"
+                     @click="playVideo(item)">
+              <VideoPlay />
+            </el-icon>
             <el-dropdown>
               <el-icon class="icon-button !text-lg" style="width: 28px !important;height:28px !important;">
                 <MoreFilled/>
@@ -55,6 +60,11 @@
       </div>
     </div>
     <el-empty v-if="list.length === 0" description="暂无数据" />
+    <div class="h-[500px] w-[500px] bg-black">
+      <video id="videoPlayer" class="video-js vjs-default-skin" controls playsinline autoplay="autoplay" width="500px" height="500px">
+        <source :src="attachmentLink" type="application/x-mpegURL" />
+      </video>
+    </div>
   </div>
 </template>
 
@@ -63,14 +73,28 @@ import {VideoPlay} from "@element-plus/icons-vue";
 import {addService, useService} from "../../../service/service";
 import {getUserBenefitApi, reduceBenefit} from "../../../api/user";
 import {setUserBenefit} from "../../../service/userService";
+import 'video.js/dist/video-js.css';
+import videojs from 'video.js';
+// import 'videojs-contrib-hls/dist/videojs-contrib-hls.min'
 export default {
   name: "loadingList",
   components: {VideoPlay},
   data() {
     return {
       list: [],
-      intervalList: null
-    }
+      intervalList: null,
+      videoSrc: '',
+      options: {
+        autoplay: false, // 设置自动播放
+        muted: true, // 设置了它为true，才可实现自动播放,同时视频也被静音（Chrome66及以上版本，禁止音视频的自动播放）
+        preload: "auto", // 预加载
+        controls: true, // 显示播放的控件
+      },
+      attachmentLink: "https://1080p.huyall.com/play/QbYNAqWd/index.m3u8",
+    };
+  },
+  created() {
+    import('videojs-contrib-hls/dist/videojs-contrib-hls.min')
   },
   async mounted() {
     await this.getLoadingList()
@@ -152,6 +176,16 @@ export default {
       } else {
         return true
       }
+    },
+    playVideo (item) {
+      // console.log(item)
+      // const url = window.URL.createObjectURL(item.m3u8Data)
+      // console.log(url)
+      // this.attachmentLink = item.m3u8Url
+      // console.log(item.m3u8Url)
+      const player = videojs("videoPlayer", this.option, () => {
+        player.play();
+      });
     }
   },
   beforeDestroy() {
