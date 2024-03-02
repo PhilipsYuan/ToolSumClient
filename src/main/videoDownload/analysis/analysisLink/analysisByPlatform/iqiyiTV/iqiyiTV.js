@@ -165,7 +165,8 @@ async function createM3u8Url(m3u8Text, id) {
         text: m3u8Text
     }
     const filePath = path.resolve(m3u8UrlMgPath, `${id}.m3u8`)
-    await fs.writeFileSync(filePath, JSON.stringify(json), "utf-8")
+    // await fs.writeFileSync(filePath, JSON.stringify(json), "utf-8")
+    await fs.writeFileSync(filePath, m3u8Text, "utf-8")
     return filePath
 }
 

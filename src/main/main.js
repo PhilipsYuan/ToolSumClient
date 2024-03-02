@@ -65,6 +65,13 @@ app.whenReady().then(() => {
     }
     callback({ responseHeaders: details.responseHeaders});
   })
+  const RequestFilter = {
+    urls: ['https://*.mgtv.com/*']
+  }
+  session.defaultSession.webRequest.onBeforeSendHeaders(RequestFilter, (details, callback) => {
+    details.requestHeaders['Referer'] = 'https://www.mgtv.com'
+    callback({ requestHeaders: details.requestHeaders })
+  })
 })
 
 // In this file you can include the rest of your app's specific main process

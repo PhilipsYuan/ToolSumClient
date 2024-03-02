@@ -14,6 +14,13 @@
             </div>
           </div>
           <div class="flex gap-3 items-center">
+            <el-tooltip content="播放" placement="top">
+              <el-icon class="icon-button !text-lg !p-1 cursor-pointer"
+                       style="width: 28px !important;height:28px !important;"
+                       @click="playVideo(item)">
+                <VideoPlay />
+              </el-icon>
+            </el-tooltip>
             <div v-if="item.pausing === true" class="text-xs text-gray-500">暂停中...</div>
             <el-tooltip v-if="item.isStart === item.pause && item.pausing === false" content="下载" placement="top">
               <el-icon class="icon-button !text-lg !p-1 cursor-pointer"
@@ -39,11 +46,6 @@
                 </svg>
               </el-icon>
             </el-tooltip>
-            <el-icon class="icon-button !text-lg !p-1 cursor-pointer"
-                     style="width: 28px !important;height:28px !important;"
-                     @click="playVideo(item)">
-              <VideoPlay />
-            </el-icon>
             <el-dropdown>
               <el-icon class="icon-button !text-lg" style="width: 28px !important;height:28px !important;">
                 <MoreFilled/>

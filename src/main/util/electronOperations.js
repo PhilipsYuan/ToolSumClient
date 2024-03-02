@@ -6,6 +6,7 @@ ipcMain.handle('go-to-directory', goToDirectory)
 ipcMain.handle('open-directory-and-file', openDirectoryAndFile)
 ipcMain.handle('check-file-is-exist', checkFileIsExist)
 ipcMain.handle('open-link-by-default-browser', openLinkByDefaultBrowser)
+ipcMain.handle('get-file-content', getFileContent)
 
 /**
  * 后端向前端推送信息
@@ -73,4 +74,13 @@ export function checkFileIsExist(event, filePath) {
  */
 export function openLinkByDefaultBrowser(event, link) {
     shell.openExternal(link)
+}
+
+/**
+ * 获取文件里内容
+ */
+export function getFileContent(event, filePath) {
+    if(fs.existsSync(filePath)){
+        return fs.readFileSync(filePath, 'utf-8')
+    }
 }

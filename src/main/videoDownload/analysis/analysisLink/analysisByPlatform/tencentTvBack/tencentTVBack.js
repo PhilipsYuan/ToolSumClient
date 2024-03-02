@@ -117,11 +117,11 @@ async function createM3u8Url(m3u8Text, id, hostPath) {
         const url = buildAbsoluteURL(hostPath, item)
         m3u8Text = m3u8Text.replace(item, url)
     })
-    const json = {
-        text: m3u8Text
-    }
+    // const json = {
+    //     text: m3u8Text
+    // }
     const filePath = path.resolve(m3u8UrlMgPath, `${id}.m3u8`)
-    await fs.writeFileSync(path.resolve(m3u8UrlMgPath, `${id}.m3u8`), JSON.stringify(json), "utf-8")
+    await fs.writeFileSync(path.resolve(m3u8UrlMgPath, `${id}.m3u8`), m3u8Text, "utf-8")
     return filePath
 }
 
