@@ -20,6 +20,7 @@
              class="video-js vjs-default-skin w-full h-full object-fill">
         <source :src="videoSrc" type="video/mp4" codecs="hevc" />
         <source :src="videoSrc" type="video/mp4" codecs="avc1" />
+        <source :src="videoSrc" type="application/x-mpegURL" />
       </video>
     </div>
 
@@ -29,6 +30,7 @@
 <script>
 import 'video.js/dist/video-js.css'
 import videoJs from 'video.js'
+import '@videojs/http-streaming'
 import zhCNJson from  'video.js/dist/lang/zh-CN.json'
 import {getUrlParams} from "../../../utils/url";
 import { addService } from "../../../service/service";
@@ -47,7 +49,11 @@ export default {
     addService('changeVideoPlayItem', this.changeVideoPlayItem.bind(this))
     this.isMac = /macintosh|mac os x/i.test(navigator.userAgent);
     const params = getUrlParams(window.location.href)
-    this.videoSrc = `file://${params.view}`
+    if(/http/.test(params.view)) {
+      this.videoSrc = params.view
+    } else {
+      this.videoSrc = `file://${params.view}`
+    }
     this.videoName = params.name
     this.$nextTick(() => {
       this.setVideoConfig()

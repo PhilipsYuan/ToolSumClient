@@ -60,11 +60,6 @@
       </div>
     </div>
     <el-empty v-if="list.length === 0" description="暂无数据" />
-    <div class="h-[500px] w-[500px] bg-black">
-      <video id="videoPlayer" class="video-js vjs-default-skin" controls playsinline autoplay="autoplay" width="500px" height="500px">
-        <source :src="attachmentLink" type="application/x-mpegURL" />
-      </video>
-    </div>
   </div>
 </template>
 
@@ -73,9 +68,6 @@ import {VideoPlay} from "@element-plus/icons-vue";
 import {addService, useService} from "../../../service/service";
 import {getUserBenefitApi, reduceBenefit} from "../../../api/user";
 import {setUserBenefit} from "../../../service/userService";
-import 'video.js/dist/video-js.css';
-import videojs from 'video.js';
-// import 'videojs-contrib-hls/dist/videojs-contrib-hls.min'
 export default {
   name: "loadingList",
   components: {VideoPlay},
@@ -90,11 +82,7 @@ export default {
         preload: "auto", // 预加载
         controls: true, // 显示播放的控件
       },
-      attachmentLink: "https://1080p.huyall.com/play/QbYNAqWd/index.m3u8",
     };
-  },
-  created() {
-    import('videojs-contrib-hls/dist/videojs-contrib-hls.min')
   },
   async mounted() {
     await this.getLoadingList()
@@ -178,14 +166,7 @@ export default {
       }
     },
     playVideo (item) {
-      // console.log(item)
-      // const url = window.URL.createObjectURL(item.m3u8Data)
-      // console.log(url)
-      // this.attachmentLink = item.m3u8Url
-      // console.log(item.m3u8Url)
-      const player = videojs("videoPlayer", this.option, () => {
-        player.play();
-      });
+      window.electronAPI.openVideoPlayPage(item.m3u8Url, item.name);
     }
   },
   beforeDestroy() {
