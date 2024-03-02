@@ -134,7 +134,7 @@ export default {
       setTimeout(() => {
         document.getElementById('m3u8-finish-list-frame').scroll(0, 0)
       }, 200)
-      await this.costUserBenefit()
+      // await this.costUserBenefit()
     },
     /**
      * 下载成功后，消耗用户的权益

@@ -109,7 +109,7 @@ async function downloadTss(totalUrls, m3u8Data, tempPath, loadingRecord) {
         })
         loadingRecord.message = {
             status: 'error',
-            content: `下载失败，请重新进行下载!`
+            content: `下载失败，请重新创建下载任务进行下载!`
         }
         parentPort && parentPort.postMessage({
             type: 'updateRecord',

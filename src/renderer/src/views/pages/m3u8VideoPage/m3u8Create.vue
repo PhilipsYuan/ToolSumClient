@@ -50,7 +50,7 @@
               placement="bottom"
               :width="'fit-content'"
               trigger="hover"
-              content="如果不是会员，视频下载完成后会消耗您的免费次数。"
+              content="如果您不是会员，创建下载任务会消耗您的免费次数。"
           >
             <template #reference>
               <el-icon class="ml-4"><QuestionFilled class="text-gray-400" /></el-icon>
@@ -67,8 +67,9 @@
 import {addService, useService} from "../../../service/service";
 import alreadyExistedModal from "./alreadyExistedModal.vue";
 import { checkLogin } from "../../../api/login";
-import {getUserBenefitApi} from "../../../api/user";
+import {getUserBenefitApi, reduceBenefit} from "../../../api/user";
 import SearchResource from './searchResource.vue'
+import {setUserBenefit} from "../../../service/userService";
 
 export default {
   name: "m3u8Create",
@@ -123,6 +124,7 @@ export default {
               useService('getM3u8LoadingList')
               this.changeTab('loading')
               this.createLoading = false
+              await this.costUserBenefit()
             } else {
               this.createLoading = false
               this.getM3u8FileFailureMessage('error', '下载资源失败，请重新尝试或者更换个下载资源!')
@@ -272,7 +274,26 @@ export default {
       }
       this.form.htmlUrl = url;
       this.form.name = name || '';
-    }
+    },
+    /**
+     * 下载成功后，消耗用户的权益
+     */
+    costUserBenefit() {
+      return getUserBenefitApi()
+          .then((res) => {
+            if(res.data.result) {
+              const result = res.data.result
+              if(result.isVip) {
+                // nothing to do
+              } else if(result.freeCount > 0) {
+                reduceBenefit()
+                    .then(() => {
+                      setUserBenefit()
+                    })
+              }
+            }
+          })
+    },
   }
 }
 </script>
