@@ -38,8 +38,14 @@ export async function openVideoPlayPage(event, videoPath, videoName) {
             await window.webContents.loadURL(`file://${urlPath}#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}`)
         }
     } else {
+        if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+            await selfVideoPlayWindow.window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}`)
+        } else {
+            const urlPath = path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
+            await selfVideoPlayWindow.window.webContents.loadURL(`file://${urlPath}#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}`)
+        }
         selfVideoPlayWindow.window.focus()
-        selfVideoPlayWindow.window.webContents.send('change-video-play-item', videoPath, videoName)
+        selfVideoPlayWindow.window.reload()
     }
 }
 
