@@ -15,13 +15,13 @@ ipcMain.handle('create-video-download-task', createVideoDownloadTask);
  * @param outPath
  * @returns {Promise<string|string|undefined|*>}
  */
- async function createVideoDownloadTask(event, url, name, outPath, audioUrl) {
+ async function createVideoDownloadTask(event, url, name, outPath, htmlUrl, audioUrl) {
     makeDir(outPath)
      if(/magnet:/.test(url)) {
-         return await createMagnetDownloadTask(event, url, name, outPath, audioUrl)
+         return await createMagnetDownloadTask(event, url, name, outPath, htmlUrl, audioUrl)
      } else if(/bilivideo/.test(url)) {
-         return await createBiliVideoDownloadTask(event, url, name, outPath, audioUrl)
+         return await createBiliVideoDownloadTask(event, url, name, outPath, htmlUrl, audioUrl)
     } else {
-         return await createM3u8DownloadTask(event, url, name, outPath, audioUrl)
+         return await createM3u8DownloadTask(event, url, name, outPath, htmlUrl, audioUrl)
      }
 }

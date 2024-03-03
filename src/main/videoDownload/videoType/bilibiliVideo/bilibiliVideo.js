@@ -18,13 +18,14 @@ const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
 makeDir(tempSourcePath)
 const cancelTokenList = {}
 
-export async function createBiliVideoDownloadTask(event, url, name, outPath, audioUrl) {
+export async function createBiliVideoDownloadTask(event, url, name, outPath, htmlUrl, audioUrl) {
     const outputPath = path.resolve(outPath, `${name}.mp4`);
     const id = shortId.generate()
     const json = {
         id: id,
         type: 'biliTV',
         name: name,
+        htmlUrl: htmlUrl || '',
         m3u8Url: url,
         audioUrl: audioUrl,
         message: {

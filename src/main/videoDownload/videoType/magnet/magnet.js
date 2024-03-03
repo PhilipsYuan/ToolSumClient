@@ -16,13 +16,14 @@ const basePath = app.getPath('userData');
 const tempTorrentPath = path.resolve(basePath, 'm3u8Video', 'tempTorrent')
 makeDir(tempTorrentPath)
 
-export async function createMagnetDownloadTask(event, url, name, outPath) {
+export async function createMagnetDownloadTask(event, url, name, htmlUrl, outPath) {
     const outputPath = path.resolve(outPath, name);
     const id = shortId.generate()
     const json = {
         id: id,
         type: 'magnet',
         name: name,
+        htmlUrl: htmlUrl || '',
         m3u8Url: url,
         message: {
             status: 'success',

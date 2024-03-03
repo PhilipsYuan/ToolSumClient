@@ -119,7 +119,7 @@ export default {
                 await this.startAnalysis()
               }
             }
-            const result = await window.electronAPI.createVideoDownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath, this.form.audioUrl)
+            const result = await window.electronAPI.createVideoDownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath, this.form.htmlUrl, this.form.audioUrl)
             if(result === 'success') {
               useService('getM3u8LoadingList')
               this.changeTab('loading')

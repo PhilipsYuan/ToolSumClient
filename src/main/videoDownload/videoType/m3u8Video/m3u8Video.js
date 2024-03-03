@@ -20,11 +20,11 @@ ipcMain.handle('create-m3u8-download-task', createM3u8DownloadTask);
 /**
  * 创建m3u8下载任务
  */
-export async function createM3u8DownloadTask(event, url, name, outPath) {
+export async function createM3u8DownloadTask(event, url, name, outPath, htmlUrl) {
     if(/m3u8Video[/|\\]tempM3u8Url/.test(url)) {
-        return createOtherM3u8DownloadTask(url, name, outPath)
+        return createOtherM3u8DownloadTask(url, name, outPath, htmlUrl)
     } else {
-        return createNormalM3u8DownloadTask(url, name, outPath)
+        return createNormalM3u8DownloadTask(url, name, outPath, htmlUrl)
     }
 }
 
@@ -32,7 +32,7 @@ export async function createM3u8DownloadTask(event, url, name, outPath) {
 /**
  * 存储在本地的m3u8文件进行解析
  */
-async function createOtherM3u8DownloadTask(url, name, outPath) {
+async function createOtherM3u8DownloadTask(url, name, outPath, htmlUrl) {
     try {
         const outputPath = path.resolve(outPath, `${name}.mp4`);
         if (checkOutputFileNotExist(null, outputPath)) {
@@ -54,6 +54,7 @@ async function createOtherM3u8DownloadTask(url, name, outPath) {
                 }
             })
             await createNewLoadingRecord({
+                htmlUrl: htmlUrl,
                 name: name,
                 m3u8Url: url,
                 m3u8Data: m3u8Data,
@@ -76,7 +77,7 @@ async function createOtherM3u8DownloadTask(url, name, outPath) {
  * @param url
  * @returns {*}
  */
-function createNormalM3u8DownloadTask(url, name, outPath) {
+function createNormalM3u8DownloadTask(url, name, outPath, htmlUrl) {
     try{
         const outputPath = path.resolve(outPath, `${name}.mp4`);
         if (checkOutputFileNotExist(null, outputPath)) {
@@ -104,6 +105,7 @@ function createNormalM3u8DownloadTask(url, name, outPath) {
                             }
                         })
                         await createNewLoadingRecord({
+                            htmlUrl: htmlUrl,
                             name: name,
                             m3u8Url: url,
                             m3u8Data: m3u8Data,
@@ -127,6 +129,7 @@ function createNormalM3u8DownloadTask(url, name, outPath) {
     const json = {
         id: id,
         name: data.name,
+        htmlUrl: data.htmlUrl || '',
         m3u8Url: data.m3u8Url,
         type: 'm3u8',
         message: {
