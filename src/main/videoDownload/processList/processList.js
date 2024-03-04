@@ -22,6 +22,7 @@ import {
 } from "../videoType/bilibiliVideo/bilibiliVideo";
 import { getDownloadLinkFromUrl } from "../analysis/analysisLink/analysisDownloadLink"
 import {createVideoDownloadTask} from "../videoDownload";
+import {getDownloadSetting} from "../../settings/settings";
 
 const basePath = app.getPath('userData')
 const processUrlsPath = path.resolve(basePath, 'm3u8Video', 'processUrls');
@@ -146,6 +147,7 @@ export async function updateDownloadVideo(event, loadingRecordId) {
     const list = m3u8VideoDownloadingListDB.data.loadingList
     const item = list.find((item) => item.id === loadingRecordId)
     item.pause = false
-    await getDownloadLinkFromUrl(null, item.htmlUrl)
-    await createVideoDownloadTask(null, item.name, item.output, item.htmlUrl, null, true, item.id)
+    const result = await getDownloadLinkFromUrl(null, item.htmlUrl)
+    const output = await getDownloadSetting().downloadPath
+    await createVideoDownloadTask(null, result.videoUrl, item.name, output, item.htmlUrl, null, true, item.id)
 }

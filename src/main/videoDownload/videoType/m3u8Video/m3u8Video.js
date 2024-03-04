@@ -9,6 +9,7 @@ import {createWork, updateWork} from "./workManager";
 import {m3u8VideoDownloadingListDB} from "../../../db/db";
 import shortId from "shortid";
 import {getHeaders} from "../../../util/httpHeaders";
+import dayjs from "dayjs";
 
 const basePath = app.getPath('userData');
 const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
@@ -165,7 +166,8 @@ function createNormalM3u8DownloadTask(url, name, outPath, htmlUrl, isUpdate, loa
         pause: false,
         isStart: false,
         successTsNum: 0,
-        outputPath: data.outputPath
+        outputPath: data.outputPath,
+        updateDate: dayjs().format("YYYY/MM/DD HH:mm")
     }
      const processUrlsPath = path.resolve(basePath, 'm3u8Video', 'processUrls');
      const urlPath = path.resolve(processUrlsPath, `${data.name}.txt`);
@@ -182,6 +184,7 @@ async function UpdateLoadingRecord(data, id) {
     const processUrlsPath = path.resolve(basePath, 'm3u8Video', 'processUrls');
     const urlPath = path.resolve(processUrlsPath, `${data.name}.txt`);
     item.urlPath = urlPath
+    item.updateDate = dayjs().format("YYYY/MM/DD HH:mm")
     // 暂停时存储的json太大了。需要分文件存储
     await createProcessFile(urlPath, data.totalUrls, data.m3u8Data)
     await m3u8VideoDownloadingListDB.write()

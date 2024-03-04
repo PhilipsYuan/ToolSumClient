@@ -14,7 +14,7 @@
             </div>
           </div>
           <div class="flex gap-3 items-center">
-            <el-tooltip content="播放" placement="top">
+            <el-tooltip v-if="item.htmlUrl" content="播放" placement="top">
               <el-icon class="icon-button !text-lg !p-1 cursor-pointer"
                        style="width: 28px !important;height:28px !important;"
                        @click="playVideo(item)">
@@ -70,6 +70,8 @@ import {VideoPlay} from "@element-plus/icons-vue";
 import {addService, useService} from "../../../service/service";
 import {getUserBenefitApi, reduceBenefit} from "../../../api/user";
 import {setUserBenefit} from "../../../service/userService";
+import axios from 'axios'
+import dayjs from "dayjs";
 export default {
   name: "loadingList",
   components: {VideoPlay},
@@ -91,6 +93,7 @@ export default {
     addService("getM3u8LoadingList", this.getLoadingList.bind(this))
     addService("m3u8VideoDownloadSuccess", this.m3u8VideoDownloadSuccess.bind(this))
     addService('deleteM3u8LoadingSuccess', this.deleteSuccess.bind(this))
+    // 定时器是为了更新下载的状态的
     this.intervalList = setInterval(async () => {
       await this.getLoadingList()
     }, 1000)
@@ -168,13 +171,27 @@ export default {
       }
     },
     async playVideo (item) {
-      await this.checkFileIsRead(item)
-      window.electronAPI.openVideoPlayPage(item.m3u8Url, item.name);
-
+      if(/tempM3u8Url|bilivideo|mgtv\.com/.test(item.m3u8Url) && this.checkIsNotRead(item)) {
+        useService("showScreenLoadingMessage", '打开中')
+        await window.electronAPI.updateDownloadVideo(item.id);
+        useService("closeScreenLoadingMessage")
+        window.electronAPI.openVideoPlayPage(item.m3u8Url, item.name);
+      } else {
+        window.electronAPI.openVideoPlayPage(item.m3u8Url, item.name);
+      }
     },
-    // 视频会出现过期的情况。校验当前视频是否可以播放，可以直接播放，不可以重新请求。
-    async checkFileIsRead(item) {
-      await window.electronAPI.updateDownloadVideo(item.id);
+    // 视频会出现过期的情况。校验当前视频是否可以播放，可以就直接播放，不可以重新请求。
+    // 过期10个小时的，就需要重新请求
+    checkIsNotRead(item) {
+      if(item.updateDate) {
+        if(dayjs(item.updateDate).add(10, "hour").isBefore(dayjs())) {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return true
+      }
     }
   },
   beforeDestroy() {

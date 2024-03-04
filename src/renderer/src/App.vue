@@ -33,6 +33,7 @@ export default {
     return {
       zhCn,
       loadingSuccess: false,
+      loading: null
     }
   },
   async beforeCreate() {
@@ -46,6 +47,7 @@ export default {
   },
   mounted() {
     addService('showScreenLoadingMessage', this.showScreenLoadingMessage.bind(this))
+    addService('closeScreenLoadingMessage', this.closeScreenLoadingMessage.bind(this))
     window.electronAPI.checkShowDisclaimer()
         .then((result) => {
           if(!result) {
@@ -58,13 +60,15 @@ export default {
       this.$router.push({path: path})
     },
     showScreenLoadingMessage(message) {
-      const loading = ElLoading.service({
+      this.loading = ElLoading.service({
         lock: true,
         text: message,
         background: 'rgba(0, 0, 0, 0.5)',
       })
-      return loading
     },
+    closeScreenLoadingMessage() {
+      this.loading && this.loading.close()
+    }
   }
 }
 </script>
