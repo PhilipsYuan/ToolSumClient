@@ -20,11 +20,11 @@ ipcMain.handle('create-m3u8-download-task', createM3u8DownloadTask);
 /**
  * 创建m3u8下载任务
  */
-export async function createM3u8DownloadTask(event, url, name, outPath, htmlUrl) {
+export async function createM3u8DownloadTask(event, url, name, outPath, htmlUrl, audioUrl,  isUpdate, loadingId) {
     if(/m3u8Video[/|\\]tempM3u8Url/.test(url)) {
-        return createOtherM3u8DownloadTask(url, name, outPath, htmlUrl)
+        return createOtherM3u8DownloadTask(url, name, outPath, htmlUrl, isUpdate, loadingId)
     } else {
-        return createNormalM3u8DownloadTask(url, name, outPath, htmlUrl)
+        return createNormalM3u8DownloadTask(url, name, outPath, htmlUrl, isUpdate, loadingId)
     }
 }
 
@@ -32,7 +32,7 @@ export async function createM3u8DownloadTask(event, url, name, outPath, htmlUrl)
 /**
  * 存储在本地的m3u8文件进行解析
  */
-async function createOtherM3u8DownloadTask(url, name, outPath, htmlUrl) {
+async function createOtherM3u8DownloadTask(url, name, outPath, htmlUrl, isUpdate, loadingId) {
     try {
         const outputPath = path.resolve(outPath, `${name}.mp4`);
         if (checkOutputFileNotExist(null, outputPath)) {
@@ -53,14 +53,26 @@ async function createOtherM3u8DownloadTask(url, name, outPath, htmlUrl) {
                     item, url, number: index + 1, cookie: info.cookie
                 }
             })
-            await createNewLoadingRecord({
-                htmlUrl: htmlUrl,
-                name: name,
-                m3u8Url: url,
-                m3u8Data: m3u8Data,
-                totalUrls: formatUrls,
-                outputPath: outputPath
-            })
+            if(isUpdate) {
+                await UpdateLoadingRecord({
+                    htmlUrl: htmlUrl,
+                    name: name,
+                    m3u8Url: url,
+                    m3u8Data: m3u8Data,
+                    totalUrls: formatUrls,
+                    outputPath: outputPath
+                }, loadingId)
+            } else {
+                await createNewLoadingRecord({
+                    htmlUrl: htmlUrl,
+                    name: name,
+                    m3u8Url: url,
+                    m3u8Data: m3u8Data,
+                    totalUrls: formatUrls,
+                    outputPath: outputPath
+                })
+            }
+
             return 'success'
         } else {
             return 'failure'
@@ -77,7 +89,7 @@ async function createOtherM3u8DownloadTask(url, name, outPath, htmlUrl) {
  * @param url
  * @returns {*}
  */
-function createNormalM3u8DownloadTask(url, name, outPath, htmlUrl) {
+function createNormalM3u8DownloadTask(url, name, outPath, htmlUrl, isUpdate, loadingId) {
     try{
         const outputPath = path.resolve(outPath, `${name}.mp4`);
         if (checkOutputFileNotExist(null, outputPath)) {
@@ -104,14 +116,26 @@ function createNormalM3u8DownloadTask(url, name, outPath, htmlUrl) {
                                 item, url, number: index + 1
                             }
                         })
-                        await createNewLoadingRecord({
-                            htmlUrl: htmlUrl,
-                            name: name,
-                            m3u8Url: url,
-                            m3u8Data: m3u8Data,
-                            totalUrls: formatUrls,
-                            outputPath: outputPath
-                        })
+                        if(isUpdate) {
+                            await UpdateLoadingRecord({
+                                htmlUrl: htmlUrl,
+                                name: name,
+                                m3u8Url: url,
+                                m3u8Data: m3u8Data,
+                                totalUrls: formatUrls,
+                                outputPath: outputPath
+                            }, loadingId)
+                        } else {
+                            await createNewLoadingRecord({
+                                htmlUrl: htmlUrl,
+                                name: name,
+                                m3u8Url: url,
+                                m3u8Data: m3u8Data,
+                                totalUrls: formatUrls,
+                                outputPath: outputPath
+                            })
+                        }
+
                         return 'success'
                     } else {
                         return 'failure'
@@ -149,6 +173,18 @@ function createNormalM3u8DownloadTask(url, name, outPath, htmlUrl) {
      // 暂停时存储的json太大了。需要分文件存储
      await createProcessFile(urlPath, data.totalUrls, data.m3u8Data)
      newLoadingRecord(json)
+}
+
+async function UpdateLoadingRecord(data, id) {
+    const list = m3u8VideoDownloadingListDB.data.loadingList
+    const item = list.find((item) => item.id === id)
+    item.m3u8Url = data.m3u8Url
+    const processUrlsPath = path.resolve(basePath, 'm3u8Video', 'processUrls');
+    const urlPath = path.resolve(processUrlsPath, `${data.name}.txt`);
+    item.urlPath = urlPath
+    // 暂停时存储的json太大了。需要分文件存储
+    await createProcessFile(urlPath, data.totalUrls, data.m3u8Data)
+    await m3u8VideoDownloadingListDB.write()
 }
 
 /**
@@ -351,6 +387,9 @@ export async function createProcessFile (path, totalUrls, m3u8Data) {
     const json = {
         totalUrls,
         m3u8Data
+    }
+    if(fs.existsSync(path)) {
+        fs.unlinkSync(path)
     }
     await fs.writeFileSync(path, global.JSON.stringify(json), "utf-8")
 }

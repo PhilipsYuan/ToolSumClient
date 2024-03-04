@@ -8,20 +8,22 @@ import {makeDir} from "../util/fs";
 ipcMain.handle('create-video-download-task', createVideoDownloadTask);
 
 /**
- * 创建下载任务
+ * 创建下载任务, 或者更新下载任务
  * @param event
  * @param url
  * @param name
  * @param outPath
  * @returns {Promise<string|string|undefined|*>}
+ * isUpdate: 判断是更新还是创建
+ * loadingId： 是更新的下载任务的Id
  */
- async function createVideoDownloadTask(event, url, name, outPath, htmlUrl, audioUrl) {
+ export async function createVideoDownloadTask(event, url, name, outPath, htmlUrl, audioUrl, isUpdate = false, loadingId) {
     makeDir(outPath)
      if(/magnet:/.test(url)) {
          return await createMagnetDownloadTask(event, url, name, outPath, htmlUrl, audioUrl)
      } else if(/bilivideo/.test(url)) {
          return await createBiliVideoDownloadTask(event, url, name, outPath, htmlUrl, audioUrl)
     } else {
-         return await createM3u8DownloadTask(event, url, name, outPath, htmlUrl, audioUrl)
+         return await createM3u8DownloadTask(event, url, name, outPath, htmlUrl, audioUrl, isUpdate, loadingId)
      }
 }

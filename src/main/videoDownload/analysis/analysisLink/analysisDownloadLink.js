@@ -12,7 +12,7 @@ ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
  * 从一个网页里分析出可以下载link(m3u8url)
  * @returns {Promise<void>}
  */
-async function getDownloadLinkFromUrl(event, htmlUrl) {
+export async function getDownloadLinkFromUrl(event, htmlUrl) {
     try{
         if(/mgtv\.com/.test(htmlUrl)) {
             return await getMgTvDownloadLink(htmlUrl)

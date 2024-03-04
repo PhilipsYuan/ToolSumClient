@@ -167,12 +167,14 @@ export default {
         return true
       }
     },
-    playVideo (item) {
+    async playVideo (item) {
+      await this.checkFileIsRead(item)
       window.electronAPI.openVideoPlayPage(item.m3u8Url, item.name);
+
     },
     // 视频会出现过期的情况。校验当前视频是否可以播放，可以直接播放，不可以重新请求。
-    checkFileIsRead() {
-
+    async checkFileIsRead(item) {
+      await window.electronAPI.updateDownloadVideo(item.id);
     }
   },
   beforeDestroy() {

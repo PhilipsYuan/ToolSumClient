@@ -20,6 +20,8 @@ import {
     pauseBiliTVDownloadVideo,
     startDownloadBiliVideo
 } from "../videoType/bilibiliVideo/bilibiliVideo";
+import { getDownloadLinkFromUrl } from "../analysis/analysisLink/analysisDownloadLink"
+import {createVideoDownloadTask} from "../videoDownload";
 
 const basePath = app.getPath('userData')
 const processUrlsPath = path.resolve(basePath, 'm3u8Video', 'processUrls');
@@ -30,6 +32,7 @@ ipcMain.handle('delete-m3u8-loading-list', deleteLoadingRecordAndFile)
 ipcMain.handle('start-download-video', startDownloadVideo)
 ipcMain.handle('pause-m3u8-download-Video', pauseDownloadVideo)
 ipcMain.handle('continue-m3u8-download-Video', continueDownloadVideo)
+ipcMain.handle('update-download-video', updateDownloadVideo)
 /**
  * 获取下载中的记录
  */
@@ -50,9 +53,6 @@ export async function newLoadingRecord (json) {
     await m3u8VideoDownloadingListDB.write()
 }
 
-
-
-
 /**
  * 删除记录和列表
  * @returns {Promise<void>}
@@ -72,7 +72,6 @@ export async function deleteLoadingRecordAndFile(event, id, callType = 'delete')
         sendTips("delete-m3u8-loading-success", callType)
     }
 }
-
 
 /**
  * 开始下载资源
@@ -138,4 +137,15 @@ export async function continueDownloadVideo(event, id) {
             await continueM3u8DownloadVideo(item)
         }
     }
+}
+
+/**
+ * 更新视频下载m3u8里的链接，因为三大平台的的链接，会有过期时间
+ */
+export async function updateDownloadVideo(event, loadingRecordId) {
+    const list = m3u8VideoDownloadingListDB.data.loadingList
+    const item = list.find((item) => item.id === loadingRecordId)
+    item.pause = false
+    await getDownloadLinkFromUrl(null, item.htmlUrl)
+    await createVideoDownloadTask(null, item.name, item.output, item.htmlUrl, null, true, item.id)
 }
