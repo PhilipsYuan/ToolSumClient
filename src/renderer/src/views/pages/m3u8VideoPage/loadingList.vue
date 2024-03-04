@@ -70,7 +70,6 @@ import {VideoPlay} from "@element-plus/icons-vue";
 import {addService, useService} from "../../../service/service";
 import {getUserBenefitApi, reduceBenefit} from "../../../api/user";
 import {setUserBenefit} from "../../../service/userService";
-import axios from 'axios'
 import dayjs from "dayjs";
 export default {
   name: "loadingList",
