@@ -1,3 +1,5 @@
+import {updateDockMenu} from "./menu/dockMenu";
+
 const browserWindows = {}
 
 export function addWindow (name, window, webviewContent) {
@@ -5,6 +7,10 @@ export function addWindow (name, window, webviewContent) {
         window: window,
         webviewContent: webviewContent
     };
+    updateDockMenu()
+    window.on('focus', () => {
+        updateDockMenu()
+    })
 }
 
 export function getWindow(name) {
@@ -13,4 +19,5 @@ export function getWindow(name) {
 
 export function deleteWindow(name) {
     browserWindows[name] && delete browserWindows[name]
+    updateDockMenu()
 }

@@ -1,5 +1,5 @@
 import './menu/menu'
-// import './menu/dockMenu'
+import './menu/dockMenu'
 import './settings/settings'
 import './util/electronOperations'
 import './videoDownload/videoDownload'

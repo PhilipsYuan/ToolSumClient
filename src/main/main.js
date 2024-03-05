@@ -2,6 +2,7 @@ import { app, BrowserWindow, session } from 'electron'
 import path from 'path'
 import './importFileModule'
 import pie from "./util/source/puppeteer-in-electron";
+import {addWindow} from "./service";
 
 async function initialize(){
   global.pie = pie
@@ -19,6 +20,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 1500,
     height: 850,
+    title: '小滑轮',
     closable: true,
     webPreferences: {
       nodeIntegration: true,
@@ -34,6 +36,11 @@ const createWindow = () => {
   } else {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show()
+    addWindow("mainWindow", mainWindow, '')
+  })
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();

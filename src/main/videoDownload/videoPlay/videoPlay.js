@@ -15,6 +15,7 @@ export async function openVideoPlayPage(event, videoPath, videoName) {
             width: 800,
             height: 640,
             show: true,
+            title: videoName,
             closable: true,
             enableLargerThanScreen: true,
             titleBarStyle: 'hidden',
@@ -38,6 +39,7 @@ export async function openVideoPlayPage(event, videoPath, videoName) {
             await window.webContents.loadURL(`file://${urlPath}#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}`)
         }
     } else {
+        selfVideoPlayWindow.window.setTitle(videoName)
         if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
             await selfVideoPlayWindow.window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}`)
         } else {

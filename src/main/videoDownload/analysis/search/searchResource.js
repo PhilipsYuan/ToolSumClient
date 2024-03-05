@@ -106,6 +106,7 @@ export async function openSearchWindow(event, searchText) {
         const window = new BrowserWindow({
             show: true,
             closable: true,
+            title: `搜索：${searchText}`,
             enableLargerThanScreen: true,
             titleBarStyle: 'hidden',
             webPreferences: {
@@ -138,6 +139,7 @@ export async function openSearchWindow(event, searchText) {
             await window.webContents.loadURL(`file://${urlPath}#/search?view=${encodeURIComponent(searchUrl)}`)
         }
     } else {
+        selfSearchWindow.window.setTitle(`搜索：${searchText}`)
         selfSearchWindow.window.focus()
         selfSearchWindow.window.webContents.send('change-search-page-url', searchUrl)
     }
