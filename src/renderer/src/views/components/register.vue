@@ -67,14 +67,18 @@ export default {
         userName: [{
           required: true,
           validator: (rule, value, callback) => {
-            checkUserName({userName: value})
-                .then((res) => {
-                  if (res.data.code === 200) {
-                    callback()
-                  } else {
-                    callback(new Error('用户名已经注册!'))
-                  }
-                })
+            if(value) {
+              checkUserName({userName: value})
+                  .then((res) => {
+                    if (res.data.code === 200) {
+                      callback()
+                    } else {
+                      callback(new Error('用户名已经注册!'))
+                    }
+                  })
+            } else {
+              callback(new Error('请输入用户名!'))
+            }
           },
           trigger: 'blur'
         }],
