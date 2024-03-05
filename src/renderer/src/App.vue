@@ -1,59 +1,36 @@
 <template>
-  <el-config-provider :locale="zhCn">
-    <div v-if="loadingSuccess">
-      <router-view />
-    </div>
-    <login/>
-    <register/>
-    <reset-password/>
-    <login-tip />
-    <disclaimer ref="disclaimer"/>
-    <about-xhl />
-  </el-config-provider>
+  <div v-if="loadingSuccess">
+    <router-view/>
+  </div>
 </template>
 
 <script>
-import './style/global.css'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import {ElLoading} from 'element-plus'
 import {addService} from "./service/service";
-import headPart from './views/components/head.vue'
-import login from './views/components/login.vue';
-import register from "./views/components/register.vue";
-import resetPassword from "./views/components/resetPassword.vue";
-import loginTip from "./views/components/loginTip.vue";
-import disclaimer from "./views/components/disclaimer.vue";
-import aboutXhl from "./views/components/aboutXhl.vue";
 import {getUserInfo} from "./api/user";
 import {setUser} from "./service/userService";
+import {getUrlParams} from "./utils/url";
 
 export default {
-  components: {headPart, login, register, resetPassword, loginTip, disclaimer, aboutXhl},
   data() {
+    const params = getUrlParams(window.location.href)
     return {
-      zhCn,
-      loadingSuccess: false,
-      loading: null
+      loadingSuccess: params.sample !== '1' ? false : true,
+      loading: null,
     }
   },
   async beforeCreate() {
-    await getUserInfo()
-        .then((res) => {
-          res && setUser(res.data.result);
-          this.loadingSuccess = true
-        })
-  },
-  created() {
+    if(!this.loadingSuccess) {
+      await getUserInfo()
+          .then((res) => {
+            res && setUser(res.data.result);
+            this.loadingSuccess = true
+          })
+    }
   },
   mounted() {
-    addService('showScreenLoadingMessage', this.showScreenLoadingMessage.bind(this))
-    addService('closeScreenLoadingMessage', this.closeScreenLoadingMessage.bind(this))
-    window.electronAPI.checkShowDisclaimer()
-        .then((result) => {
-          if(!result) {
-            this.$refs.disclaimer.open()
-          }
-        })
+    addService('showScreenLoadingMessage', this.showScreenLoadingMessage.bind(this));
+    addService('closeScreenLoadingMessage', this.closeScreenLoadingMessage.bind(this));
   },
   methods: {
     goPath(path) {

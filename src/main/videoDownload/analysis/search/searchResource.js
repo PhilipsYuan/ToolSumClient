@@ -133,10 +133,10 @@ export async function openSearchWindow(event, searchText) {
             deleteWindow("selfSearchWindow")
         })
         if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-            await window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/search?view=${encodeURIComponent(searchUrl)}`)
+            await window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/search?view=${encodeURIComponent(searchUrl)}&sample=1`)
         } else {
             const urlPath = path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
-            await window.webContents.loadURL(`file://${urlPath}#/search?view=${encodeURIComponent(searchUrl)}`)
+            await window.webContents.loadURL(`file://${urlPath}#/search?view=${encodeURIComponent(searchUrl)}&sample=1`)
         }
     } else {
         selfSearchWindow.window.setTitle(`搜索：${searchText}`)

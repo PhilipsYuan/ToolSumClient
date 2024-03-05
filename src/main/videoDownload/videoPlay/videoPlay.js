@@ -33,18 +33,18 @@ export async function openVideoPlayPage(event, videoPath, videoName) {
             deleteWindow("selfVideoPlayWindow")
         })
         if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-            await window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}`)
+            await window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}&sample=1`)
         } else {
             const urlPath = path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
-            await window.webContents.loadURL(`file://${urlPath}#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}`)
+            await window.webContents.loadURL(`file://${urlPath}#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}&sample=1`)
         }
     } else {
         selfVideoPlayWindow.window.setTitle(videoName)
         if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-            await selfVideoPlayWindow.window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}`)
+            await selfVideoPlayWindow.window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}&sample=1`)
         } else {
             const urlPath = path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
-            await selfVideoPlayWindow.window.webContents.loadURL(`file://${urlPath}#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}`)
+            await selfVideoPlayWindow.window.webContents.loadURL(`file://${urlPath}#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}&sample=1`)
         }
         selfVideoPlayWindow.window.focus()
         selfVideoPlayWindow.window.reload()

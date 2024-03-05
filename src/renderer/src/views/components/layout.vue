@@ -31,20 +31,40 @@
         <router-view/>
       </el-main>
     </el-container>
+    <login />
+    <register/>
+    <reset-password />
+    <login-tip  />
+    <disclaimer ref="disclaimer"/>
+    <about-xhl />
   </el-container>
 </template>
 
 <script>
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+import login from './login.vue';
+import register from "./register.vue";
+import resetPassword from "./resetPassword.vue";
+import loginTip from "./loginTip.vue";
+import disclaimer from "./disclaimer.vue";
+import aboutXhl from "./aboutXhl.vue";
 import headPart from "./head.vue";
 import {getSystemUpdateNotice} from "../../api/user";
 
+
+window.app.config.globalProperties.$message = ElMessage
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  window.app.component(key, component)
+}
+
 export default {
   name: "layout",
-  components: {headPart},
+  components: {headPart, login, register, resetPassword, loginTip, disclaimer, aboutXhl},
   data() {
     return {
       notice: null,
-      active: '1'
+      active: '1',
     }
   },
   watch: {
@@ -75,6 +95,12 @@ export default {
     }
   },
   async mounted() {
+    window.electronAPI.checkShowDisclaimer()
+        .then((result) => {
+          if (!result) {
+            this.$refs.disclaimer.open()
+          }
+        })
     switch (this.$route.name) {
       case 'home':
         this.active = '1';

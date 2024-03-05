@@ -7,9 +7,9 @@
           {{videoName}}
         </div>
         <div class="flex gap-1" style="-webkit-app-region: no-drag;">
-          <div v-if="!isMac" class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg"
+          <div  class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg"
                @click="closeWindow">
-            <el-icon><Close /></el-icon>
+            x
           </div>
         </div>
       </div>
@@ -18,9 +18,9 @@
       <div class="text-xs text-center text-gray-400 my-1">如出现播放失败，建议使用系统播放或者其他视频播放器（例如：迅雷影音）</div>
       <video v-if="videoSrc" ref="myVideo" controls autoplay
              class="video-js vjs-default-skin w-full h-full object-fill">
-        <source :src="videoSrc" type="video/mp4" codecs="hevc" />
-        <source :src="videoSrc" type="video/mp4" codecs="avc1" />
-        <source :src="videoSrc" type="application/x-mpegURL" />
+        <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="avc1" />
+        <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="hevc" />
+        <source v-if="/\.m3u8/.test(videoSrc)" :src="videoSrc" type="application/x-mpegURL" />
       </video>
     </div>
 

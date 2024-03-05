@@ -11,6 +11,9 @@ const searchPage = () => import('../views/pages/searchPage/searchPage.vue')
 const videoPlayPage = () => import('../views/pages/videoPlayPage/videoPlayPage.vue')
 
 const routerMap = [
+    {path: '/videoPlay', component: videoPlayPage, title: '播放', name: 'videoPlay'},
+    {path: '/search', component: searchPage, title: '搜索', name: 'search'},
+    {path: '/error', component: errorPage, title: '错误', name: 'error'},
     {
         path: '/', component: layout, title: '首页', name: 'layout', children: [
             {path: '', component: m3u8VideoPage, title: '视频下载', name: 'home'},
@@ -21,9 +24,6 @@ const routerMap = [
             {path: '/help', component: helpPage, title: '使用指南', name: 'help'},
         ]
     },
-    {path: '/search', component: searchPage, title: '搜索', name: 'search'},
-    {path: '/videoPlay', component: videoPlayPage, title: '播放', name: 'videoPlay'},
-    {path: '/error', component: errorPage, title: '错误', name: 'error'}
 ]
 
 export default createRouter({
