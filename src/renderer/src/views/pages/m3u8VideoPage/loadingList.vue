@@ -14,7 +14,7 @@
             </div>
           </div>
           <div class="flex gap-3 items-center">
-            <el-tooltip v-if="item.htmlUrl" content="播放" placement="top">
+            <el-tooltip v-if="item.htmlUrl || (!item.htmlUrl && !/tempM3u8Url|bilivideo|mgtv\.com/.test(item.m3u8Url))" content="播放" placement="top">
               <el-icon class="icon-button !text-lg !p-1 cursor-pointer"
                        style="width: 28px !important;height:28px !important;"
                        @click="playVideo(item)">
@@ -98,16 +98,38 @@ export default {
     }, 1000)
   },
   methods: {
+    /**
+     * 播放视频
+     * @param item
+     * @returns {Promise<void>}
+     */
+    async playVideo (item) {
+      if(/tempM3u8Url|bilivideo|mgtv\.com/.test(item.m3u8Url) && this.checkIsNotRead(item)) {
+        useService("showScreenLoadingMessage", '打开中')
+        await window.electronAPI.updateDownloadVideo(item.id);
+        useService("closeScreenLoadingMessage")
+      }
+      window.electronAPI.openVideoPlayPage(item.m3u8Url, item.name);
+    },
+
     async startDownload(item) {
       if(item.message.content !== '合成中...' && this.checkoutDownloadingLimit()) {
-        if(item.pause === false && item.isStart === false) {
+        if(/tempM3u8Url|bilivideo|mgtv\.com/.test(item.m3u8Url) && this.checkIsNotRead(item)) {
+          useService("showScreenLoadingMessage", '解析中')
+          await window.electronAPI.updateDownloadVideo(item.id);
+          useService("closeScreenLoadingMessage")
           await window.electronAPI.startDownloadVideo(item.id)
-        }  else {
-          await window.window.electronAPI.continueM3u8DownloadVideo(item.id)
-          await this.getLoadingList()
+        } else {
+          if(item.pause === false && item.isStart === false) {
+            await window.electronAPI.startDownloadVideo(item.id)
+          }  else {
+            await window.window.electronAPI.continueM3u8DownloadVideo(item.id)
+            await this.getLoadingList()
+          }
         }
       }
     },
+
     async pauseDownload(item) {
       if(item.message.content !== '合成中...' && !item.pausing) {
         await window.window.electronAPI.pauseM3u8DownloadVideo(item.id)
@@ -169,21 +191,11 @@ export default {
         return true
       }
     },
-    async playVideo (item) {
-      if(/tempM3u8Url|bilivideo|mgtv\.com/.test(item.m3u8Url) && this.checkIsNotRead(item)) {
-        useService("showScreenLoadingMessage", '打开中')
-        await window.electronAPI.updateDownloadVideo(item.id);
-        useService("closeScreenLoadingMessage")
-        window.electronAPI.openVideoPlayPage(item.m3u8Url, item.name);
-      } else {
-        window.electronAPI.openVideoPlayPage(item.m3u8Url, item.name);
-      }
-    },
     // 视频会出现过期的情况。校验当前视频是否可以播放，可以就直接播放，不可以重新请求。
     // 过期10个小时的，就需要重新请求
     checkIsNotRead(item) {
       if(item.updateDate) {
-        if(dayjs(item.updateDate).add(10, "hour").isBefore(dayjs())) {
+        if(dayjs(item.updateDate).add(5, "hour").isBefore(dayjs())) {
           return true
         } else {
           return false
