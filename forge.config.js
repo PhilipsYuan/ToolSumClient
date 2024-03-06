@@ -1,10 +1,24 @@
 module.exports = {
   packagerConfig: {
+    appBundleId: 'com.feiaci.xiaohualun',
     icon: './icons/icons/icon',
     name: '小滑轮',
     productName: '小滑轮',
     ignore: [/\.yarn/, /\.idea/, /temp/, /doc/, /src\/render/, /ffmpegPlatforms/, /config/,
-      /yarn-error.log/, /\.lock/, /.gitignore/]
+      /yarn-error.log/, /\.lock/, /.gitignore/],
+    osxSign: {
+      identity: 'Developer ID Application: philips yuan (88A2BYST88)',
+      "hardened-runtime": false,
+      entitlements: "entitlements.plist",
+      "entitlements-inherit": "entitlements.plist",
+      "signature-flags": "library"
+    },
+    // osxNotarize: {
+    //   // tool: "notarytool",
+    //   appleId: 'yuanfei891219@aliyun.com',
+    //   appleIdPassword: 'kjnx-fksm-vkqo-iqgf',
+    //   teamId: '88A2BYST88'
+    // }
   },
   rebuildConfig: {},
   makers: [
