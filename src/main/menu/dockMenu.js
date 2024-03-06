@@ -23,6 +23,8 @@ function createDockMenu() {
 }
 
 export function updateDockMenu () {
-    const menuItem = createDockMenu()
-    app.dock.setMenu(menuItem)
+    if(process.platform === 'darwin') {
+        const menuItem = createDockMenu()
+        app.dock.setMenu(menuItem)
+    }
 }
