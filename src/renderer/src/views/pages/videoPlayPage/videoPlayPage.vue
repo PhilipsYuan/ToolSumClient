@@ -7,7 +7,7 @@
           {{videoName}}
         </div>
         <div class="flex gap-1" style="-webkit-app-region: no-drag;">
-          <div  class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg"
+          <div v-if="!isMac" class="w-8 hover:bg-gray-200 rounded-md cursor-pointer flex items-center justify-center text-gray-500 hover:text-blue-400 text-lg"
                @click="closeWindow">
             x
           </div>
