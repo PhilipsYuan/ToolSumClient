@@ -145,7 +145,7 @@ export default {
             }
           }
         } else {
-          this.$message.error('您已经没有免费使用次数了，请购买会员后，再继续使用！')
+          this.$message.error('免费使用次数已经用完啦，请购买会员后，继续使用！')
         }
       } else {
         useService('openLoginTip');
