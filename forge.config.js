@@ -2,7 +2,7 @@ module.exports = {
   packagerConfig: {
     appBundleId: 'com.feiaci.xiaohualun',
     icon: './icons/icons/icon',
-    name: '小滑轮',
+    name: 'xhl',
     productName: '小滑轮',
     ignore: [/\.yarn/, /\.idea/, /temp/, /doc/, /src\/render/, /ffmpegPlatforms/, /config/,
       /yarn-error.log/, /\.lock/, /.gitignore/],
