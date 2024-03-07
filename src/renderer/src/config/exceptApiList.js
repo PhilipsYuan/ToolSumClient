@@ -3,5 +3,6 @@
  */
 export const exceptionList = [
     'mini/system/getSystemUpdateNotice',
-    'mini/user/account/info'
+    'mini/user/account/info',
+    'mini/systemConfig/getVersion'
 ]
