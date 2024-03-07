@@ -2,7 +2,22 @@
   <div class="max-h-[calc(100vh-124px)] overflow-auto border p-5 bg-white rounded-md border-[#d1d5db]">
     <div class="">
       <el-collapse v-model="activeNames">
-        <el-collapse-item title="1. 如何下载视频？" name="1">
+        <el-collapse-item title="1. 如何下载一个视频？" name="1">
+          <div class="help-answer">
+            <div>
+              <div class="help-answer-index">1</div>
+              将视频的链接（比如：https://www.iqiyi.com/v_1bd4div6n60.html）输入到网址输入框，点击"解析下载链接"按钮进行解析。
+              软件就会自动解析出m3u8链接和名称。点击'创建'，会创建一个下载任务。
+            </div>
+            <div><img src="./h-10.png"/></div>
+            <div>
+              <div class="help-answer-index">2</div>
+              在下载中，就看到这个任务了，点击开始图标，就可以观看视频。点击下载按钮，就可以下载视频了, 下载完成后，在已完成中可以看到视频了。
+            </div>
+            <div><img src="./h-11.png"/></div>
+          </div>
+        </el-collapse-item>
+        <el-collapse-item title="2. 如何使用搜索下载视频？" name="2">
           <div class="help-answer">
             <div>
               <div class="help-answer-index">1</div>
@@ -25,11 +40,11 @@
             <div><img src="./h-7.png"/></div>
             <div>
               <div class="help-answer-index">4</div>
-              如果上面的步骤不是很好用，您可以自己找m3u8链接，具体步骤，可以看问题2（如何获取m3u8链接）。
+              如果上面的步骤不是很好用，您可以自己找m3u8链接，具体步骤，可以看问题3（如何获取m3u8链接）。
             </div>
           </div>
         </el-collapse-item>
-        <el-collapse-item title="2. 如何获取m3u8链接？" name="2">
+        <el-collapse-item title="3. 如何获取m3u8链接？" name="3">
           <div class="help-answer">
             输入网页网址有可能解析不出来m3u8的下载链接。我们可以通过下面步骤，自己查找m3u8下载链接。
             然后将它放入m3u8链接输入框中，再输入名称，就可以进行下载了。
@@ -61,7 +76,7 @@ export default {
   name: "helpPage",
   data() {
     return {
-      activeNames: '0'
+      activeNames: '1'
     }
   }
 }

@@ -22,23 +22,24 @@
           </el-icon>
         </div>
       </div>
-      <el-form :model="form" label-width="85px" label-position="left">
+      <el-form :model="form" label-width="100px" label-position="left" :rules="rules">
         <el-form-item label="搜索">
-          <search-resource ref="searchResource" @setHtmlUrl="setHtmlUrl" />
+          <search-resource ref="searchResource" @setHtmlUrl="setHtmlUrl"/>
         </el-form-item>
-        <el-form-item label="网址">
+        <el-form-item label="网址" prop="htmlUrl">
           <div class="flex items-center gap-4 w-full">
             <el-input v-model="form.htmlUrl" class="w-full" placeholder="请输入视频网址"
                       @change="()=> this.form.htmlUrl = this.form.htmlUrl.trim()"/>
-            <el-button @click="startAnalysis" :loading="analysisLoading" :disabled="createLoading">解析下载链接</el-button>
+            <el-button @click="startAnalysis" :loading="analysisLoading" :disabled="createLoading">解析下载链接
+            </el-button>
           </div>
         </el-form-item>
-        <el-form-item label="m3u8链接:">
-          <el-input v-model="form.m3u8Url" placeholder="请输入m3u8的下载链接"
+        <el-form-item label="m3u8链接:" prop="m3u8Url">
+          <el-input v-model="form.m3u8Url" placeholder="请输入m3u8的链接"
                     @change="()=> this.form.m3u8Url = this.form.m3u8Url.trim()"/>
         </el-form-item>
-        <el-form-item label="文件名称:">
-          <el-input v-model="form.name" placeholder="请输入下载视频名称"
+        <el-form-item label="文件名称:" prop="name">
+          <el-input v-model="form.name" placeholder="请输入视频名称"
                     @change="()=> this.form.name = this.form.name.trim()"/>
         </el-form-item>
         <el-form-item label="">
@@ -53,27 +54,29 @@
               content="如果您不是会员，创建下载任务会消耗您的免费次数。"
           >
             <template #reference>
-              <el-icon class="ml-4"><QuestionFilled class="text-gray-400" /></el-icon>
+              <el-icon class="ml-4">
+                <QuestionFilled class="text-gray-400"/>
+              </el-icon>
             </template>
           </el-popover>
         </el-form-item>
       </el-form>
     </div>
-    <already-existed-modal ref="alreadyExistedModal" @changeTab="changeTab" />
+    <already-existed-modal ref="alreadyExistedModal" @changeTab="changeTab"/>
   </div>
 </template>
 
 <script>
 import {addService, useService} from "../../../service/service";
 import alreadyExistedModal from "./alreadyExistedModal.vue";
-import { checkLogin } from "../../../api/login";
+import {checkLogin} from "../../../api/login";
 import {getUserBenefitApi, reduceBenefit} from "../../../api/user";
 import SearchResource from './searchResource.vue'
 import {setUserBenefit} from "../../../service/userService";
 
 export default {
   name: "m3u8Create",
-  components: { alreadyExistedModal, SearchResource },
+  components: {alreadyExistedModal, SearchResource},
   data() {
     return {
       isLogin: false,
@@ -82,6 +85,17 @@ export default {
         m3u8Url: "",
         name: "",
         audioUrl: ''
+      },
+      rules: {
+        htmlUrl: [
+            { required: true, message: '请输入视频网址', trigger: 'blur'},
+        ],
+        m3u8Url: [
+          { required: true, message: '请输入m3u8的链接', trigger: 'blur'},
+        ],
+        name: [
+          { required: true, message: '请输入视频名称', trigger: 'blur'},
+        ],
       },
       downloadButtonStatus: false,
       downloadPath: "11",
@@ -108,19 +122,19 @@ export default {
   },
   methods: {
     async getInfo() {
-      if(this.isLogin) {
+      if (this.isLogin) {
         const hasBenefit = await this.checkUserBenefit()
-        if(hasBenefit) {
-          if(await this.checkDownloadCondition()) {
+        if (hasBenefit) {
+          if (await this.checkDownloadCondition()) {
             this.createLoading = true
-            if(/m3u8Video[/|\\]tempM3u8Url/.test(this.form.m3u8Url)) {
+            if (/m3u8Video[/|\\]tempM3u8Url/.test(this.form.m3u8Url)) {
               const isExist = await window.electronAPI.checkFileIsExist(this.form.m3u8Url)
-              if(!isExist) {
+              if (!isExist) {
                 await this.startAnalysis()
               }
             }
             const result = await window.electronAPI.createVideoDownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath, this.form.htmlUrl, this.form.audioUrl)
-            if(result === 'success') {
+            if (result === 'success') {
               useService('getM3u8LoadingList')
               this.changeTab('loading')
               this.createLoading = false
@@ -131,7 +145,7 @@ export default {
             }
           }
         } else {
-         this.$message.error('您已经没有免费使用次数了，请购买会员后，再继续使用！')
+          this.$message.error('您已经没有免费使用次数了，请购买会员后，再继续使用！')
         }
       } else {
         useService('openLoginTip');
@@ -141,20 +155,20 @@ export default {
     async checkDownloadCondition() {
       if (!this.downloadPath) {
         this.$message.error('您还没有设置存储地址，请先去设置里设置存储地址，再回来下载！')
-         return false
-      } else if(!(this.form.name && this.form.m3u8Url)) {
+        return false
+      } else if (!(this.form.name && this.form.m3u8Url)) {
         this.$message.error("请先输入链接和文件名称，再进行下载")
         return false
-      } else if(!(this.isUrl(this.form.m3u8Url) || /m3u8Video[/|\\]tempM3u8Url/.test(this.form.m3u8Url)
-      || /magnet:/.test(this.form.m3u8Url))){
+      } else if (!(this.isUrl(this.form.m3u8Url) || /m3u8Video[/|\\]tempM3u8Url/.test(this.form.m3u8Url)
+          || /magnet:/.test(this.form.m3u8Url))) {
         this.$message.error("链接格式不正确, 请确认链接正确后，再进行下载！")
         return false
       } else {
         const m3u8UrlIsNotDownloaded = await window.electronAPI.checkDownloadUrlNotExist(this.form.m3u8Url, this.form.name)
-        if(m3u8UrlIsNotDownloaded.item) {
+        if (m3u8UrlIsNotDownloaded.item) {
           this.$refs.alreadyExistedModal.openModal(m3u8UrlIsNotDownloaded.item, this.form.m3u8Url, this.form.name, m3u8UrlIsNotDownloaded.type)
           return false
-        } else if(! await window.electronAPI.checkDownloadFileNotExist(this.form.name, this.downloadPath)) {
+        } else if (!await window.electronAPI.checkDownloadFileNotExist(this.form.name, this.downloadPath)) {
           this.$message.error("存储地址里已存在此名称的文件，请更换一个名称！")
           return false
         }
@@ -189,11 +203,11 @@ export default {
     checkUserBenefit() {
       return getUserBenefitApi()
           .then((res) => {
-            if(res.data.result) {
+            if (res.data.result) {
               const result = res.data.result
-              if(result.isVip) {
+              if (result.isVip) {
                 return true
-              } else if(result.freeCount > 0) {
+              } else if (result.freeCount > 0) {
                 return true
               } else {
                 return false
@@ -204,15 +218,15 @@ export default {
           })
     },
     async startAnalysis() {
-      if(this.form.htmlUrl && this.isUrl(this.form.htmlUrl)) {
+      if (this.form.htmlUrl && this.isUrl(this.form.htmlUrl)) {
         this.analysisLoading = true
         this.message = {
           content: "网页解析中...（可能需要1-2分钟，请耐心等待） ",
           status: 'success'
         }
         const info = await window.electronAPI.getDownloadLinkFromUrl(this.form.htmlUrl)
-        if(info === 'error') {
-          if(/qq\.com|iqiyi|mgtv\.com/.test(this.form.htmlUrl)) {
+        if (info === 'error') {
+          if (/qq\.com|iqiyi|mgtv\.com/.test(this.form.htmlUrl)) {
             this.message = {
               content: "网页加载不成功，请重新尝试, 如还不成功，可将地址发送给我们，我们会努力解析，并在最新的版本中支持！",
               status: 'error'
@@ -223,17 +237,17 @@ export default {
               status: 'error'
             }
           }
-        } else if(info === 'noFound') {
+        } else if (info === 'noFound') {
           this.message = {
             content: "网页解析不成功，可将地址发送给我们，我们会努力解析并在最新的版本中支持！",
             status: 'error'
           }
-        } else if(info.videoUrl) {
+        } else if (info.videoUrl) {
           this.form.m3u8Url = info.videoUrl
-          if(info.audioUrl) {
+          if (info.audioUrl) {
             this.form.audioUrl = info.audioUrl
           }
-          if(info.title) {
+          if (info.title) {
             this.form.name = info.title
           }
           this.message = {
@@ -241,7 +255,7 @@ export default {
             status: 'success'
           }
         } else {
-          if(/qq\.com|iqiyi|mgtv\.com/.test(this.form.htmlUrl)) {
+          if (/qq\.com|iqiyi|mgtv\.com/.test(this.form.htmlUrl)) {
             this.message = {
               content: "网页加载不成功，请重新尝试, 如还不成功，可将地址发送给我们，我们会努力解析并在最新的版本中支持！",
               status: 'error'
@@ -254,7 +268,7 @@ export default {
           }
         }
         this.analysisLoading = false
-      } else if(this.form.htmlUrl) {
+      } else if (this.form.htmlUrl) {
         this.message = {
           content: "网址不符合要求（必须带http或者https协议），请确认下！",
           status: 'error'
@@ -266,7 +280,7 @@ export default {
         }
       }
     },
-    setHtmlUrl (url, name) {
+    setHtmlUrl(url, name) {
       this.form.m3u8Url = ''
       this.message = {
         status: 'success',
@@ -281,11 +295,11 @@ export default {
     costUserBenefit() {
       return getUserBenefitApi()
           .then((res) => {
-            if(res.data.result) {
+            if (res.data.result) {
               const result = res.data.result
-              if(result.isVip) {
+              if (result.isVip) {
                 // nothing to do
-              } else if(result.freeCount > 0) {
+              } else if (result.freeCount > 0) {
                 reduceBenefit()
                     .then(() => {
                       setUserBenefit()
