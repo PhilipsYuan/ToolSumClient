@@ -7,18 +7,18 @@ module.exports = {
     ignore: [/\.yarn/, /\.idea/, /temp/, /doc/, /src\/render/, /ffmpegPlatforms/, /config/,
       /yarn-error.log/, /\.lock/, /.gitignore/],
     osxSign: {
-      identity: 'Developer ID Application: philips yuan (88A2BYST88)',
-      "hardened-runtime": false,
-      entitlements: "entitlements.plist",
-      "entitlements-inherit": "entitlements.plist",
-      "signature-flags": "library"
+      // identity: 'Developer ID Application: philips yuan (88A2BYST88)',
+      // "hardened-runtime": true,
+      // entitlements: "entitlements.plist",
+      // "entitlements-inherit": "entitlements.plist",
+      // "signature-flags": "library"
     },
-    // osxNotarize: {
-    //   // tool: "notarytool",
-    //   appleId: 'yuanfei891219@aliyun.com',
-    //   appleIdPassword: 'kjnx-fksm-vkqo-iqgf',
-    //   teamId: '88A2BYST88'
-    // }
+    osxNotarize: {
+      tool: "notarytool",
+      appleId: 'yuanfei891219@aliyun.com',
+      appleIdPassword: 'kjnx-fksm-vkqo-iqgf',
+      teamId: '88A2BYST88'
+    }
   },
   rebuildConfig: {},
   makers: [
