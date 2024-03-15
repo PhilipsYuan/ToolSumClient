@@ -108,8 +108,12 @@ export default {
         useService("showScreenLoadingMessage", '打开中')
         await window.electronAPI.updateDownloadVideo(item.id);
         useService("closeScreenLoadingMessage")
+        await this.getLoadingList()
+        let newItem = this.list.find((i) => i.id === item.id)
+        window.electronAPI.openVideoPlayPage(newItem.m3u8Url, newItem.name);
+      } else {
+        window.electronAPI.openVideoPlayPage(item.m3u8Url, item.name);
       }
-      window.electronAPI.openVideoPlayPage(item.m3u8Url, item.name);
     },
 
     async startDownload(item) {
