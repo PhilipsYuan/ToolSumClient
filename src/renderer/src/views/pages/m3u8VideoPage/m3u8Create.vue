@@ -98,7 +98,7 @@ export default {
         ],
       },
       downloadButtonStatus: false,
-      downloadPath: "11",
+      downloadPath: "",
       message: {
         status: 'success',
         content: ''

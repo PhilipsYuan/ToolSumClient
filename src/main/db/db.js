@@ -4,6 +4,7 @@ import { JSONFile } from "lowdb/node";
 import os from 'os'
 import pathPlugin from 'path'
 import {createDir, getFileInfo} from '../util/fs'
+import fs from "fs";
 
 const basePath = app.getPath('userData')
 const path = basePath + '/db'
@@ -43,7 +44,7 @@ function getAppSettingsDB () {
     const settings = new JSONFile(`${path}/setting.json`)
     const sep = pathPlugin.sep
     const downloadPath = os.homedir() + sep + 'Downloads'
-    const settingsDB = new Low(settings, json ? json : {settings: {downloadPath}})
+    const settingsDB = new Low(settings, json ? json : {settings: {downloadSetting: {downloadPath: fs.existsSync(downloadPath) ? downloadPath : ''}}})
     return settingsDB
 }
 
