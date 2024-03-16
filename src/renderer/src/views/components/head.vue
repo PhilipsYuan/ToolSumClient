@@ -6,7 +6,7 @@
           <img class="h-10" src="../../assets/favicon.ico">
         </div>
         <div class="cursor-pointer inline-block text-xl font-medium align-middle" @click="goToPath('home')">小滑轮</div>
-        <el-link v-if="newVersion && currentVersion && Number(newVersion.split('.')[2]) > Number(currentVersion.split('.')[2])"
+        <el-link v-if="checkNewVersion()"
                  @click="goToNewVersion" type="primary" target="_blank">新版本（{{newVersion}}）</el-link>
       </div>
       <div class="flex items-center gap-3">
@@ -98,6 +98,23 @@ export default {
     },
     goToNewVersion() {
       window.electronAPI.openLinkByDefaultBrowser("https://www.feiaci.com/xhl/m3u8Video")
+    },
+    checkNewVersion() {
+      if(this.newVersion && this.currentVersion) {
+        const newVersionList = this.newVersion.split('.')
+        const currentVersionList = this.currentVersion.split('.')
+        if(newVersionList[0] > currentVersionList[0]) {
+          return true
+        } else if(newVersionList[1] > currentVersionList[1]) {
+          return true
+        } else if(newVersionList[2] > currentVersionList[2]) {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return false
+      }
     }
   }
 }
