@@ -82,9 +82,11 @@ export default {
         .then((res) => {
           setUser(null)
           if (this.$route.name === 'home') {
+            useService('saveInputInfo')
             window.location.reload();
           } else {
             this.$router.push({name: 'home'})
+            useService('saveInputInfo')
             window.location.reload();
           }
         })

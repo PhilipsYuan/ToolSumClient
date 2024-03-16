@@ -113,6 +113,8 @@ export default {
   },
   async mounted() {
     addService('getM3u8FileFailureTips', this.getM3u8FileFailureMessage.bind(this))
+    addService('saveInputInfo', this.saveInputInfo.bind(this))
+    this.recoverInputInfo()
     checkLogin()
         .then((res) => {
           if (res) {
@@ -308,6 +310,19 @@ export default {
             }
           })
     },
+    saveInputInfo() {
+      localStorage.setItem('inputInfo', JSON.stringify(this.form))
+    },
+    recoverInputInfo() {
+      const info = localStorage.getItem('inputInfo')
+      if(info) {
+        this.form = JSON.parse(info)
+      }
+      this.removeInputInfo()
+    },
+    removeInputInfo() {
+      localStorage.removeItem('inputInfo')
+    }
   }
 }
 </script>

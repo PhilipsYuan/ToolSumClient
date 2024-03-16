@@ -1,6 +1,8 @@
 import { app } from "electron";
 import { Low } from 'lowdb'
 import { JSONFile } from "lowdb/node";
+import os from 'os'
+import pathPlugin from 'path'
 import {createDir, getFileInfo} from '../util/fs'
 
 const basePath = app.getPath('userData')
@@ -39,7 +41,9 @@ function getAppSettingsDB () {
     const jsonString = getFileInfo(`${path}/setting.json`)
     const json = jsonString ? JSON.parse(jsonString) : ''
     const settings = new JSONFile(`${path}/setting.json`)
-    const settingsDB = new Low(settings, json ? json : {settings: {}})
+    const sep = pathPlugin.sep
+    const downloadPath = os.homedir() + sep + 'Downloads'
+    const settingsDB = new Low(settings, json ? json : {settings: {downloadPath}})
     return settingsDB
 }
 

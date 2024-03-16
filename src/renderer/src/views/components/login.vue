@@ -78,6 +78,7 @@ export default {
                   .then((re) => {
                     setUser(re.data.result);
                     this.close()
+                    useService('saveInputInfo')
                     window.location.reload();
                   })
               } else {
