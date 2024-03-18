@@ -16,12 +16,16 @@
     </div>
     <div class="w-full h-[calc(100%-68px)]">
       <div class="text-xs text-center text-gray-400 my-1">如出现播放失败，建议使用系统播放或者其他视频播放器（例如：迅雷影音）</div>
-      <video v-if="videoSrc" ref="myVideo" controls autoplay
+      <video v-if="videoSrc" ref="myVideo" controls
              class="video-js vjs-default-skin w-full h-full object-fill">
         <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="avc1" />
         <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="hevc" />
         <source v-if="/\.m3u8/.test(videoSrc)" :src="videoSrc" type="application/x-mpegURL" />
+        <source v-if="/\.m4s/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="avc1" />
       </video>
+<!--      <audio v-if="audioSrc" class="opacity-0" >-->
+<!--        <source :src="audioSrc" type="audio/mp3">-->
+<!--      </audio>-->
     </div>
 
   </div>
@@ -42,6 +46,8 @@ export default {
       videoSrc: '',
       player: null,
       videoName: '',
+      audioSrc: '',
+      audioElement: '',
       isMac: false,
     }
   },
@@ -54,14 +60,23 @@ export default {
     } else {
       this.videoSrc = `file://${params.view}`
     }
+    if(params.audio) {
+      this.audioSrc = params.audio
+      this.audioElement = new Audio(this.audioSrc);
+    }
     this.videoName = params.name
     this.$nextTick(() => {
       this.setVideoConfig()
     })
   },
   methods: {
-    setVideoConfig() {
+    async setVideoConfig() {
       this.player = videoJs(this.$refs.myVideo);
+      const ready = await this.checkVideoAndAudioSuccess()
+      if(ready) {
+        this.audioElement.play()
+        this.player.play()
+      }
     },
     changeVideoPlayItem(videoPath, videoName) {
       this.videoSrc = `file://${videoPath}`
@@ -70,6 +85,38 @@ export default {
     },
     closeWindow() {
       window.electronAPI.closeVideoPlayWindow()
+    },
+    /**
+     * 校验视频是否准备好了
+     * @returns {Promise<unknown>}
+     */
+    checkVideoAndAudioSuccess() {
+      let videoOK = false
+      let audioOK = false
+      return new Promise(resolve => {
+        const interval = setInterval(() => {
+          if(this.player) {
+            this.player.on('loadedmetadata', () => {
+              videoOK = true
+            })
+          } else {
+            videoOK = true
+          }
+          if(this.audioElement) {
+            this.audioElement.addEventListener("canplaythrough", (event) => {
+              /* 音频可以播放；如果权限允许则播放 */
+              audioOK = true
+            });
+          } else {
+            audioOK = true
+          }
+
+          if(audioOK && videoOK) {
+            clearInterval(interval)
+            resolve(true)
+          }
+        }, 100)
+      })
     }
   }
 }

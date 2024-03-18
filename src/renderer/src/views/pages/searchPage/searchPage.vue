@@ -37,13 +37,13 @@
 </template>
 
 <script>
-import {ArrowRightBold} from "@element-plus/icons-vue";
+import {Back, Right, Close, RefreshLeft} from "@element-plus/icons-vue";
 import { getUrlParams } from "../../../utils/url";
 import { addService } from "../../../service/service";
 
 export default {
   name: "searchPage",
-  components: {ArrowRightBold},
+  components: {Back, Right, Close, RefreshLeft},
   data() {
     return {
       webview: null,

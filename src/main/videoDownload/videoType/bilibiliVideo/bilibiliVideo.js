@@ -10,6 +10,7 @@ import {newFinishedRecord} from "../../finishList/finishList";
 import {sendTips} from "../../../util/electronOperations";
 import fs from 'fs'
 import {m3u8VideoDownloadingListDB} from "../../../db/db";
+import dayjs from "dayjs";
 
 const binary = os.platform() === 'win32' ? 'ffmpeg.exe' : 'ffmpeg';
 const ffmpegPath = path.resolve(__dirname, binary);
@@ -18,31 +19,57 @@ const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
 makeDir(tempSourcePath)
 const cancelTokenList = {}
 
-export async function createBiliVideoDownloadTask(event, url, name, outPath, htmlUrl, audioUrl) {
+export async function createBiliVideoDownloadTask(event, url, name, outPath, htmlUrl, audioUrl,  isUpdate, loadingId) {
     const outputPath = path.resolve(outPath, `${name}.mp4`);
-    const id = shortId.generate()
-    const json = {
-        id: id,
-        type: 'biliTV',
-        name: name,
-        htmlUrl: htmlUrl || '',
-        m3u8Url: url,
-        audioUrl: audioUrl,
-        message: {
-            status: 'success',
-            content: '未开始进行下载'
-        },
-        // 判断是否在进行中
-        pausing: false,
-        pause: false,
-        isStart: false,
-        totalVideoLength: 0,
-        totalAudioLength: 0,
-        lastVideoDownloadPosition: 0,
-        lastAudioDownloadPosition: 0,
-        outputPath: outputPath
+    if(isUpdate) {
+        const data = {
+            name: name,
+            htmlUrl: htmlUrl,
+            m3u8Url: url,
+            audioUrl: audioUrl,
+            outputPath: outputPath
+        }
+        return UpdateLoadingRecord(data, loadingId)
+    } else {
+        const id = shortId.generate()
+        const json = {
+            id: id,
+            type: 'biliTV',
+            name: name,
+            htmlUrl: htmlUrl || '',
+            m3u8Url: url,
+            audioUrl: audioUrl,
+            message: {
+                status: 'success',
+                content: '未开始进行下载'
+            },
+            // 判断是否在进行中
+            pausing: false,
+            pause: false,
+            isStart: false,
+            totalVideoLength: 0,
+            totalAudioLength: 0,
+            lastVideoDownloadPosition: 0,
+            lastAudioDownloadPosition: 0,
+            outputPath: outputPath,
+            updateDate: dayjs().format("YYYY/MM/DD HH:mm")
+        }
+        await newLoadingRecord(json)
+        return 'success'
     }
-    await newLoadingRecord(json)
+
+}
+
+async function UpdateLoadingRecord (data, id) {
+    const list = m3u8VideoDownloadingListDB.data.loadingList
+    const item = list.find((item) => item.id === id)
+    item.m3u8Url = data.m3u8Url
+    item.htmlUrl = data.htmlUrl
+    item.name = data.name
+    item.audioUrl = data.audioUrl
+    item.outputPath = data.outputPath
+    item.updateDate = dayjs().format("YYYY/MM/DD HH:mm")
+    await m3u8VideoDownloadingListDB.write()
     return 'success'
 }
 

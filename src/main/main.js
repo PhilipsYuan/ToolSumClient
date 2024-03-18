@@ -73,10 +73,16 @@ app.whenReady().then(() => {
     callback({ responseHeaders: details.responseHeaders});
   })
   const RequestFilter = {
-    urls: ['https://*.mgtv.com/*']
+    urls: ['https://*.mgtv.com/*', 'https://*.bilivideo.cn/*']
   }
   session.defaultSession.webRequest.onBeforeSendHeaders(RequestFilter, (details, callback) => {
-    details.requestHeaders['Referer'] = 'https://www.mgtv.com'
+    let refer = ''
+    if(/mgtv/.test(details.url)) {
+      refer = 'https://www.mgtv.com'
+    } else if(/bilivideo/.test(details.url)) {
+      refer = 'https://www.bilibili.com'
+    }
+    details.requestHeaders['Referer'] = refer
     callback({ requestHeaders: details.requestHeaders })
   })
 })

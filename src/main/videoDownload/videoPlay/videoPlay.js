@@ -8,7 +8,7 @@ ipcMain.on('close-video-play-window', closeVideoPlayWindow)
  * 打开视频播放页面
  * @returns {Promise<void>}
  */
-export async function openVideoPlayPage(event, videoPath, videoName) {
+export async function openVideoPlayPage(event, videoPath, videoName, audioUrl) {
     let selfVideoPlayWindow = getWindow("selfVideoPlayWindow")
     if(!selfVideoPlayWindow) {
         const window = new BrowserWindow({
@@ -27,24 +27,24 @@ export async function openVideoPlayPage(event, videoPath, videoName) {
                 webviewTag: true
             },
         });
-        // window.webContents.openDevTools();
+        window.webContents.openDevTools();
         addWindow("selfVideoPlayWindow", window, '')
         window.on('closed', () => {
             deleteWindow("selfVideoPlayWindow")
         })
         if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-            await window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}&sample=1`)
+            await window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}&sample=1&audio=${encodeURIComponent(audioUrl)}`)
         } else {
             const urlPath = path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
-            await window.webContents.loadURL(`file://${urlPath}#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}&sample=1`)
+            await window.webContents.loadURL(`file://${urlPath}#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}&sample=1&audio=${encodeURIComponent(audioUrl)}`)
         }
     } else {
         selfVideoPlayWindow.window.setTitle(videoName)
         if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-            await selfVideoPlayWindow.window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}&sample=1`)
+            await selfVideoPlayWindow.window.webContents.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}&sample=1&audio=${encodeURIComponent(audioUrl)}`)
         } else {
             const urlPath = path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
-            await selfVideoPlayWindow.window.webContents.loadURL(`file://${urlPath}#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}&sample=1`)
+            await selfVideoPlayWindow.window.webContents.loadURL(`file://${urlPath}#/videoPlay?view=${encodeURIComponent(videoPath)}&name=${encodeURIComponent(videoName)}&sample=1&audio=${encodeURIComponent(audioUrl)}`)
         }
         selfVideoPlayWindow.window.focus()
         selfVideoPlayWindow.window.reload()
