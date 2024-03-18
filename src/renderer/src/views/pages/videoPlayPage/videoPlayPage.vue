@@ -16,16 +16,14 @@
     </div>
     <div class="w-full h-[calc(100%-68px)]">
       <div class="text-xs text-center text-gray-400 my-1">如出现播放失败，建议使用系统播放或者其他视频播放器（例如：迅雷影音）</div>
-      <video v-if="videoSrc" ref="myVideo" controls
+<!--      <video id="my-video" class="video-js vjs-default-skin w-full h-full object-fill" autoplay></video>-->
+      <video id="my-video" ref="myVideo" controls autoplay
              class="video-js vjs-default-skin w-full h-full object-fill">
-        <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="avc1" />
-        <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="hevc" />
-        <source v-if="/\.m3u8/.test(videoSrc)" :src="videoSrc" type="application/x-mpegURL" />
-        <source v-if="/\.m4s/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="avc1" />
+<!--        <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="avc1" />-->
+<!--        <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="hevc" />-->
+<!--        <source v-if="/\.m3u8/.test(videoSrc)" :src="videoSrc" type="application/x-mpegURL" />-->
+<!--        <source v-if="/\.m4s/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="avc1" />-->
       </video>
-<!--      <audio v-if="audioSrc" class="opacity-0" >-->
-<!--        <source :src="audioSrc" type="audio/mp3">-->
-<!--      </audio>-->
     </div>
 
   </div>
@@ -62,21 +60,38 @@ export default {
     }
     if(params.audio) {
       this.audioSrc = params.audio
-      this.audioElement = new Audio(this.audioSrc);
     }
     this.videoName = params.name
+
     this.$nextTick(() => {
-      this.setVideoConfig()
+      setTimeout(() => {
+        this.setVideoConfig()
+      }, 2000)
+
     })
   },
   methods: {
     async setVideoConfig() {
-      this.player = videoJs(this.$refs.myVideo);
-      const ready = await this.checkVideoAndAudioSuccess()
-      if(ready) {
-        this.audioElement.play()
+      const videoTag = document.getElementById("my-video");
+      this.player = videoJs(videoTag, {
+        preload: 'auto',
+        source: [{
+          src: this.videoSrc,
+          type: 'video/mp4',
+          codecs: 'avc1'
+        }, {
+          src: this.videoSrc,
+          type: 'application/x-mpegURL',
+        }]
+      }, () => {
         this.player.play()
-      }
+      });
+
+      // const ready = await this.checkVideoAndAudioSuccess()
+      // if(ready) {
+      //   this.audioElement.play()
+      //   this.player.play()
+      // }
     },
     changeVideoPlayItem(videoPath, videoName) {
       this.videoSrc = `file://${videoPath}`
@@ -85,6 +100,38 @@ export default {
     },
     closeWindow() {
       window.electronAPI.closeVideoPlayWindow()
+    },
+
+    playEr(videoUrl, audioUrl) {
+      const videoTag = document.getElementById("my-video");
+      const myMediaSource = new MediaSource();
+      const url = URL.createObjectURL(myMediaSource);
+      videoTag.src = url;
+      myMediaSource.addEventListener('sourceopen', () => {
+        console.log('here')
+        // 1. add source buffers
+        const audioSourceBuffer = myMediaSource
+            .addSourceBuffer('audio/mp4; codecs="mp4a.40.2"');
+        const videoSourceBuffer = myMediaSource
+            .addSourceBuffer('video/mp4; codecs="avc1.64001e"');
+
+        // 2. download and add our audio/video to the SourceBuffers
+        // for the audio SourceBuffer
+        fetch(audioUrl).then(function(response) {
+          // The data has to be a JavaScript ArrayBuffer
+          return response.arrayBuffer();
+        }).then(function(audioData) {
+          audioSourceBuffer.appendBuffer(audioData);
+        });
+        // the same for the video SourceBuffer
+        fetch(videoUrl).then(function(response) {
+          // The data has to be a JavaScript ArrayBuffer
+          return response.arrayBuffer();
+        }).then(function(videoData) {
+          videoSourceBuffer.appendBuffer(videoData);
+        });
+      })
+
     },
     /**
      * 校验视频是否准备好了
