@@ -16,15 +16,9 @@
     </div>
     <div class="w-full h-[calc(100%-68px)]">
       <div class="text-xs text-center text-gray-400 my-1">如出现播放失败，建议使用系统播放或者其他视频播放器（例如：迅雷影音）</div>
-      <video id="my-video" autoplay controls>
+      <video id="my-video" ref="myVideo"
+             class="video-js vjs-default-skin w-full h-full object-fill" autoplay controls>
       </video>
-<!--      <video ref="myVideo"-->
-<!--             class="video-js vjs-default-skin w-full h-full object-fill">-->
-<!--&lt;!&ndash;        <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="avc1" />&ndash;&gt;-->
-<!--&lt;!&ndash;        <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="hevc" />&ndash;&gt;-->
-<!--&lt;!&ndash;        <source v-if="/\.m3u8/.test(videoSrc)" :src="videoSrc" type="application/x-mpegURL" />&ndash;&gt;-->
-<!--&lt;!&ndash;        <source v-if="/\.m4s/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="avc1" />&ndash;&gt;-->
-<!--      </video>-->
     </div>
 
   </div>
@@ -66,12 +60,9 @@ export default {
     setTimeout(() => {
 
     })
-    this.playVideoWithAudio(this.videoSrc, this.audioSrc)
-    // this.$nextTick(() => {
-    //   setTimeout(() => {
-    //     this.setVideoConfig()
-    //   }, 2000)
-    // })
+    this.$nextTick(() => {
+      this.setVideoConfig()
+    })
   },
   methods: {
     async setVideoConfig() {
@@ -84,13 +75,12 @@ export default {
           src: this.videoSrc,
           type: 'application/x-mpegURL',
         }
-        console.log("here222")
         this.player = videoJs(this.$refs.myVideo, {
           preload: 'auto',
           sources: [json]
         });
       } else if(this.videoSrc && this.audioSrc) {
-        this.playVideoWithAudio(this.videoSrc, this.audioSrc)
+        this.playEr(this.videoSrc, this.audioSrc)
       }
     },
     changeVideoPlayItem(videoPath, videoName) {
@@ -102,23 +92,28 @@ export default {
       window.electronAPI.closeVideoPlayWindow()
     },
 
-    playVideoWithAudio(videoUrl, audioUrl) {
-      console.log(videoUrl)
-      console.log(audioUrl)
-      const videoTag = document.getElementById("my-video");
-      console.log(videoTag)
+    playEr(videoUrl, audioUrl) {
+      // const videoTag = document.getElementById("my-video");
       const myMediaSource = new MediaSource();
       const url = URL.createObjectURL(myMediaSource);
-      videoTag.src = url;
+      this.player = videoJs(this.$refs.myVideo, {
+        preload: 'auto',
+        sources: [{
+          src: url,
+          type: 'video/mp4',
+        },
+          {
+            src: url,
+            type: 'video/mp4',
+          }]
+      });
+      // this.$refs.myVideo.src = url;
       myMediaSource.addEventListener('sourceopen', () => {
-        console.log('here')
         // 1. add source buffers
         const audioSourceBuffer = myMediaSource
-            .addSourceBuffer('audio/mp4;codecs="mp4a.40.5"');
-        // video/mp4;codecs="av01.0.00M.10.0.110.01.01.01.0
-        // audio/mp4;codecs="mp4a.40.5
+            .addSourceBuffer('audio/mp4; codecs="mp4a.40.2"');
         const videoSourceBuffer = myMediaSource
-            .addSourceBuffer('video/mp4;codecs="av01.0.00M.10.0.110.01.01.01.0"');
+            .addSourceBuffer('video/mp4; codecs="avc1.64001e"');
 
         // 2. download and add our audio/video to the SourceBuffers
         // for the audio SourceBuffer
@@ -137,7 +132,7 @@ export default {
         });
       })
 
-    },
+    }
   }
 }
 </script>
