@@ -16,8 +16,7 @@
     </div>
     <div class="w-full h-[calc(100%-68px)]">
       <div class="text-xs text-center text-gray-400 my-1">如出现播放失败，建议使用系统播放或者其他视频播放器（例如：迅雷影音）</div>
-      <video id="my-video" autoplay controls
-             class="video-js vjs-default-skin w-full h-full object-fill">
+      <video id="my-video" autoplay controls>
       </video>
 <!--      <video ref="myVideo"-->
 <!--             class="video-js vjs-default-skin w-full h-full object-fill">-->
@@ -64,12 +63,15 @@ export default {
       this.audioSrc = params.audio
     }
     this.videoName = params.name
-    this.$nextTick(() => {
-      setTimeout(() => {
-        this.setVideoConfig()
-      }, 2000)
+    setTimeout(() => {
 
     })
+    this.playVideoWithAudio(this.videoSrc, this.audioSrc)
+    // this.$nextTick(() => {
+    //   setTimeout(() => {
+    //     this.setVideoConfig()
+    //   }, 2000)
+    // })
   },
   methods: {
     async setVideoConfig() {
@@ -104,6 +106,7 @@ export default {
       console.log(videoUrl)
       console.log(audioUrl)
       const videoTag = document.getElementById("my-video");
+      console.log(videoTag)
       const myMediaSource = new MediaSource();
       const url = URL.createObjectURL(myMediaSource);
       videoTag.src = url;
@@ -111,11 +114,11 @@ export default {
         console.log('here')
         // 1. add source buffers
         const audioSourceBuffer = myMediaSource
-            .addSourceBuffer('audio/mp4; codecs="mp4a.40.2"');
+            .addSourceBuffer('audio/mp4;codecs="mp4a.40.5"');
         // video/mp4;codecs="av01.0.00M.10.0.110.01.01.01.0
         // audio/mp4;codecs="mp4a.40.5
         const videoSourceBuffer = myMediaSource
-            .addSourceBuffer('video/mp4; codecs="avc1.64001e"');
+            .addSourceBuffer('video/mp4;codecs="av01.0.00M.10.0.110.01.01.01.0"');
 
         // 2. download and add our audio/video to the SourceBuffers
         // for the audio SourceBuffer
