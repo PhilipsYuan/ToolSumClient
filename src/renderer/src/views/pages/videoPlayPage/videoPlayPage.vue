@@ -16,14 +16,16 @@
     </div>
     <div class="w-full h-[calc(100%-68px)]">
       <div class="text-xs text-center text-gray-400 my-1">如出现播放失败，建议使用系统播放或者其他视频播放器（例如：迅雷影音）</div>
-<!--      <video id="my-video" class="video-js vjs-default-skin w-full h-full object-fill" autoplay></video>-->
-      <video id="my-video" ref="myVideo" controls autoplay
+      <video id="my-video" autoplay controls
              class="video-js vjs-default-skin w-full h-full object-fill">
-<!--        <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="avc1" />-->
-<!--        <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="hevc" />-->
-<!--        <source v-if="/\.m3u8/.test(videoSrc)" :src="videoSrc" type="application/x-mpegURL" />-->
-<!--        <source v-if="/\.m4s/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="avc1" />-->
       </video>
+<!--      <video ref="myVideo"-->
+<!--             class="video-js vjs-default-skin w-full h-full object-fill">-->
+<!--&lt;!&ndash;        <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="avc1" />&ndash;&gt;-->
+<!--&lt;!&ndash;        <source v-if="/\.mp4/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="hevc" />&ndash;&gt;-->
+<!--&lt;!&ndash;        <source v-if="/\.m3u8/.test(videoSrc)" :src="videoSrc" type="application/x-mpegURL" />&ndash;&gt;-->
+<!--&lt;!&ndash;        <source v-if="/\.m4s/.test(videoSrc)" :src="videoSrc" type="video/mp4" codecs="avc1" />&ndash;&gt;-->
+<!--      </video>-->
     </div>
 
   </div>
@@ -62,7 +64,6 @@ export default {
       this.audioSrc = params.audio
     }
     this.videoName = params.name
-
     this.$nextTick(() => {
       setTimeout(() => {
         this.setVideoConfig()
@@ -72,26 +73,23 @@ export default {
   },
   methods: {
     async setVideoConfig() {
-      const videoTag = document.getElementById("my-video");
-      this.player = videoJs(videoTag, {
-        preload: 'auto',
-        source: [{
+      if(/\.mp4/.test(this.videoSrc) || /\.m3u8/.test(this.videoSrc)) {
+        const json = /\.mp4/.test(this.videoSrc) ? {
           src: this.videoSrc,
           type: 'video/mp4',
           codecs: 'avc1'
-        }, {
+        } : {
           src: this.videoSrc,
           type: 'application/x-mpegURL',
-        }]
-      }, () => {
-        this.player.play()
-      });
-
-      // const ready = await this.checkVideoAndAudioSuccess()
-      // if(ready) {
-      //   this.audioElement.play()
-      //   this.player.play()
-      // }
+        }
+        console.log("here222")
+        this.player = videoJs(this.$refs.myVideo, {
+          preload: 'auto',
+          sources: [json]
+        });
+      } else if(this.videoSrc && this.audioSrc) {
+        this.playVideoWithAudio(this.videoSrc, this.audioSrc)
+      }
     },
     changeVideoPlayItem(videoPath, videoName) {
       this.videoSrc = `file://${videoPath}`
@@ -102,7 +100,9 @@ export default {
       window.electronAPI.closeVideoPlayWindow()
     },
 
-    playEr(videoUrl, audioUrl) {
+    playVideoWithAudio(videoUrl, audioUrl) {
+      console.log(videoUrl)
+      console.log(audioUrl)
       const videoTag = document.getElementById("my-video");
       const myMediaSource = new MediaSource();
       const url = URL.createObjectURL(myMediaSource);
@@ -112,6 +112,8 @@ export default {
         // 1. add source buffers
         const audioSourceBuffer = myMediaSource
             .addSourceBuffer('audio/mp4; codecs="mp4a.40.2"');
+        // video/mp4;codecs="av01.0.00M.10.0.110.01.01.01.0
+        // audio/mp4;codecs="mp4a.40.5
         const videoSourceBuffer = myMediaSource
             .addSourceBuffer('video/mp4; codecs="avc1.64001e"');
 
@@ -133,38 +135,6 @@ export default {
       })
 
     },
-    /**
-     * 校验视频是否准备好了
-     * @returns {Promise<unknown>}
-     */
-    checkVideoAndAudioSuccess() {
-      let videoOK = false
-      let audioOK = false
-      return new Promise(resolve => {
-        const interval = setInterval(() => {
-          if(this.player) {
-            this.player.on('loadedmetadata', () => {
-              videoOK = true
-            })
-          } else {
-            videoOK = true
-          }
-          if(this.audioElement) {
-            this.audioElement.addEventListener("canplaythrough", (event) => {
-              /* 音频可以播放；如果权限允许则播放 */
-              audioOK = true
-            });
-          } else {
-            audioOK = true
-          }
-
-          if(audioOK && videoOK) {
-            clearInterval(interval)
-            resolve(true)
-          }
-        }, 100)
-      })
-    }
   }
 }
 </script>
