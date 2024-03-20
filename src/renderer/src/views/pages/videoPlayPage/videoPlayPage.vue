@@ -78,7 +78,7 @@ export default {
           sources: [json]
         });
       } else if(this.videoSrc && this.audioSrc) {
-        playVideoAndAudio(this.videoSrc, this.audioSrc, this.$refs.myVideo, videoJs)
+        this.playVideoAndAudio(this.videoSrc, this.audioSrc, this.$refs.myVideo, videoJs)
       }
     },
     changeVideoPlayItem(videoPath, videoName) {
@@ -119,9 +119,6 @@ export default {
           videoSourceBuffer.appendBuffer(videoData);
         });
       })
-    },
-    getTotal() {
-
     }
   }
 }
