@@ -31,6 +31,7 @@ import '@videojs/http-streaming'
 import zhCNJson from  'video.js/dist/lang/zh-CN.json'
 import {getUrlParams} from "../../../utils/url";
 import { addService } from "../../../service/service";
+import { playVideoAndAudio } from './videoAndAudioPlay'
 videoJs.addLanguage('zh-CN', zhCNJson)
 export default {
   name: "videoPlayPage",
@@ -57,9 +58,6 @@ export default {
       this.audioSrc = params.audio
     }
     this.videoName = params.name
-    setTimeout(() => {
-
-    })
     this.$nextTick(() => {
       this.setVideoConfig()
     })
@@ -80,7 +78,7 @@ export default {
           sources: [json]
         });
       } else if(this.videoSrc && this.audioSrc) {
-        this.playEr(this.videoSrc, this.audioSrc)
+        playVideoAndAudio(this.videoSrc, this.audioSrc, this.$refs.myVideo, videoJs)
       }
     },
     changeVideoPlayItem(videoPath, videoName) {
@@ -91,9 +89,7 @@ export default {
     closeWindow() {
       window.electronAPI.closeVideoPlayWindow()
     },
-
-    playEr(videoUrl, audioUrl) {
-      // const videoTag = document.getElementById("my-video");
+    playVideoAndAudio(videoUrl, audioUrl) {
       const myMediaSource = new MediaSource();
       const url = URL.createObjectURL(myMediaSource);
       this.player = videoJs(this.$refs.myVideo, {
@@ -101,36 +97,30 @@ export default {
         sources: [{
           src: url,
           type: 'video/mp4',
-        },
-          {
-            src: url,
-            type: 'video/mp4',
-          }]
+        }]
       });
-      // this.$refs.myVideo.src = url;
       myMediaSource.addEventListener('sourceopen', () => {
-        // 1. add source buffers
+        let videoTotal = 0
+        let audioTotal = 0
         const audioSourceBuffer = myMediaSource
             .addSourceBuffer('audio/mp4; codecs="mp4a.40.2"');
         const videoSourceBuffer = myMediaSource
             .addSourceBuffer('video/mp4; codecs="avc1.64001e"');
-
-        // 2. download and add our audio/video to the SourceBuffers
-        // for the audio SourceBuffer
-        fetch(audioUrl).then(function(response) {
-          // The data has to be a JavaScript ArrayBuffer
+        fetch(audioUrl).then((response) =>{
+          audioTotal = response.headers.get('Content-Range').split('/')[1]
           return response.arrayBuffer();
         }).then(function(audioData) {
           audioSourceBuffer.appendBuffer(audioData);
         });
-        // the same for the video SourceBuffer
-        fetch(videoUrl).then(function(response) {
-          // The data has to be a JavaScript ArrayBuffer
+        fetch(videoUrl).then((response) => {
+          videoTotal = response.headers.get('Content-Range').split('/')[1]
           return response.arrayBuffer();
-        }).then(function(videoData) {
+        }).then((videoData) => {
           videoSourceBuffer.appendBuffer(videoData);
         });
       })
+    },
+    getTotal() {
 
     }
   }

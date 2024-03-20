@@ -46,12 +46,16 @@ function getInfoFromPlayInfo(data) {
     const infoString = data.match(/<script>window\.__playinfo__=({.*})<\/script><script>/)?.[1]
     const info = infoString ? JSON.parse(infoString) : null;
     if(info) {
+        const videoInfoList = info?.data?.dash?.video
+        const audioInfoList = info?.data?.dash?.audio
+        const videoItem = videoInfoList.find((item) => /avc1/.test(item.codecs))
+        const audioItem = audioInfoList.find((item) => /mp4a\.40\.2/.test(item.codecs))
         const videoUrl =
-            info?.data?.dash?.video?.[0]?.baseUrl
-            ?? (info?.data?.dash?.video?.[0]?.backupUrl?.[0] ?? info?.data?.dash?.video?.[0]?.backup_url?.[0]);
+            videoItem?.baseUrl
+            ?? (videoItem?.backupUrl?.[0] ?? videoItem?.backup_url?.[0]);
         const audioUrl =
-            info?.data?.dash?.audio?.[0]?.baseUrl
-            ?? (info?.data?.dash?.audio?.[0]?.backupUrl?.[0] ?? info?.data?.dash?.audio?.[0]?.backup_url?.[0]);
+            audioItem?.baseUrl
+            ?? (audioItem?.backupUrl?.[0] ?? audioItem?.backup_url?.[0]);
         const title = data.match(/title="(.*?)"/)?.[1]?.replaceAll?.(/\\|\/|:|\*|\?|"|<|>|\|/g, '');
 
         if (videoUrl && audioUrl) {
@@ -93,15 +97,13 @@ async function getInfoFromNextData(data, epId) {
             .then((res) => {
                 const dashInfo = res?.data?.result?.video_info?.dash
                 if(dashInfo) {
-                    if(dashInfo.video && dashInfo.video.length > 0 && dashInfo.audio && dashInfo.audio.length > 0){
-                        const largeVideo = dashInfo.video.reduce(function(max, item) {
-                            return item.size > max.size ? item : max;
-                        });
-                        const videoUrl = largeVideo.baseUrl ?? (largeVideo.backupUrl?.[0] ?? largeVideo.backup_url?.[0]);
-                        const largeAudio = dashInfo.audio.reduce(function(max, item) {
-                            return item.size > max.size ? item : max;
-                        });
-                        const audioUrl = largeAudio.baseUrl ?? (largeAudio.backupUrl?.[0] ?? largeAudio.backup_url?.[0]);
+                    const videoInfoList = dashInfo?.video
+                    const audioInfoList = dashInfo?.audio
+                    const videoItem = videoInfoList.find((item) => /avc1/.test(item.codecs))
+                    const audioItem = audioInfoList.find((item) => /mp4a\.40\.2/.test(item.codecs))
+                    if(videoItem && audioItem){
+                        const videoUrl = videoItem.baseUrl ?? (videoItem.backupUrl?.[0] ?? videoItem.backup_url?.[0]);
+                        const audioUrl = audioItem.baseUrl ?? (audioItem.backupUrl?.[0] ?? audioItem.backup_url?.[0]);
                         const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0].trim();
                         if (videoUrl && audioUrl) {
                             return {videoUrl, audioUrl, title};
