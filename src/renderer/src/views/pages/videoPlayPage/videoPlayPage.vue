@@ -78,7 +78,7 @@ export default {
           sources: [json]
         });
       } else if(this.videoSrc && this.audioSrc) {
-        this.playVideoAndAudio(this.videoSrc, this.audioSrc, this.$refs.myVideo, videoJs)
+        playVideoAndAudio(this.videoSrc, this.audioSrc, this.$refs.myVideo, videoJs)
       }
     },
     changeVideoPlayItem(videoPath, videoName) {

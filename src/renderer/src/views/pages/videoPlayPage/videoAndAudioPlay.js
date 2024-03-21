@@ -1,5 +1,4 @@
 import axios from "axios";
-import videoJs from "video.js";
 
 export async function playVideoAndAudio(videoUrl, audioUrl, videoElement, videoJs) {
     const totals = await getTotalLength(videoUrl, audioUrl)
@@ -53,7 +52,6 @@ export async function playVideoAndAudio(videoUrl, audioUrl, videoElement, videoJ
                     index++;
                     videoSourceBuffer.appendBuffer(videoData);
                     send();
-                    // videoElement.play();
                 });
             }
         };

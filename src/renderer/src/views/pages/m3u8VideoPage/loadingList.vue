@@ -1,7 +1,8 @@
 <template>
   <div class="min-h-[300px]">
     <div class="grid gap-4" v-if="list.length > 0">
-      <div v-for="item in list" class="border rounded-md px-4 py-2 h-fit hover:bg-gray-100 hover:border-blue-400" :id="item.id">
+      <div v-for="item in list" class="border rounded-md px-4 py-2 h-fit hover:bg-gray-100 hover:border-blue-400"
+           :class="{'bg-green-50 hover:bg-green-50': item.isStart !== item.pause || item.pausing === true}" :id="item.id">
         <div class="flex items-center justify-between">
           <div>
             <div>{{item.name}}</div>
@@ -35,7 +36,7 @@
               </el-icon>
             </el-tooltip>
             <el-tooltip v-if="item.isStart !== item.pause || item.pausing === true" content="暂停" placement="top">
-              <el-icon class="icon-button !text-lg !p-1 cursor-pointer"
+              <el-icon class="icon-button !text-lg !p-1 cursor-pointer !text-green-500"
                        :class="{'pointer-events-none !text-gray-300': item.message.content === '合成中...'}"
                        style="width: 28px !important;height:28px !important;"
                        @click="pauseDownload(item)">
