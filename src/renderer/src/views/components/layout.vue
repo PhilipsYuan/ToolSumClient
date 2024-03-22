@@ -25,8 +25,18 @@
       </el-aside>
       <el-main>
         <div v-if="notice"
-             class="-ml-5 -mt-5 mb-8 text-sm text-red-400 border-b text-center bg-white p-2 w-[calc(100%+40px)] shadow-[0px_8px_16px_rgba(147,151,159,0.16)]">
-          {{ notice }}
+             class="px-4 py-2 border text-xs rounded-md mb-8 bg-gray-50 flex items-start justify-between max-h-[120px] overflow-auto relative">
+          <div class="flex items-start">
+            <el-icon class="!text-blue-500 mr-2 mt-1">
+              <InfoFilled/>
+            </el-icon>
+            <div class="whitespace-pre">{{ notice }}</div>
+          </div>
+          <div class="absolute top-1 right-1">
+            <el-icon class="icon-button" @click="clearNotice">
+              <CloseBold/>
+            </el-icon>
+          </div>
         </div>
         <router-view/>
       </el-main>
@@ -129,6 +139,9 @@ export default {
     goPath(path) {
       this.$router.push({path: path})
     },
+    clearNotice() {
+      this.notice = ''
+    }
   }
 }
 </script>

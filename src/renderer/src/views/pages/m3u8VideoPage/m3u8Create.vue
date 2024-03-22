@@ -87,9 +87,6 @@ export default {
         audioUrl: ''
       },
       rules: {
-        htmlUrl: [
-            { required: true, message: '请输入视频网址', trigger: 'blur'},
-        ],
         m3u8Url: [
           { required: true, message: '请输入m3u8的链接', trigger: 'blur'},
         ],
