@@ -12,6 +12,8 @@ ipcMain.handle('check-show-disclaimer', checkShowDisclaimer)
 ipcMain.handle('get-disclaimer-info', getDisclaimerInfo)
 ipcMain.handle('set-agree-disclaimer-setting', setAgreeDisclaimerSetting)
 ipcMain.handle('get-current-soft-version', getCurrentSoftVersion)
+ipcMain.handle('get-notice-setting', getNoticeSetting)
+ipcMain.handle('set-notice-setting', setNoticeSetting)
 
 /**
  * 设置
@@ -110,6 +112,27 @@ async function checkShowDisclaimer() {
         await setDisclaimerSetting(false, saveTime, expiredTime, info)
         return false;
     }
+}
+
+export function getNoticeSetting () {
+    const noticeSetting = settingsDB.data.settings.noticeSetting
+    return noticeSetting || {}
+}
+
+async function setNoticeSetting(event, data) {
+    const noticeSetting = settingsDB.data.settings.noticeSetting
+    if(noticeSetting) {
+        noticeSetting.isClose = data.isClose
+        noticeSetting.value = data.value
+        noticeSetting.expiredTime = data.expiredTime
+    } else {
+        settingsDB.data.settings.noticeSetting = {
+            isClose: data.isClose,
+            value: data.value,
+            expiredTime: data.expiredTime
+        }
+    }
+    await settingsDB.write()
 }
 
 function getCurrentSoftVersion () {

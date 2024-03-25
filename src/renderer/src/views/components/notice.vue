@@ -1,11 +1,11 @@
 <template>
-  <div v-if="notice"
+  <div v-if="noticeInfo?.value"
        class="py-2 border text-xs rounded-md mb-4 bg-gray-50 flex items-start justify-between relative">
     <div class="flex items-start max-h-[120px] w-full overflow-auto px-4">
       <el-icon class="!text-blue-500 mr-2 mt-1">
         <InfoFilled/>
       </el-icon>
-      <div class="whitespace-pre">{{ notice }}</div>
+      <div class="whitespace-pre">{{ noticeInfo.value }}</div>
     </div>
     <div class="absolute top-1 right-1">
       <el-icon class="icon-button" @click="clearNotice">
@@ -17,31 +17,44 @@
 
 <script>
 import {getSystemUpdateNotice} from "../../api/user";
+import dayjs from "dayjs";
 
 export default {
   name: "notice",
   data() {
     return {
-      notice: ''
+      noticeInfo: null
     }
   },
   mounted() {
-    getSystemUpdateNotice()
-        .then((res) => {
-          this.notice = res.data.result || `网飞三体来啦。
-第一集m3u8链接：https://v.cdnlz14.com/20240321/36154_ef1392a1/2100k/hls/mixed.m3u8。
-第二集m3u8链接：https://v.cdnlz14.com/20240321/36155_87696a27/2100k/hls/mixed.m3u8。
-第三集m3u8链接： https://v.cdnlz14.com/20240321/36156_ce4bc075/2100k/hls/mixed.m3u8。
-第四集m3u8链接：https://v.cdnlz14.com/20240321/36157_105bb251/2100k/hls/mixed.m3u8。
-第五集m3u8链接： https://v.cdnlz14.com/20240321/36158_7da7e04b/2100k/hls/mixed.m3u8。
-第六集m3u8链接：https://v.cdnlz14.com/20240321/36159_c10ff6bb/2100k/hls/mixed.m3u8。
-第七集m3u8链接： https://v.cdnlz14.com/20240321/36160_23346131/2100k/hls/mixed.m3u8。
-第八集m3u8链接：https://v.cdnlz14.com/20240321/36161_01426e28/2100k/hls/mixed.m3u8。`
+     getSystemUpdateNotice()
+        .then(async (res) => {
+          const newNotice = res.data.result
+          // 有效的通知，有通知内容，且时间在有效期内
+          const currentTime = dayjs().format('YYYY-MM-DD')
+          if(newNotice.value && newNotice.expiredTime && dayjs(currentTime).isBefore(dayjs(newNotice.expiredTime))) {
+            const saveNotice = await window.electronAPI.getNoticeSetting()
+            if(saveNotice && saveNotice.isClose && saveNotice.value === newNotice.value) {
+              // 这个情况下不用处理。
+            } else {
+              this.noticeInfo = newNotice
+              window.electronAPI.setNoticeSetting({
+                isClose: false,
+                value: newNotice.value,
+                expiredTime: newNotice.expiredTime
+              })
+            }
+          }
         })
   },
   methods: {
     clearNotice() {
-      this.notice = ''
+      window.electronAPI.setNoticeSetting({
+        isClose: true,
+        value: this.noticeInfo.value,
+        expiredTime: this.noticeInfo.expiredTime
+      })
+      this.noticeInfo = null
     }
   }
 }

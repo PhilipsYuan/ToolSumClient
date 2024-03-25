@@ -33,6 +33,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     openLinkByDefaultBrowser: (link) => ipcRenderer.invoke('open-link-by-default-browser', link),
     getFileContent: (filePath) => ipcRenderer.invoke('get-file-content', filePath),
     updateDownloadVideo: (loadingRecordId) => ipcRenderer.invoke('update-download-video', loadingRecordId),
+    getNoticeSetting: () => ipcRenderer.invoke('get-notice-setting'),
+    setNoticeSetting: (data) => ipcRenderer.invoke('set-notice-setting', data),
 
     // 渲染器进程到主进程（单向）
     quitApp: () => ipcRenderer.send('quit-app'),

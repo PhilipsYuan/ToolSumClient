@@ -70,7 +70,7 @@ function userLogOut() {
 }
 
 function getSystemUpdateNotice() {
-  const url = `${host.server}mini/system/getSystemUpdateNotice`;
+  const url = `${host.server}mini/system/getSystemUpdateNotice2`;
   return axios.get(url)
 }
 
