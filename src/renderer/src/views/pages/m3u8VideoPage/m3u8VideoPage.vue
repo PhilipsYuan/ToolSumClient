@@ -1,5 +1,6 @@
 <template>
   <div class="relative h-[calc(100vh-124px)]">
+    <notice v-if="activeName === 'create'" />
     <el-tabs type="border-card" v-model="activeName" @tab-change="tabChanged">
       <el-tab-pane label="视频下载" name="create" />
       <el-tab-pane label="下载中" name="loading" />
@@ -16,9 +17,10 @@
 import m3u8Create from "./m3u8Create.vue";
 import finishedList from "./finishedList.vue";
 import loadingList from './loadingList.vue'
+import Notice from "../../components/notice.vue";
 export default {
   name: "m3u8VideoPage",
-  components: { m3u8Create, finishedList, loadingList },
+  components: {Notice, m3u8Create, finishedList, loadingList },
   data() {
     return {
       activeName: 'create'

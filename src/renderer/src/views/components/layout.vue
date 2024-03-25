@@ -24,20 +24,6 @@
         </el-menu>
       </el-aside>
       <el-main>
-        <div v-if="notice"
-             class="px-4 py-2 border text-xs rounded-md mb-8 bg-gray-50 flex items-start justify-between max-h-[120px] overflow-auto relative">
-          <div class="flex items-start">
-            <el-icon class="!text-blue-500 mr-2 mt-1">
-              <InfoFilled/>
-            </el-icon>
-            <div class="whitespace-pre">{{ notice }}</div>
-          </div>
-          <div class="absolute top-1 right-1">
-            <el-icon class="icon-button" @click="clearNotice">
-              <CloseBold/>
-            </el-icon>
-          </div>
-        </div>
         <router-view/>
       </el-main>
     </el-container>
@@ -60,8 +46,6 @@ import loginTip from "./loginTip.vue";
 import disclaimer from "./disclaimer.vue";
 import aboutXhl from "./aboutXhl.vue";
 import headPart from "./head.vue";
-import {getSystemUpdateNotice} from "../../api/user";
-
 
 window.app.config.globalProperties.$message = ElMessage
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -130,17 +114,10 @@ export default {
       case 'help':
         this.active = '5';
     }
-    getSystemUpdateNotice()
-        .then((res) => {
-          this.notice = res.data.result
-        })
   },
   methods: {
     goPath(path) {
       this.$router.push({path: path})
-    },
-    clearNotice() {
-      this.notice = ''
     }
   }
 }
