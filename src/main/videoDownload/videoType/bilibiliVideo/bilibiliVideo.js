@@ -68,7 +68,15 @@ async function UpdateLoadingRecord (data, id) {
     item.name = data.name
     item.audioUrl = data.audioUrl
     item.outputPath = data.outputPath
+    item.totalVideoLength = 0
+    item.totalAudioLength = 0
+    item.lastVideoDownloadPosition = 0
+    item.lastAudioDownloadPosition = 0
     item.updateDate = dayjs().format("YYYY/MM/DD HH:mm")
+    item.message = {
+        status: 'success',
+        content: '未开始进行下载'
+    }
     await m3u8VideoDownloadingListDB.write()
     return 'success'
 }

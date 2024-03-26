@@ -184,6 +184,11 @@ async function UpdateLoadingRecord(data, id) {
     const processUrlsPath = path.resolve(basePath, 'm3u8Video', 'processUrls');
     const urlPath = path.resolve(processUrlsPath, `${data.name}.txt`);
     item.urlPath = urlPath
+    item.successTsNum = 0
+    item.message = {
+        status: 'success',
+        content: '未开始进行下载'
+    }
     item.updateDate = dayjs().format("YYYY/MM/DD HH:mm")
     // 暂停时存储的json太大了。需要分文件存储
     await createProcessFile(urlPath, data.totalUrls, data.m3u8Data)

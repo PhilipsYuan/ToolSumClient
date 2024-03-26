@@ -90,6 +90,7 @@ export default {
   },
   async mounted() {
     await this.getLoadingList()
+    console.log(this.list)
     addService("getM3u8LoadingList", this.getLoadingList.bind(this))
     addService("m3u8VideoDownloadSuccess", this.m3u8VideoDownloadSuccess.bind(this))
     addService('deleteM3u8LoadingSuccess', this.deleteSuccess.bind(this))
@@ -106,9 +107,7 @@ export default {
      */
     async playVideo (item) {
       if(/tempM3u8Url|bilivideo|mgtv\.com/.test(item.m3u8Url) && this.checkIsNotRead(item)) {
-        useService("showScreenLoadingMessage", '打开中')
-        await window.electronAPI.updateDownloadVideo(item.id);
-        useService("closeScreenLoadingMessage")
+        await this.updateDownloadInfo(item, '打开中...\n之前存储信息已过期，下载信息会被清除。')
         await this.getLoadingList()
         let newItem = this.list.find((i) => i.id === item.id)
         window.electronAPI.openVideoPlayPage(newItem.m3u8Url, newItem.name, newItem.audioUrl);
@@ -120,9 +119,7 @@ export default {
     async startDownload(item) {
       if(item.message.content !== '合成中...' && this.checkoutDownloadingLimit()) {
         if(/tempM3u8Url|bilivideo|mgtv\.com/.test(item.m3u8Url) && this.checkIsNotRead(item)) {
-          useService("showScreenLoadingMessage", '解析中')
-          await window.electronAPI.updateDownloadVideo(item.id);
-          useService("closeScreenLoadingMessage")
+          await this.updateDownloadInfo(item, '解析中...\n之前存储信息已过期，会重新进行下载。')
           await window.electronAPI.startDownloadVideo(item.id)
         } else {
           if(item.pause === false && item.isStart === false) {
@@ -208,6 +205,11 @@ export default {
       } else {
         return true
       }
+    },
+    async updateDownloadInfo(item, loadingMessage) {
+      useService("showScreenLoadingMessage", loadingMessage)
+      await window.electronAPI.updateDownloadVideo(item.id);
+      useService("closeScreenLoadingMessage")
     }
   },
   beforeDestroy() {

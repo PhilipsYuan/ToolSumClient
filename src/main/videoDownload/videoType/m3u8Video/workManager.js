@@ -49,7 +49,6 @@ function runWork(work, loadingRecord) {
     })
     work && work.on('exit', (code) => {
         delete works[loadingRecord.id]
-        console.log('exit')
         if (code !== 0) {
             console.log(`Worker stopped with exit code ${code}`)
         }
@@ -59,11 +58,15 @@ function runWork(work, loadingRecord) {
 /**
  * 更新work
  */
-export function updateWork(loadingRecord) {
+export async function updateWork(loadingRecord) {
     const work = works[loadingRecord.id]
-    work && work.postMessage({
-        type: 'pause'
-    })
+    if(work) {
+        work.postMessage({
+            type: 'pause'
+        })
+    } else {
+        await savePauseDownloadInfo(loadingRecord)
+    }
 }
 
 /**

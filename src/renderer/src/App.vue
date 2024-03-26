@@ -40,7 +40,7 @@ export default {
       this.loading = ElLoading.service({
         lock: true,
         text: message,
-        background: 'rgba(0, 0, 0, 0.5)',
+        background: 'rgba(0, 0, 0, 0.7)',
       })
     },
     closeScreenLoadingMessage() {
