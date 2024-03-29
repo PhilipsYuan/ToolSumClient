@@ -29,7 +29,7 @@ export default {
   mounted() {
      getSystemUpdateNotice()
         .then(async (res) => {
-          const newNotice = res.data.result
+          const newNotice = res
           // 有效的通知，有通知内容，且时间在有效期内
           const currentTime = dayjs().format('YYYY-MM-DD')
           if(newNotice.value && newNotice.expiredTime && dayjs(currentTime).isBefore(dayjs(newNotice.expiredTime))) {

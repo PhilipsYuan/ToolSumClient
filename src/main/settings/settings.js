@@ -84,33 +84,24 @@ async function getDisclaimerInfo() {
  * 校验显示免责申明
  */
 async function checkShowDisclaimer() {
-    const disclaimerSetting = settingsDB.data.settings.disclaimerSetting
+    const response = await axios.get(`${host.server}mini/systemConfig/disclaimer`)
+    const info = response.data.result.cookie
+    const expiredTime = response.data.result.expiredTime
     const currentTime = dayjs().format('YYYY-MM-DD')
-    if(disclaimerSetting && disclaimerSetting.info && disclaimerSetting.isAgree && dayjs(currentTime).isBefore(dayjs(disclaimerSetting.expiredTime))) {
-        if(dayjs(currentTime).isBefore(dayjs(disclaimerSetting.saveTime))) {
-            return true
+    if(info && expiredTime && dayjs(currentTime).isBefore(dayjs(expiredTime))) {
+        // 有效的通知，有通知内容，且时间在有效期内
+        const disclaimerSetting = settingsDB.data.settings.disclaimerSetting
+        if(disclaimerSetting && disclaimerSetting.isAgree && disclaimerSetting.info === info) {
+            // 用户已经同意了，而且申明内容相同。所以不用显示。
+            return false
         } else {
-            const response = await axios.get(`${host.server}mini/systemConfig/disclaimer`)
-            const info = response.data.result.cookie
-            if(info === disclaimerSetting.info) {
-                const expiredTime = response.data.result.expiredTime
-                const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
-                await setDisclaimerSetting(false, saveTime, expiredTime, info)
-                return true
-            } else {
-                const expiredTime = response.data.result.expiredTime
-                const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
-                await setDisclaimerSetting(false, saveTime, expiredTime, info)
-                return false;
-            }
+            const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
+            await setDisclaimerSetting(false, saveTime, expiredTime, info)
+            return true
         }
     } else {
-        const response = await axios.get(`${host.server}mini/systemConfig/disclaimer`)
-        const info = response.data.result.cookie
-        const expiredTime = response.data.result.expiredTime
-        const saveTime = dayjs().add(3, 'day').format('YYYY-MM-DD')
-        await setDisclaimerSetting(false, saveTime, expiredTime, info)
-        return false;
+        // 没有内容，或者内容过期了。不用显示
+        return false
     }
 }
 

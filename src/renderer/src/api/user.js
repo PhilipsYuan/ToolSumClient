@@ -1,6 +1,8 @@
 import host from '../utils/const/host';
 import axios from '../utils/axios';
 
+let notice = null
+
 /**
  * 登录
  * @param name
@@ -69,9 +71,16 @@ function userLogOut() {
   return axios.get(url)
 }
 
-function getSystemUpdateNotice() {
-  const url = `${host.server}mini/system/getSystemUpdateNotice2`;
-  return axios.get(url)
+async function getSystemUpdateNotice() {
+  if(notice) {
+    return Promise.resolve(notice)
+  } else {
+    const url = `${host.server}mini/system/getSystemUpdateNotice2`;
+    const res =  await axios.get(url)
+    notice = res.data.result
+    return notice
+  }
+
 }
 
 /**

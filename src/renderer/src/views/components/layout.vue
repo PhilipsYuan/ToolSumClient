@@ -91,7 +91,7 @@ export default {
   async mounted() {
     window.electronAPI.checkShowDisclaimer()
         .then((result) => {
-          if (!result) {
+          if (result) {
             this.$refs.disclaimer.open()
           }
         })
