@@ -6,6 +6,7 @@ import fs from "fs";
 import {getPlayList} from "../../../../../util/m3u8Parse";
 import { decryptProcess } from "./getVinFo";
 import { getVideoInfo } from './addLoginVersion'
+import axios from "../../../../../util/source/axios";
 
 /**
  * 如果是免费的视频，m3u8文件在proxyhttp直接获取。
@@ -56,12 +57,30 @@ async function getM3u8Link(htmlUrl) {
                 const vid = getVid(htmlUrl)
                 if(json2.anc) {
                     const result = await decryptProcess(json.vinfo) || ''
-                    const m3u8String = result.match(/(#EXTM3U.*#EXT-X-ENDLIST)/)[1].replace(/\\n/g, '\n').replace(/\\u0026/g, '&');
-                    const host = result.match(/"ui":\[{"url":"([^"]*)"/)[1];
-                    m3u8Url = await createM3u8Url(m3u8String, vid, host)
-                    title = result.match(/"ti":"([^"]*)"/)[1]
+                    const m3u8String = result.match(/(#EXTM3U.*#EXT-X-ENDLIST)/)?.[1].replace(/\\n/g, '\n').replace(/\\u0026/g, '&');
+                    if(m3u8String) {
+                        const host = result.match(/"ui":\[{"url":"([^"]*)"/)[1];
+                        m3u8Url = await createM3u8Url(m3u8String, vid, host)
+                        title = result.match(/"ti":"([^"]*)"/)[1]
+                    } else {
+                        const allInfo = result.match(/"ul":{"ui":\[{"url":(.*)"}},{"/)?.[0]
+                        if(allInfo) {
+                            const host = allInfo.match(/"url":"([^"]*)"/)?.[1]
+                            const path = allInfo.match(/"pt":"([^"]*)"/)?.[1]
+                            const url = host + path
+                            const result = await axios.get(url)
+                            m3u8Url = await createM3u8Url(result.data, vid, host)
+                            title = result.match(/"ti":"([^"]*)"/)[1]
+                        }
+                    }
                 } else if(json2?.vl?.vi[0].ul?.m3u8) {
                     m3u8Url = await createM3u8Url(json2?.vl?.vi[0].ul?.m3u8, vid, json2?.vl?.vi[0].ul.ui[0].url)
+                    title = json2?.vl?.vi[0].ti
+                } else if(json2.vl.vi[0].ul.ui && json2.vl.vi[0].ul.ui[0]) {
+                    const item = json2.vl.vi[0].ul.ui[0]
+                    const url = item.url + item.hls.pt
+                    const result = await axios.get(url)
+                    m3u8Url = await createM3u8Url(result.data, vid, item.url)
                     title = json2?.vl?.vi[0].ti
                 }
             }
