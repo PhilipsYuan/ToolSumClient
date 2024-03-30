@@ -1,30 +1,14 @@
 import {app, BrowserWindow} from "electron";
 import puppeteer from "../../../../../util/source/puppeteer-core";
-import axios from "../../../../../util/source/axios";
 
 export function getNormalM3u8Link(htmlUrl) {
-    const promise1 = getM3u8Link(htmlUrl)
-    const promise2 = getTitle(htmlUrl)
-    return Promise.all([promise1, promise2])
-        .then((results) => {
-            if(results[0] === 'error' || results[1] === 'error') {
+    return getM3u8Link(htmlUrl)
+        .then((result) => {
+            if(result === 'error') {
                 return 'error'
             } else {
-                return {title: results[1], videoUrl: results[0]}
+                return {title: result.title, videoUrl: result.m3u8Url}
             }
-        })
-}
-
-export function getTitle(htmlUrl) {
-    return axios
-        .get(htmlUrl)
-        .then((res) => {
-            const data = res.data
-            const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0].trim();
-            return title
-        })
-        .catch(() => {
-            return 'error'
         })
 }
 
@@ -47,9 +31,9 @@ async function getM3u8Link(htmlUrl) {
 
     async function responseFun (response) {
         const url = response.url()
-        if (/\.m3u8/.test(url)) {
+        if (/m3u8/.test(url)) {
             const text = await response.text()
-            if(/#EXT-X-ENDLIST/.test(text))
+            if(/#EXT-X-ENDLIST|#EXTM3U/.test(text))
                 m3u8Url = url
         }
     }
@@ -59,7 +43,8 @@ async function getM3u8Link(htmlUrl) {
         return await window.loadURL(htmlUrl, {
             userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1'
         })
-            .then((res) => {
+            .then(async (res) => {
+                const title = await page.title()
                 const promise = new Promise((resolve) => {
                     let index = 0
                     const interval = setInterval(() => {
@@ -68,7 +53,7 @@ async function getM3u8Link(htmlUrl) {
                             page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
-                            resolve(m3u8Url)
+                            resolve({m3u8Url: m3u8Url, title: title})
                         } else {
                             index++
                         }

@@ -3,7 +3,7 @@
     <div class="bg-gray-100 pl-4 pr-4 h-10 py-2 w-full" :class="{'!pl-20': isMac}" style="-webkit-app-region: drag;">
       <div class="flex h-6 justify-between items-center" >
         <div></div>
-        <div class="w-full text-center">
+        <div class="w-full text-center w-[500px] truncate">
           {{videoName}}
         </div>
         <div class="flex gap-1" style="-webkit-app-region: no-drag;">
@@ -54,7 +54,7 @@ export default {
     } else {
       this.videoSrc = `file://${params.view}`
     }
-    if(params.audio) {
+    if(params.audio && params.audio !== 'undefined') {
       this.audioSrc = params.audio
     }
     this.videoName = params.name
@@ -64,7 +64,9 @@ export default {
   },
   methods: {
     async setVideoConfig() {
-      if(/\.mp4/.test(this.videoSrc) || /\.m3u8/.test(this.videoSrc)) {
+      if(this.videoSrc && this.audioSrc) {
+        playVideoAndAudio(this.videoSrc, this.audioSrc, this.$refs.myVideo, videoJs)
+      } else {
         const json = /\.mp4/.test(this.videoSrc) ? {
           src: this.videoSrc,
           type: 'video/mp4',
@@ -77,8 +79,6 @@ export default {
           preload: 'auto',
           sources: [json]
         });
-      } else if(this.videoSrc && this.audioSrc) {
-        playVideoAndAudio(this.videoSrc, this.audioSrc, this.$refs.myVideo, videoJs)
       }
     },
     changeVideoPlayItem(videoPath, videoName) {

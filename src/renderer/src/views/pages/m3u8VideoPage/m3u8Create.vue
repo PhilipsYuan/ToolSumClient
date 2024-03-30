@@ -232,7 +232,7 @@ export default {
             }
           } else {
             this.message = {
-              content: "网页加载不成功，请先确定网页在浏览器上是否正常打开！",
+              content: "网页加载不成功，有些网站会时好时坏，建议重新尝试或者确定网页在浏览器上是否正常打开。",
               status: 'error'
             }
           }
