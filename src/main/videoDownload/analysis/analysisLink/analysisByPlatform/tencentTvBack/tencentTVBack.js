@@ -52,36 +52,11 @@ async function getM3u8Link(htmlUrl) {
         if(/qq\.com\/proxyhttp/.test(url)) {
             const post = JSON.parse(response.request().postData())
             if(post.buid === 'vinfoad') {
-                const json = await getVideoInfo(url, post)
-                const json2 = JSON.parse(json.vinfo)
                 const vid = getVid(htmlUrl)
-                if(json2.anc) {
-                    const result = await decryptProcess(json.vinfo) || ''
-                    const m3u8String = result.match(/(#EXTM3U.*#EXT-X-ENDLIST)/)?.[1].replace(/\\n/g, '\n').replace(/\\u0026/g, '&');
-                    if(m3u8String) {
-                        const host = result.match(/"ui":\[{"url":"([^"]*)"/)[1];
-                        m3u8Url = await createM3u8Url(m3u8String, vid, host)
-                        title = result.match(/"ti":"([^"]*)"/)[1]
-                    } else {
-                        const allInfo = result.match(/"ul":{"ui":\[{"url":(.*)"}},{"/)?.[0]
-                        if(allInfo) {
-                            const host = allInfo.match(/"url":"([^"]*)"/)?.[1]
-                            const path = allInfo.match(/"pt":"([^"]*)"/)?.[1]
-                            const url = host + path
-                            const result = await axios.get(url)
-                            m3u8Url = await createM3u8Url(result.data, vid, host)
-                            title = result.match(/"ti":"([^"]*)"/)[1]
-                        }
-                    }
-                } else if(json2?.vl?.vi[0].ul?.m3u8) {
-                    m3u8Url = await createM3u8Url(json2?.vl?.vi[0].ul?.m3u8, vid, json2?.vl?.vi[0].ul.ui[0].url)
-                    title = json2?.vl?.vi[0].ti
-                } else if(json2.vl.vi[0].ul.ui && json2.vl.vi[0].ul.ui[0]) {
-                    const item = json2.vl.vi[0].ul.ui[0]
-                    const url = item.url + item.hls.pt
-                    const result = await axios.get(url)
-                    m3u8Url = await createM3u8Url(result.data, vid, item.url)
-                    title = json2?.vl?.vi[0].ti
+                const info = await getUrlAndTitle(url, post, vid)
+                if(info) {
+                    m3u8Url = info.m3u8Url
+                    title = info.title
                 }
             }
         }
@@ -128,6 +103,72 @@ async function getM3u8Link(htmlUrl) {
 }
 
 /**
+ * 递归解析，为了获取正确的解码内容（因为解码不够完美，会出现解码出来找不到问题）
+ * 这个需要优化，完美破解解码
+ * @param url
+ * @param post
+ * @returns {Promise<void>}
+ */
+async function getUrlAndTitle (url, post, vid) {
+    const info = await getVideoInfo(url, post)
+    const json = JSON.parse(info.vinfo)
+    if(json.anc) {
+        const result = await decryptProcess(info.vinfo) || ''
+        const m3u8String = result.match(/(#EXTM3U.*#EXT-X-ENDLIST)/)?.[1].replace(/\\n/g, '\n').replace(/\\u0026/g, '&');
+        if(m3u8String) {
+            const hosts = result.match(/"(https:\/\/[^"]*)"/g)
+            if(hosts.length > 6) {
+                const matchHosts = hosts.filter((item) => item.length > 100)
+                const clearHosts = matchHosts.map((item) => item.replace('"', ''))
+                const allUrls = getPlayList(m3u8String)
+                let host = ''
+                for(let hostItem of clearHosts) {
+                    const url =  buildAbsoluteURL(hostItem, allUrls[0])
+                    try {
+                        const match = await axios.get(url)
+                        if(match.status === 200) {
+                            host = hostItem
+                            break;
+                        }
+                    } catch (e) {
+                       // nothing to do
+                    }
+                }
+                const m3u8Url = await createM3u8Url(m3u8String, vid, host)
+                const title = result?.match(/"ti":"([^"]*)"/)[1]
+                return {m3u8Url, title}
+            } else {
+                return await getUrlAndTitle(url, post, vid)
+            }
+        } else {
+            const allInfo = result.match(/"ul":{"ui":\[{"url":(.*)"}},{"/)?.[0]
+            if (allInfo) {
+                const host = allInfo.match(/"url":"([^"]*)"/)?.[1]
+                const path = allInfo.match(/"pt":"([^"]*)"/)?.[1]
+                const url = host + path
+                const m3u8Result = await axios.get(url)
+                const m3u8Url = await createM3u8Url(m3u8Result.data, vid, host)
+                const title = result?.match(/"ti":"([^"]*)"/)[1]
+                return {m3u8Url, title}
+            }
+        }
+    } else if(json?.vl?.vi[0].ul?.m3u8){
+        const m3u8Url = await createM3u8Url(json?.vl?.vi[0].ul?.m3u8, vid, json?.vl?.vi[0].ul.ui[0].url)
+        const title = json?.vl?.vi[0].ti
+        return {m3u8Url, title}
+    } else if(json.vl.vi[0].ul.ui && json.vl.vi[0].ul.ui[0]){
+        const item = json.vl.vi[0].ul.ui[0]
+        const url = item.url + item.hls.pt
+        const result = await axios.get(url)
+        const m3u8Url = await createM3u8Url(result.data, vid, item.url)
+        const title = json?.vl?.vi[0].ti
+        return {m3u8Url, title}
+    } else {
+        return null
+    }
+}
+
+/**
  * 创建本地m3u8url
  */
 async function createM3u8Url(m3u8Text, id, hostPath) {
@@ -136,9 +177,6 @@ async function createM3u8Url(m3u8Text, id, hostPath) {
         const url = buildAbsoluteURL(hostPath, item)
         m3u8Text = m3u8Text.replace(item, url)
     })
-    // const json = {
-    //     text: m3u8Text
-    // }
     const filePath = path.resolve(m3u8UrlMgPath, `${id}.m3u8`)
     await fs.writeFileSync(path.resolve(m3u8UrlMgPath, `${id}.m3u8`), m3u8Text, "utf-8")
     return filePath
