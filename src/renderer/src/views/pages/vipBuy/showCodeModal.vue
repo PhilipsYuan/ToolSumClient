@@ -28,6 +28,7 @@ import {getBuyVipOrderStatus, overtimeBuyVipRecordsApi} from '../../../api/vip'
 import { setUserBenefit } from "../../../service/userService";
 import PDialog from "../../UIComponents/PDialog.vue";
 import qrCode from 'qrcode'
+import dayjs from "dayjs";
 export default {
   name: "showCodeModal",
   components: { PDialog },
@@ -38,7 +39,6 @@ export default {
       name: '',
       price: '',
       orderId: '',
-      orderOverTime: false,
       interval: '',
       timeInterval: '',
       // 倒计时时间
@@ -84,14 +84,21 @@ export default {
                       this.close()
                       this.$emit('openOrderModal', '支付成功，权益已下发，请开始使用吧！', 'success')
                     })
-              } else if (this.orderOverTime) {
-                overtimeBuyVipRecordsApi(this.orderId)
-                    .then((res) => {
-                      if(res) {
-                        this.close()
-                        this.$emit('openOrderModal', '订单支付已经过期，请重新购买', 'failure')
-                      }
-                    })
+              } else {
+                const overSeconds = dayjs(new Date()).diff(dayjs(result.createdTime), 'second')
+                if(overSeconds >= 900) {
+                  overtimeBuyVipRecordsApi(this.orderId)
+                      .then((res) => {
+                        if(res) {
+                          this.close()
+                          this.$emit('openOrderModal', '订单支付已经过期，请重新购买', 'failure')
+                        }
+                      })
+                } else {
+                  this.restSeconds = 900 - overSeconds
+                  this.timeInterval && clearInterval(this.timeInterval)
+                  this.setDownTime()
+                }
               }
             })
       }, 1000 * 5)
@@ -108,7 +115,6 @@ export default {
           if (minutes == 0) {
             clearInterval(this.timeInterval);
             this.downTime = '00:00'
-            this.orderOverTime = true
             return;
           }
           minutes--;
@@ -126,8 +132,8 @@ export default {
       this.$router.push({path: '/personal'})
     },
     close() {
-      clearInterval(this.interval)
-      clearInterval(this.timeInterval)
+      this.interval && clearInterval(this.interval)
+      this.timeInterval && clearInterval(this.timeInterval)
       this.showModal = false
     },
     convertSeconds(seconds) {

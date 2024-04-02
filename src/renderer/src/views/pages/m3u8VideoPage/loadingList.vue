@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-[300px]">
-    <div class="grid gap-4" v-if="list.length > 0">
+    <div class="grid gap-4 overflow-auto h-[calc(100vh-190px)]" v-if="list.length > 0" >
       <div v-for="item in list" class="border rounded-md px-4 py-2 h-fit hover:bg-gray-100 hover:border-blue-400"
            :class="{'bg-green-50 hover:bg-green-50': item.isStart !== item.pause || item.pausing === true}" :id="item.id">
         <div class="flex items-center justify-between">
