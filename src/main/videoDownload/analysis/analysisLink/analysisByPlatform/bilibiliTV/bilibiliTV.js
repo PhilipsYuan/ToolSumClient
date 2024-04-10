@@ -16,6 +16,7 @@ export async function getBiliTVDownloadLink(htmlUrl) {
                 'User-Agent':
                     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36',
                 referer: 'https://www.bilibili.com',
+                Cookie: 'CURRENT_QUALITY=80'
             },
         })
         .then(async ({ data }) => {
