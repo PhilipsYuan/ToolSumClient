@@ -19,12 +19,12 @@ makeDir(m3u8UrlMgPath)
 export async function getIQiYiTVDownloadLink (url) {
     const htmlUrl = removeUrlParams(url)
     const { tvId, vid, title, payMark } = await getVid(htmlUrl)
-    if(payMark == 1) {
+    if(payMark == 0) {
+        return getFreeVideo(tvId, title)
+    } else if(Number(payMark) > 0) {
         // 获取vip视频
         const cookie  = await getCookieInfo()
         return getFreeVideo(tvId, title, cookie)
-    } else  if(payMark == 0) {
-        return getFreeVideo(tvId, title)
     } else {
         return 'error'
     }
