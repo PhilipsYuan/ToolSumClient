@@ -9,7 +9,7 @@
       <finished-list ref="finishList" v-show="activeName === 'finish'" />
       <loading-list ref="loadingList" v-show="activeName === 'loading'" @changeTab="changeTab"/>
     </el-tabs>
-    <div v-if="activeName === 'create'" class="absolute bottom-8 flex justify-center text-gray-500 w-full">Tip: 如果您在使用过程中遇到问题，欢迎给我们邮箱留言(xiaohualun1@gmail.com)或加入小滑轮官方QQ群（876806405），我们会尽快回复您。</div>
+    <div v-if="activeName === 'create'" class="absolute bottom-8 flex justify-center text-gray-500 w-full">Tip: 如果您在使用过程中遇到问题，欢迎给我们邮箱留言(xiaohualun1@gmail.com)或加入小滑轮官方QQ群（876806405），我们会尽快回复您</div>
   </div>
 </template>
 
