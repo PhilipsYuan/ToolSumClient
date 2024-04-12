@@ -44,6 +44,7 @@ export default {
       // 倒计时时间
       downTime: '15:00',
       restSeconds: 900,
+      orderCreatedTime: ''
     }
   },
   methods: {
@@ -75,6 +76,7 @@ export default {
         getBuyVipOrderStatus({orderId: this.orderId})
             .then((res) => {
               const result = res.data.result
+
               // 查询订单结果，如果15分钟没有支付，关闭订单，支付成功后，设置内容
               if(result.orderStatus == '2') {
                 setUserBenefit()
