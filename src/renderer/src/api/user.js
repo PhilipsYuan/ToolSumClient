@@ -111,6 +111,11 @@ function getXHLVersion() {
   return axios.get(url)
 }
 
+export function addErrorUrl(data) {
+  let url = `${host.server}mini/user/manage/addErrorUrl`;
+  return axios.post(url, data)
+}
+
 export {
   login,
   register,

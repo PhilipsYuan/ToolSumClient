@@ -70,9 +70,9 @@
 import {addService, useService} from "../../../service/service";
 import alreadyExistedModal from "./alreadyExistedModal.vue";
 import {checkLogin} from "../../../api/login";
-import {getUserBenefitApi, reduceBenefit} from "../../../api/user";
+import {getUserBenefitApi, reduceBenefit, addErrorUrl} from "../../../api/user";
 import SearchResource from './searchResource.vue'
-import {setUserBenefit} from "../../../service/userService";
+import {getUser, setUserBenefit} from "../../../service/userService";
 
 export default {
   name: "m3u8Create",
@@ -236,11 +236,13 @@ export default {
               status: 'error'
             }
           }
+          this.addErrorUrlFun()
         } else if (info === 'noFound') {
           this.message = {
             content: "网页解析不成功，可将地址发送给我们，我们会努力解析并在最新的版本中支持！",
             status: 'error'
           }
+          this.addErrorUrlFun()
         } else if (info.videoUrl) {
           this.form.m3u8Url = info.videoUrl
           if (info.audioUrl) {
@@ -265,6 +267,7 @@ export default {
               status: 'error'
             }
           }
+          this.addErrorUrlFun()
         }
         this.analysisLoading = false
       } else if (this.form.htmlUrl) {
@@ -319,6 +322,16 @@ export default {
     },
     removeInputInfo() {
       localStorage.removeItem('inputInfo')
+    },
+    addErrorUrlFun() {
+      if(this.form.htmlUrl) {
+        let user = getUser()
+        let data = {
+          uid: user?.uid || 'noUser',
+          errorUrl: this.form.htmlUrl.substring(0, 395)
+        }
+        addErrorUrl(data)
+      }
     }
   }
 }
