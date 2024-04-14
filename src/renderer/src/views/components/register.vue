@@ -134,10 +134,12 @@ export default {
         ]
       },
       codeMessage: '获取验证码',
-      requestLoading: false
+      requestLoading: false,
+      isMac: false
     }
   },
   mounted() {
+    this.isMac = /macintosh|mac os x/i.test(navigator.userAgent);
     addService('openRegister', this.open.bind(this));
   },
   methods: {
@@ -165,7 +167,8 @@ export default {
             nickName: this.form.nickName,
             password: this.form.password,
             email: this.form.email,
-            validateCode: this.form.validateCode
+            validateCode: this.form.validateCode,
+            userFrom: this.isMac ? 1 : 2
           }
           this.requestLoading = true
           register(json)
