@@ -218,58 +218,65 @@ export default {
     },
     async startAnalysis() {
       if (this.form.htmlUrl && this.isUrl(this.form.htmlUrl)) {
-        this.analysisLoading = true
-        this.message = {
-          content: "网页解析中...（可能需要1-2分钟，请耐心等待） ",
-          status: 'success'
-        }
-        const info = await window.electronAPI.getDownloadLinkFromUrl(this.form.htmlUrl)
-        if (info === 'error') {
-          if (/qq\.com|iqiyi|mgtv\.com/.test(this.form.htmlUrl)) {
-            this.message = {
-              content: "网页加载不成功，请重新尝试, 如还不成功，可将地址发送给我们，我们会努力解析，并在最新的版本中支持！",
-              status: 'error'
-            }
-          } else {
-            this.message = {
-              content: "网页加载不成功，有些网站会时好时坏，建议重新尝试或者确定网页在浏览器上是否正常打开。",
-              status: 'error'
-            }
-          }
-          this.addErrorUrlFun()
-        } else if (info === 'noFound') {
+        if(/\.m3u8$/.test(this.form.htmlUrl)) {
           this.message = {
-            content: "网页解析不成功，可将地址发送给我们，我们会努力解析并在最新的版本中支持！",
+            content: "您在网址输入框放的是m3u8链接, 它应该放在'm3u8链接'输入框里，再补充下'文件名称'就可以创建视频了。网址输入框放的是视频所在的网页地址。",
             status: 'error'
           }
-          this.addErrorUrlFun()
-        } else if (info.videoUrl) {
-          this.form.m3u8Url = info.videoUrl
-          if (info.audioUrl) {
-            this.form.audioUrl = info.audioUrl
-          }
-          if (info.title) {
-            this.form.name = info.title
-          }
+        } else {
+          this.analysisLoading = true
           this.message = {
-            content: "网页解析完成，发现可下载的链接。",
+            content: "网页解析中...（可能需要1-2分钟，请耐心等待） ",
             status: 'success'
           }
-        } else {
-          if (/qq\.com|iqiyi|mgtv\.com/.test(this.form.htmlUrl)) {
+          const info = await window.electronAPI.getDownloadLinkFromUrl(this.form.htmlUrl)
+          if (info === 'error') {
+            if (/qq\.com|iqiyi|mgtv\.com/.test(this.form.htmlUrl)) {
+              this.message = {
+                content: "网页加载不成功，请重新尝试, 如还不成功，可将地址发送给我们，我们会努力解析，并在最新的版本中支持！",
+                status: 'error'
+              }
+            } else {
+              this.message = {
+                content: "网页加载不成功，有些网站会时好时坏，建议重新尝试或者确定网页在浏览器上是否正常打开。",
+                status: 'error'
+              }
+            }
+            this.addErrorUrlFun()
+          } else if (info === 'noFound') {
             this.message = {
-              content: "网页加载不成功，请重新尝试, 如还不成功，可将地址发送给我们，我们会努力解析并在最新的版本中支持！",
+              content: "网页解析不成功，可将地址发送给我们，我们会努力解析并在最新的版本中支持！",
               status: 'error'
+            }
+            this.addErrorUrlFun()
+          } else if (info.videoUrl) {
+            this.form.m3u8Url = info.videoUrl
+            if (info.audioUrl) {
+              this.form.audioUrl = info.audioUrl
+            }
+            if (info.title) {
+              this.form.name = info.title
+            }
+            this.message = {
+              content: "网页解析完成，发现可下载的链接。",
+              status: 'success'
             }
           } else {
-            this.message = {
-              content: "未找到下载的链接，请重新尝试或者查看使用指南自己查找下载链接。",
-              status: 'error'
+            if (/qq\.com|iqiyi|mgtv\.com/.test(this.form.htmlUrl)) {
+              this.message = {
+                content: "网页加载不成功，请重新尝试, 如还不成功，可将地址发送给我们，我们会努力解析并在最新的版本中支持！",
+                status: 'error'
+              }
+            } else {
+              this.message = {
+                content: "未找到下载的链接，请重新尝试或者查看使用指南自己查找下载链接。",
+                status: 'error'
+              }
             }
+            this.addErrorUrlFun()
           }
-          this.addErrorUrlFun()
+          this.analysisLoading = false
         }
-        this.analysisLoading = false
       } else if (this.form.htmlUrl) {
         this.message = {
           content: "网址不符合要求（必须带http或者https协议），请确认下！",
