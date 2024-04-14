@@ -4,6 +4,7 @@ import { getMgTvDownloadLink } from "./analysisByPlatform/mgtv/mgtv";
 import { getBiliTVDownloadLink } from "./analysisByPlatform/bilibiliTV/bilibiliTV";
 import { getNormalM3u8Link} from "./analysisByPlatform/normalM3u8/normalM3u8";
 import { getIQiYiTVDownloadLink } from "./analysisByPlatform/iqiyiTV/iqiyiTV"
+import { getHaoKanTVDownloadLink } from './analysisByPlatform/haokan/haokanTV'
 import { getTencentTVDownloadLink as test} from "./analysisByPlatform/tencentTV/tencentTV"
 
 ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
@@ -22,6 +23,8 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
             return await getIQiYiTVDownloadLink(htmlUrl)
         } else if(/v\.qq\.com/.test(htmlUrl)) {
             return await getTencentTVDownloadLink(htmlUrl)
+        } else if (/haokan\.baidu\.com/.test(htmlUrl)) {
+            return await getHaoKanTVDownloadLink(htmlUrl)
         } else {
             return await getNormalM3u8Link(htmlUrl)
         }
