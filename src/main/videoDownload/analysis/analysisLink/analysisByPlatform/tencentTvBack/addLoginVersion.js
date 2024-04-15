@@ -70,7 +70,7 @@ async function getVuSession(loginInfo) {
             Host: 'pbaccess.video.qq.com',
             referer: 'https://v.qq.com/',
             Origin: 'https://v.qq.com',
-            Cookie: `vqq_access_token=${loginInfo.access_token}; vqq_openid=${loginInfo.openid}; vqq_vuserid=${loginInfo.vuserid}; vqq_vusession=${loginInfo.vusession};`
+            Cookie: `video_guid=${loginInfo.video_guid}; vqq_access_token=${loginInfo.access_token}; vqq_openid=${loginInfo.openid}; vqq_vuserid=${loginInfo.vuserid}; vqq_vusession=${loginInfo.vusession};`
         }
     })
         .then((res) => {
