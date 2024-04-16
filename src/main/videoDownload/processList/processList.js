@@ -93,7 +93,7 @@ export async function startDownloadVideo(event, id) {
         }
         if(item.type === 'magnet') {
             startDownloadMagnetVideo(item)
-        } else if(item.type === 'biliTV') {
+        } else if(item.type === 'biliTV' || item.type === 'haokan') {
             startDownloadBiliVideo(item)
         } else {
             startDownloadM3u8Video(item)
@@ -112,7 +112,7 @@ export async function pauseDownloadVideo(event, id) {
         const item = m3u8VideoDownloadingListDB.data.loadingList[index];
         if(item.type === 'magnet') {
             await pauseMagnetDownloadVideo(item)
-        } else if(item.type === 'biliTV') {
+        } else if(item.type === 'biliTV' || item.type === 'haokan') {
             await pauseBiliTVDownloadVideo(item)
         } else {
             await pauseM3u8DownloadVideo(item)
@@ -132,7 +132,7 @@ export async function continueDownloadVideo(event, id) {
         item.pause = false
         if(item.type === 'magnet') {
             await continueMagnetDownloadVideo(item)
-        } else if(item.type === 'biliTV') {
+        } else if(item.type === 'biliTV' || item.type === 'haokan') {
             await continueBiliTVDownloadVideo(item)
         } else {
             await continueM3u8DownloadVideo(item)

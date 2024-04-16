@@ -34,7 +34,7 @@ export async function createBiliVideoDownloadTask(event, url, name, outPath, htm
         const id = shortId.generate()
         const json = {
             id: id,
-            type: 'biliTV',
+            type: getType(url),
             name: name,
             htmlUrl: htmlUrl || '',
             m3u8Url: url,
@@ -57,7 +57,6 @@ export async function createBiliVideoDownloadTask(event, url, name, outPath, htm
         await newLoadingRecord(json)
         return 'success'
     }
-
 }
 
 async function UpdateLoadingRecord (data, id) {
@@ -168,7 +167,7 @@ function downloadBFile(type, cancelToken, item, url, fullFileName, progressCallb
             headers: {
                 'User-Agent':
                     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36',
-                referer: 'https://www.bilibili.com',
+                referer: getRefer(url),
                 'Range': `bytes=${type === 'video' ? item.lastVideoDownloadPosition : item.lastAudioDownloadPosition}-`
             },
             onDownloadProgress: (progressEvent) => {
@@ -218,5 +217,24 @@ function createCancelTokens (item) {
     return {
         videoCancelToken,
         audioCancelToken
+    }
+}
+
+function getType(url) {
+    if(/bilivideo/.test(url)) {
+        return 'biliTV'
+    } else if(/bdstatic/.test(url)) {
+        return 'haokan'
+    } else {
+        return 'V&A'
+    }
+}
+function getRefer(url) {
+    if(/bilivideo/.test(url)) {
+        return 'https://www.bilibili.com'
+    } else if(/bdstatic/.test(url)) {
+        return 'https://haokan.baidu.com/'
+    } else {
+        return ''
     }
 }

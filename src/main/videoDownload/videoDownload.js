@@ -21,7 +21,7 @@ ipcMain.handle('create-video-download-task', createVideoDownloadTask);
     makeDir(outPath)
      if(/magnet:/.test(url)) {
          return await createMagnetDownloadTask(event, url, name, outPath, htmlUrl, audioUrl)
-     } else if(/bilivideo/.test(url)) {
+     } else if(/bilivideo/.test(url) || (url && audioUrl)) {
          return await createBiliVideoDownloadTask(event, url, name, outPath, htmlUrl, audioUrl, isUpdate, loadingId)
     } else {
          return await createM3u8DownloadTask(event, url, name, outPath, htmlUrl, audioUrl, isUpdate, loadingId)
