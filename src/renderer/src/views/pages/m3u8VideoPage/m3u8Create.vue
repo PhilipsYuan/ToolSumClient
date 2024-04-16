@@ -177,6 +177,7 @@ export default {
     clearInput() {
       this.form.name = ''
       this.form.m3u8Url = ''
+      this.form.audioUrl = ''
       this.form.htmlUrl = ''
       this.message = {
         status: 'success',
@@ -253,6 +254,8 @@ export default {
             this.form.m3u8Url = info.videoUrl
             if (info.audioUrl) {
               this.form.audioUrl = info.audioUrl
+            } else {
+              this.form.audioUrl = '';
             }
             if (info.title) {
               this.form.name = info.title
@@ -291,6 +294,7 @@ export default {
     },
     setHtmlUrl(url, name) {
       this.form.m3u8Url = ''
+      this.form.audioUrl = ''
       this.message = {
         status: 'success',
         content: ''
