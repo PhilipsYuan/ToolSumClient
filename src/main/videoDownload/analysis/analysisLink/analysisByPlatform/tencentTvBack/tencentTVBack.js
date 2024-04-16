@@ -188,7 +188,10 @@ async function createM3u8Url(m3u8Text, id, hostPath) {
  * @returns {*}
  */
 function getVid (htmlUrl) {
-    const vid = htmlUrl.match(/cover\/[^\/]*\/([^.]*).html/)[1]
+    let vid = htmlUrl.match(/[cover|page]\/[^\/]*\/([^.]*).html/)?.[1] || htmlUrl.match(/page\/([^.]*).html/)?.[1]
+    if(!vid) {
+        vid = new Date().getTime()
+    }
     return vid
 }
 
