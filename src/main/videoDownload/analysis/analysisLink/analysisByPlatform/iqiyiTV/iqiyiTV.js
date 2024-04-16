@@ -112,7 +112,7 @@ function getFreeVideo(tvId, title, cookie) {
                     return {videoUrl: m3u8Url, title: title}
                 } else {
                     const m3u8Url = await createM3u8Url(text, tvId)
-                    return {videoUrl: m3u8Url, title: title}
+                    return {videoUrl: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, '')}
                 }
 
             } else {
@@ -144,7 +144,7 @@ function getVid(htmlUrl) {
                 title = data.match(/name":"([^"]+)","playUrl"/)?.[1] || data.match(/<title>([^<]*)<\/title>/)?.[1]
             }
             const payMark = data.match(/"payMark":(\d+),/)?.[1] || '';
-            return {tvId, vid, title: title.replace(/\//g, '').replace(/\\/g, ''), payMark}
+            return {tvId, vid, title: title?.replace(/\//g, '').replace(/\\/g, ''), payMark}
         })
         .catch((e) => {
             return null
