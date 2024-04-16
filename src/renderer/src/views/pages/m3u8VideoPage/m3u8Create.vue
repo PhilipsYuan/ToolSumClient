@@ -81,7 +81,7 @@ export default {
     return {
       isLogin: false,
       form: {
-        htmlUrl: "https://haokan.baidu.com/v?vid=14394347804484348525&",
+        htmlUrl: "https://haokan.baidu.com/v?vid=10015822950177184746",
         m3u8Url: "",
         name: "",
         audioUrl: ''
@@ -230,6 +230,7 @@ export default {
             status: 'success'
           }
           const info = await window.electronAPI.getDownloadLinkFromUrl(this.form.htmlUrl)
+          console.log(info)
           if (info === 'error') {
             if (/qq\.com|iqiyi|mgtv\.com/.test(this.form.htmlUrl)) {
               this.message = {
