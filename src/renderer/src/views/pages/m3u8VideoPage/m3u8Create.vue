@@ -81,7 +81,7 @@ export default {
     return {
       isLogin: false,
       form: {
-        htmlUrl: "https://haokan.baidu.com/v?vid=10015822950177184746",
+        htmlUrl: "",
         m3u8Url: "",
         name: "",
         audioUrl: ''
