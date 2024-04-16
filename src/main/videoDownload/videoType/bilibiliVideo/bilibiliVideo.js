@@ -94,8 +94,10 @@ export function startDownloadBiliVideo(item) {
     if(item.lastVideoDownloadPosition === 0 || item.lastVideoDownloadPosition < item.totalVideoLength) {
         promises.push(downloadBFile('video', cancelTokens.videoCancelToken, item, item.m3u8Url, videoPath))
     }
-    if(item.lastAudioDownloadPosition === 0 || item.lastAudioDownloadPosition < item.totalAudioLength) {
-        promises.push(downloadBFile('audio', cancelTokens.audioCancelToken, item, item.audioUrl, audioPath))
+    if(item.audioUrl != 'noNeed') {
+        if(item.lastAudioDownloadPosition === 0 || item.lastAudioDownloadPosition < item.totalAudioLength) {
+            promises.push(downloadBFile('audio', cancelTokens.audioCancelToken, item, item.audioUrl, audioPath))
+        }
     }
     Promise.all(promises)
         .then(() => {
@@ -128,7 +130,11 @@ export async function continueBiliTVDownloadVideo(item) {
 }
 
 function combineVideo(tempPath, videoPath, audioPath, item) {
-    const exec = childProcess.spawn(`${ffmpegPath} -y -i "${videoPath}" -i "${audioPath}" -c copy "${item.outputPath}"`, {
+    let command = `${ffmpegPath} -y -i "${videoPath}" -i "${audioPath}" -c copy "${item.outputPath}"`
+    if(item.audioUrl === 'noNeed') {
+        command = `${ffmpegPath} -y -i "${videoPath}" -c copy "${item.outputPath}"`
+    }
+    const exec = childProcess.spawn(command, {
         maxBuffer: 5 * 1024 * 1024,
         shell: true
     });

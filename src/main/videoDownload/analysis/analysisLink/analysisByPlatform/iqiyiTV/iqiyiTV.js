@@ -144,7 +144,7 @@ function getVid(htmlUrl) {
                 title = data.match(/name":"([^"]+)","playUrl"/)?.[1] || data.match(/<title>([^<]*)<\/title>/)?.[1]
             }
             const payMark = data.match(/"payMark":(\d+),/)?.[1] || '';
-            return {tvId, vid, title, payMark}
+            return {tvId, vid, title: title.replace(/\//g, '').replace(/\\/g, ''), payMark}
         })
         .catch((e) => {
             return null

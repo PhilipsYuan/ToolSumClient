@@ -54,7 +54,7 @@ export default {
     } else {
       this.videoSrc = `file://${params.view}`
     }
-    if(params.audio && params.audio !== 'undefined') {
+    if(params.audio && params.audio !== 'undefined' && params.audio !== 'noNeed') {
       this.audioSrc = params.audio
     }
     this.videoName = params.name

@@ -31,13 +31,25 @@ async function getM3u8Link(htmlUrl) {
     return await windowBrowswer.loadURL(htmlUrl, {})
       .then(async (res) => {
         const title = await page.title()
-        const videoInfo = await page.evaluate(() => window.__PRELOADED_STATE__.curVideoMeta.dash.bd264);
-        const videoItem = videoInfo.video.find((item) => item.id === '1080p' || item.id === '3') || videoInfo.video[0];
-        const audioItem = videoInfo.audio[0];
-        const audioUrl = videoInfo.baseUri + audioItem.baseUrl
-        const videoUrl = videoInfo.baseUri + videoItem.baseUrl
+        const curVideoMeta = await page.evaluate(() => window.__PRELOADED_STATE__.curVideoMeta);
+        let audioUrl = ''
+        let videoUrl = ''
+        if(curVideoMeta?.dash?.bd264) {
+          const videoInfo = curVideoMeta?.dash?.bd264;
+          const videoItem = videoInfo.video.find((item) => item.id === '1080p' || item.id === '3') || videoInfo.video[0];
+          const audioItem = videoInfo.audio[0];
+          audioUrl = videoInfo.baseUri + audioItem.baseUrl
+          videoUrl = videoInfo.baseUri + videoItem.baseUrl
+        } else {
+          audioUrl = 'noNeed'
+          videoUrl = (curVideoMeta?.clarityUrl.find((item) => item.key === 'sc') || curVideoMeta?.clarityUrl[0])?.url || curVideoMeta?.playurl;
+        }
         windowBrowswer && windowBrowswer.destroy();
-        return {videoUrl, audioUrl, title};
+        if(videoUrl) {
+          return {videoUrl, audioUrl, title: title.replace(/\//g, '').replace(/\\/g, '')};
+        } else {
+          return 'error'
+        }
       })
       .catch((e) => {
         windowBrowswer && windowBrowswer.destroy();

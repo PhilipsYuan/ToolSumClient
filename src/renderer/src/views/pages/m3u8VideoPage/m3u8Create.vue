@@ -230,7 +230,6 @@ export default {
             status: 'success'
           }
           const info = await window.electronAPI.getDownloadLinkFromUrl(this.form.htmlUrl)
-          console.log(info)
           if (info === 'error') {
             if (/qq\.com|iqiyi|mgtv\.com/.test(this.form.htmlUrl)) {
               this.message = {
