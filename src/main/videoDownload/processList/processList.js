@@ -1,6 +1,6 @@
 import { m3u8VideoDownloadingListDB } from "../../db/db";
 import {app, ipcMain} from "electron";
-import { makeDir} from "../../util/fs";
+import {deleteDirectory, makeDir} from "../../util/fs";
 import {sendTips} from "../../util/electronOperations";
 import path from "path";
 import {
@@ -26,6 +26,8 @@ import {getDownloadSetting} from "../../settings/settings";
 
 const basePath = app.getPath('userData')
 const processUrlsPath = path.resolve(basePath, 'm3u8Video', 'processUrls');
+const tempSourcePath = path.resolve(basePath, 'm3u8Video', 'tempSource')
+makeDir(tempSourcePath)
 makeDir(processUrlsPath)
 
 ipcMain.handle('get-m3u8-loading-list', getLoadingList)
@@ -65,6 +67,9 @@ export async function deleteLoadingRecordAndFile(event, id, callType = 'delete')
         const item = m3u8VideoDownloadingListDB.data.loadingList[index]
         if(item.type === 'magnet') {
             await deleteMagnetLoadingRecordAndFile(item, callType)
+        } else if(item.type === 'biliTV' || item.type === 'haokan') {
+            const tempPath = path.resolve(tempSourcePath, item.name);
+            deleteDirectory(tempPath)
         } else {
             await deleteM3u8loadingRecordAndFile(item)
         }
