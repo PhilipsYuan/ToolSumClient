@@ -1,5 +1,6 @@
 import {app, BrowserWindow} from "electron";
 import puppeteer from "../../../../../util/source/puppeteer-core";
+import path from "path";
 
 export function getNormalM3u8Link(htmlUrl) {
     return getM3u8Link(htmlUrl)
@@ -16,6 +17,7 @@ export function getNormalM3u8Link(htmlUrl) {
 async function getM3u8Link(htmlUrl) {
     let m3u8Url = null
     const browser = await pie.connect(app, puppeteer);
+    console.log(__dirname)
     const window = new BrowserWindow({
         show: false, width: 900, height: 600, webPreferences: {
             devTools: true,
@@ -23,7 +25,8 @@ async function getM3u8Link(htmlUrl) {
             allowRunningInsecureContent: true,
             experimentalFeatures: true,
             webviewTag: true,
-            autoplayPolicy: "document-user-activation-required"
+            autoplayPolicy: "document-user-activation-required",
+            preload: path.join(__dirname, 'preload.js')
         }
     });
     const page = await global.pie.getPage(browser, window)
@@ -41,10 +44,13 @@ async function getM3u8Link(htmlUrl) {
 
     try {
         return await window.loadURL(htmlUrl, {
+            platform: 'iphone',
             userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1'
         })
             .then(async (res) => {
                 const title = await page.title()
+                const info = await page.evaluate(() => window.navigator)
+                console.log(info)
                 const promise = new Promise((resolve) => {
                     let index = 0
                     const interval = setInterval(() => {
