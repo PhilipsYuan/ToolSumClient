@@ -1,6 +1,7 @@
 import {app, BrowserWindow} from "electron";
 import puppeteer from "../../../../../util/source/puppeteer-core";
 import path from "path";
+import { isBlackRequest } from '../../../../../util/const/abortRequest'
 
 export function getNormalM3u8Link(htmlUrl) {
     return getM3u8Link(htmlUrl)
@@ -17,7 +18,6 @@ export function getNormalM3u8Link(htmlUrl) {
 async function getM3u8Link(htmlUrl) {
     let m3u8Url = null
     const browser = await pie.connect(app, puppeteer);
-    console.log(__dirname)
     const window = new BrowserWindow({
         show: false, width: 900, height: 600, webPreferences: {
             devTools: true,
@@ -31,7 +31,18 @@ async function getM3u8Link(htmlUrl) {
     });
     const page = await global.pie.getPage(browser, window)
     await page.setViewport({"width": 475, "height": 867, "isMobile": true})
-
+    // 启动request拦截器。拦截一些没有用的请求
+    await page.setRequestInterception(true)
+    page.on('request', (request) => {
+        // 检查请求的 URL 是否是你想要屏蔽的 JS 文件
+        if (isBlackRequest(request.url())) {
+            // 阻止请求
+            request.abort();
+        } else {
+            // 允许其他请求继续
+            request.continue();
+        }
+    });
     async function responseFun (response) {
         const url = response.url()
         if (/m3u8/.test(url)) {
@@ -44,13 +55,10 @@ async function getM3u8Link(htmlUrl) {
 
     try {
         return await window.loadURL(htmlUrl, {
-            platform: 'iphone',
-            userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1'
+            userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_2 like Mac OS X; zh-cn) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/20B110 Quark/1.11.2.2085 Mobile'
         })
             .then(async (res) => {
                 const title = await page.title()
-                const info = await page.evaluate(() => window.navigator)
-                console.log(info)
                 const promise = new Promise((resolve) => {
                     let index = 0
                     const interval = setInterval(() => {
