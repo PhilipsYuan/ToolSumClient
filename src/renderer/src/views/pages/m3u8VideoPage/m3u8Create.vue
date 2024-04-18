@@ -219,9 +219,9 @@ export default {
     },
     async startAnalysis() {
       if (this.form.htmlUrl && this.isUrl(this.form.htmlUrl)) {
-        if(/\.m3u8$/.test(this.form.htmlUrl)) {
+        if(/\.m3u8$/.test(this.form.htmlUrl) || /\.m3u8?/.test(this.form.htmlUrl)) {
           this.message = {
-            content: "您在网址输入框放的是m3u8链接, 它应该放在'm3u8链接'输入框里，再补充下'文件名称'就可以创建视频了。网址输入框放的是视频所在的网页地址。",
+            content: "您在网址输入框放的是m3u8链接, 它应放在'm3u8链接'输入框里。再补充'文件名称'就可以创建视频。网址输入框放的是视频所在的网页地址。",
             status: 'error'
           }
         } else {
