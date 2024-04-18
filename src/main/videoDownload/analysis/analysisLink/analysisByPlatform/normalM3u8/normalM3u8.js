@@ -2,6 +2,7 @@ import {app, BrowserWindow} from "electron";
 import puppeteer from "../../../../../util/source/puppeteer-core";
 import path from "path";
 import { isBlackRequest } from '../../../../../util/const/abortRequest'
+import { getUserAgent} from "../../../../../util/const/userAgentSetting";
 
 export function getNormalM3u8Link(htmlUrl) {
     return getM3u8Link(htmlUrl)
@@ -55,7 +56,7 @@ async function getM3u8Link(htmlUrl) {
 
     try {
         return await window.loadURL(htmlUrl, {
-            userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_2 like Mac OS X; zh-cn) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/20B110 Quark/1.11.2.2085 Mobile'
+            userAgent: getUserAgent(htmlUrl)
         })
             .then(async (res) => {
                 const title = await page.title()

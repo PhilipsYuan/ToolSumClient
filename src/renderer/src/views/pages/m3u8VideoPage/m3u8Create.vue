@@ -176,7 +176,7 @@ export default {
     },
     clearInput() {
       this.form.name = ''
-      this.form.m3u8Url = 'http://www.hzjmled.com/vodplay/77566-1-38.html'
+      this.form.m3u8Url = ''
       this.form.audioUrl = ''
       this.form.htmlUrl = ''
       this.message = {
