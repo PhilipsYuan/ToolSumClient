@@ -103,18 +103,22 @@ function getFreeVideo(tvId, title, cookie) {
         .then(async (res) => {
             const videos = res.data.data?.program?.video
             if(videos) {
-                const text = videos.find((item) => item.m3u8).m3u8
-                if(/<SegmentList/.test(text)) {
-                    // 这个有问题，还没有实现，在超高清的时候，会是这个格式。
-                    const m3u8Url = await createMpdUrl(text, tvId)
-                    // const m3u8String = await mpdToM3u8(text)
-                    // const m3u8Url = await createM3u8Url(m3u8String, tvId)
-                    return {videoUrl: m3u8Url, title: title}
+                console.log(videos)
+                const text = videos.find((item) => item.m3u8)?.m3u8
+                if(text) {
+                    if(/<SegmentList/.test(text)) {
+                        // 这个有问题，还没有实现，在超高清的时候，会是这个格式。
+                        const m3u8Url = await createMpdUrl(text, tvId)
+                        // const m3u8String = await mpdToM3u8(text)
+                        // const m3u8Url = await createM3u8Url(m3u8String, tvId)
+                        return {videoUrl: m3u8Url, title: title}
+                    } else {
+                        const m3u8Url = await createM3u8Url(text, tvId)
+                        return {videoUrl: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, '')}
+                    }
                 } else {
-                    const m3u8Url = await createM3u8Url(text, tvId)
-                    return {videoUrl: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, '')}
+                    return 'error'
                 }
-
             } else {
                 return 'error'
             }
