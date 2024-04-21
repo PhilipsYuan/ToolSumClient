@@ -1,5 +1,6 @@
 const chromeSupportUrl = [
-  'v.ccdi.gov.cn'
+  'v.ccdi.gov.cn',
+  'tv.cctv.com'
 ];
 
 export function getUserAgent(htmlUrl) {

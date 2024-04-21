@@ -103,8 +103,8 @@ function getFreeVideo(tvId, title, cookie) {
         .then(async (res) => {
             const videos = res.data.data?.program?.video
             if(videos) {
-                console.log(videos)
-                const text = videos.find((item) => item.m3u8)?.m3u8
+                const text = videos.find((item) => item.m3u8)?.m3u8;
+                const fs = videos.find(item => item.fs)?.fs
                 if(text) {
                     if(/<SegmentList/.test(text)) {
                         // 这个有问题，还没有实现，在超高清的时候，会是这个格式。
@@ -116,6 +116,9 @@ function getFreeVideo(tvId, title, cookie) {
                         const m3u8Url = await createM3u8Url(text, tvId)
                         return {videoUrl: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, '')}
                     }
+                } else if(fs) {
+                    const m3u8Url = await createM3u8UrlBuyFs(fs, tvId)
+                    return {videoUrl: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, '')}
                 } else {
                     return 'error'
                 }
@@ -142,6 +145,9 @@ function getVid(htmlUrl) {
         .then(async (res) => {
             const data = res.data;
             let tvId = data.match(/"tvId":(\d+),"albumId"/)?.[1]
+            if(/pages\.iqiyi\.com/.test(htmlUrl)) {
+                tvId = data.match(/"tvId":(\d+),"vData"/)?.[1]
+            }
             const vid = data.match(/"vid":"(.*?)",/)?.[1] || ''
             let title = data.match(/\.name="([^"]*)"/)?.[1];
             if(!title) {
@@ -172,6 +178,29 @@ async function createM3u8Url(m3u8Text, id) {
     // await fs.writeFileSync(filePath, JSON.stringify(json), "utf-8")
     await fs.writeFileSync(filePath, m3u8Text, "utf-8")
     return filePath
+}
+
+/**
+ * F4v文件列表，转换m3u8url
+ */
+async function createM3u8UrlBuyFs(fs, id) {
+    let m3u8String = `#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:400\n#EXT-X-MEDIA-SEQUENCE:0\n`
+    const newUrls = fs.map((item) => {
+        return axios.get(`https://pcw-data.video.iqiyi.com/videos${item.l}`)
+          .then((res) => res.data.l)
+    })
+    return Promise.all(newUrls)
+      .then(async (results) => {
+          fs.forEach((item, index) => {
+              const time = (Number(item.d) / 1000).toFixed(6)
+              const extinf = `#EXTINF:${time},\n${results[index]}\n`
+              m3u8String = m3u8String + extinf
+          })
+          m3u8String = m3u8String + `#EXT-X-ENDLIST`
+          console.log(m3u8String)
+          return await createM3u8Url(m3u8String, id)
+      })
+
 }
 
 /**
