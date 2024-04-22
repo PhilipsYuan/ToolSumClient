@@ -158,7 +158,7 @@ async function getUrlAndTitle (url, post, vid) {
         return {m3u8Url, title}
     } else if(json.vl.vi[0].ul.ui && json.vl.vi[0].ul.ui[0]){
         const item = json.vl.vi[0].ul.ui[0]
-        const url = item.url + item.hls.pt
+        const url = item.url + item.hls?.pt
         const result = await axios.get(url)
         const m3u8Url = await createM3u8Url(result.data, vid, item.url)
         const title = json?.vl?.vi[0].ti
