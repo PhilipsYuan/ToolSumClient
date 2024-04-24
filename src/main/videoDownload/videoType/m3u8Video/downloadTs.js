@@ -75,9 +75,26 @@ async function downloadingM3u8Video(loadingRecord) {
     const tempPath = path.resolve(tempSourcePath, loadingRecord.name);
     const outputPath = loadingRecord.outputPath;
     let m3u8Data = loadingRecord.m3u8Data
-    const convert = await downloadTss(loadingRecord.totalUrls, m3u8Data, tempPath, loadingRecord)
-    if (convert && !loadingRecord.pause) {
-        combineVideo(tempPath, outputPath, loadingRecord)
+    const regex = new RegExp(tempPath)
+    if(regex.test(loadingRecord.totalUrls[0].url)) {
+        new Promise((resolve) => {
+            fs.writeFile(path.resolve(tempPath, `index.m3u8`), m3u8Data, "utf-8", (err) => {
+                if(err) {
+                    console.log('replaceTsFileUrls failure')
+                } else {
+                    resolve(m3u8Data)
+                    console.log('replaceTsFileUrls success')
+                }
+            })
+        })
+          .then(() => {
+              combineVideo(tempPath, outputPath, loadingRecord)
+          })
+    } else {
+        const convert = await downloadTss(loadingRecord.totalUrls, m3u8Data, tempPath, loadingRecord)
+        if (convert && !loadingRecord.pause) {
+            combineVideo(tempPath, outputPath, loadingRecord)
+        }
     }
 }
 

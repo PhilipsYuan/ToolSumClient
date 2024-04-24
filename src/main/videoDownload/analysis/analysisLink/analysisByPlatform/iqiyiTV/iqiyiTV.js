@@ -4,6 +4,7 @@ import { getVf } from "./mmc";
 import { app } from 'electron'
 import fs from 'fs';
 import path from "path";
+import { createM3u8UrlBuyFs } from './f4vToM3u8'
 // import dayjs from 'dayjs'
 import host from "../../../../../../renderer/src/utils/const/host";
 import {makeDir} from "../../../../../util/fs";
@@ -117,8 +118,13 @@ function getFreeVideo(tvId, title, cookie) {
                         return {videoUrl: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, '')}
                     }
                 } else if(fs) {
-                    const m3u8Url = await createM3u8UrlBuyFs(fs, tvId)
-                    return {videoUrl: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, '')}
+                    const perfectTitle = title?.replace(/\//g, '').replace(/\\/g, '') || ''
+                    const m3u8Url = await createM3u8UrlBuyFs(fs, tvId, perfectTitle)
+                    if(m3u8Url === 'error') {
+                        return {videoUrl: m3u8Url, title: perfectTitle}
+                    } else {
+                        return 'error'
+                    }
                 } else {
                     return 'error'
                 }
@@ -128,7 +134,10 @@ function getFreeVideo(tvId, title, cookie) {
         })
         .catch((e) => {
             console.log(e)
-
+            const filePath = path.resolve(m3u8UrlMgPath, `${id}.m3u8`)
+            if(fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath)
+            }
             return 'error'
         })
 }
@@ -180,28 +189,7 @@ async function createM3u8Url(m3u8Text, id) {
     return filePath
 }
 
-/**
- * F4v文件列表，转换m3u8url
- */
-async function createM3u8UrlBuyFs(fs, id) {
-    let m3u8String = `#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:400\n#EXT-X-MEDIA-SEQUENCE:0\n`
-    const newUrls = fs.map((item) => {
-        return axios.get(`https://pcw-data.video.iqiyi.com/videos${item.l}`)
-          .then((res) => res.data.l)
-    })
-    return Promise.all(newUrls)
-      .then(async (results) => {
-          fs.forEach((item, index) => {
-              const time = (Number(item.d) / 1000).toFixed(6)
-              const extinf = `#EXTINF:${time},\n${results[index]}\n`
-              m3u8String = m3u8String + extinf
-          })
-          m3u8String = m3u8String + `#EXT-X-ENDLIST`
-          console.log(m3u8String)
-          return await createM3u8Url(m3u8String, id)
-      })
 
-}
 
 /**
  * 创建本地的mpd

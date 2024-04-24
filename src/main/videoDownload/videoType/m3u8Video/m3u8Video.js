@@ -48,7 +48,11 @@ async function createOtherM3u8DownloadTask(url, name, outPath, htmlUrl, isUpdate
                 if (/^http/.test(item)) {
                     url = item
                 } else {
-                    url = info.host + item
+                    if(info.host) {
+                        url = info.host + item
+                    } else {
+                        url = item
+                    }
                 }
                 return {
                     item, url, number: index + 1, cookie: info.cookie
