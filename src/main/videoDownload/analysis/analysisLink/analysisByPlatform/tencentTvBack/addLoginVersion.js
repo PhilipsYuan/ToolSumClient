@@ -23,7 +23,7 @@ export async function getVideoInfo(url, postData) {
     postData.sspAdParam = changeSspAdParam(postData.sspAdParam, loginInfo)
     return axios.post(url, postData, {
         headers: {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36¬",
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1",
             referer: 'https://v.qq.com',
         }
     })
