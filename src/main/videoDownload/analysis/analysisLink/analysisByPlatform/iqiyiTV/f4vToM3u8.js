@@ -66,6 +66,7 @@ export async function createM3u8UrlBuyFs(f4vFiles, id, name) {
         m3u8String = m3u8String + extinf
       })
       m3u8String = m3u8String + `#EXT-X-ENDLIST`
+      deleteDirectory(f4vPath)
       return await createM3u8Url(m3u8String, id)
     })
     .catch((e) => {

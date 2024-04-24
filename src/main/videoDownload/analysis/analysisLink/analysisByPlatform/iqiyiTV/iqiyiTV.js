@@ -120,7 +120,7 @@ function getFreeVideo(tvId, title, cookie) {
                 } else if(fs) {
                     const perfectTitle = title?.replace(/\//g, '').replace(/\\/g, '') || ''
                     const m3u8Url = await createM3u8UrlBuyFs(fs, tvId, perfectTitle)
-                    if(m3u8Url === 'error') {
+                    if(m3u8Url !== 'error') {
                         return {videoUrl: m3u8Url, title: perfectTitle}
                     } else {
                         return 'error'
