@@ -75,7 +75,9 @@ async function getM3u8Link(htmlUrl) {
         return await window.loadURL(htmlUrl, {
             // userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1'
         })
-            .then((res) => {
+            .then(async (res) => {
+                const curVideoMeta = await page.evaluate(() => document.createElement('video').canPlayType('video/mp4; codecs="avc1.42E01E"'));
+                console.log(curVideoMeta)
                 const promise = new Promise((resolve) => {
                     let index = 0
                     const interval = setInterval(() => {
@@ -114,6 +116,8 @@ async function getUrlAndTitle (url, post, vid) {
     const json = JSON.parse(info.vinfo)
     if(json.anc) {
         const result = await decryptProcess(info.vinfo) || ''
+        console.log(result)
+        fs.writeFileSync('test.txt', result)
         const m3u8String = result.match(/(#EXTM3U.*#EXT-X-ENDLIST)/)?.[1].replace(/\\n/g, '\n').replace(/\\u0026/g, '&');
         if(m3u8String) {
             const hosts = result.match(/"(https:\/\/[^"]*)"/g)

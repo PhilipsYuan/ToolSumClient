@@ -40,7 +40,8 @@ function changeVinfoparam(vinfo, loginInfo) {
     const bb = cc.replace('logintoken=', `logintoken=${loginToken}`)
     // hevclv: 28 表示h265格式， hevclv:31 表示h264格式
     const dd = bb.replace(/hevclv=[^&]*&/, 'hevclv=31&')
-    return dd
+    const ee = dd.replace(/&drm=\d+$/, '&drm=40')
+    return ee
 }
 
 function changeSspAdParam(sspAdParam, loginInfo) {
