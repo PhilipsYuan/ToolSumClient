@@ -35,7 +35,7 @@ function runWork(work, loadingRecord) {
                 filePath: loadingRecord.outputPath,
                 m3u8Url: loadingRecord.m3u8Url
             })
-            await deleteLoadingRecordAndFile(null, loadingRecord.id, 'success')
+            // await deleteLoadingRecordAndFile(null, loadingRecord.id, 'success')
             sendTips('m3u8-download-video-success', loadingRecord.id)
             work.terminate()
         }

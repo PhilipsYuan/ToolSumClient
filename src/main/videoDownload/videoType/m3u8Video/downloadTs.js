@@ -247,7 +247,7 @@ function combineVideo(tempPath, outputPath, loadingRecord) {
         console.log('2222222：' + info)
     });
     exec_1.stderr.on('close', async () => {
-        deleteTempSource(tempPath)
+        // deleteTempSource(tempPath)
         parentPort && parentPort.postMessage({
             type: 'combineSuccess'
         })

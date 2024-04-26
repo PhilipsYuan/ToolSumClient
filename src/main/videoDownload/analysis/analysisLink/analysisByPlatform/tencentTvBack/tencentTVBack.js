@@ -117,7 +117,7 @@ async function getUrlAndTitle (url, post, vid) {
     if(json.anc) {
         const result = await decryptProcess(info.vinfo) || ''
         console.log(result)
-        fs.writeFileSync('test.txt', result)
+        fs.writeFileSync('test.js', result)
         const m3u8String = result.match(/(#EXTM3U.*#EXT-X-ENDLIST)/)?.[1].replace(/\\n/g, '\n').replace(/\\u0026/g, '&');
         if(m3u8String) {
             const hosts = result.match(/"(https:\/\/[^"]*)"/g)

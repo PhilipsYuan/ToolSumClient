@@ -54,6 +54,7 @@ export default {
     } else {
       this.videoSrc = `file://${params.view}`
     }
+    this.videoSrc = 'file:///Users/smart-philip/philip/project/selfProject/ToolSumClient/test.m3u8'
     if(params.audio && params.audio !== 'undefined') {
       if(params.audio !== 'noNeed') {
         this.audioSrc = params.audio
@@ -76,6 +77,14 @@ export default {
         } : {
           src: this.videoSrc,
           type: 'application/x-mpegURL',
+          keySystems: {
+            "FairPlayWebKit": "com.apple.fps.1_0",
+            "Widevine": "com.widevine.alpha",
+            "FairPlay": "com.apple.fps",
+            "Chacha": "com.tencent.chacha",
+            "PlayReady": "com.microsoft.playready",
+            "PlayReadyHardware": "com.microsoft.playready.hardware"
+          }
         }
         this.player = videoJs(this.$refs.myVideo, {
           preload: 'auto',
