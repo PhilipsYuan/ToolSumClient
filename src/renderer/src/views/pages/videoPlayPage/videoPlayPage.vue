@@ -54,7 +54,6 @@ export default {
     } else {
       this.videoSrc = `file://${params.view}`
     }
-    this.videoSrc = 'file:///Users/smart-philip/philip/project/selfProject/ToolSumClient/test.m3u8'
     if(params.audio && params.audio !== 'undefined') {
       if(params.audio !== 'noNeed') {
         this.audioSrc = params.audio
