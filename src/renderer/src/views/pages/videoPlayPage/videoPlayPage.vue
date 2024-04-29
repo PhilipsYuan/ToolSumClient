@@ -79,14 +79,6 @@ export default {
         } : {
           src: this.videoSrc,
           type: 'application/x-mpegURL',
-          keySystems: {
-            "FairPlayWebKit": "com.apple.fps.1_0",
-            "Widevine": "com.widevine.alpha",
-            "FairPlay": "com.apple.fps",
-            "Chacha": "com.tencent.chacha",
-            "PlayReady": "com.microsoft.playready",
-            "PlayReadyHardware": "com.microsoft.playready.hardware"
-          }
         }
         this.player = videoJs(this.$refs.myVideo, {
           preload: 'auto',
@@ -101,37 +93,6 @@ export default {
     },
     closeWindow() {
       window.electronAPI.closeVideoPlayWindow()
-    },
-    playVideoAndAudio(videoUrl, audioUrl) {
-      const myMediaSource = new MediaSource();
-      const url = URL.createObjectURL(myMediaSource);
-      this.player = videoJs(this.$refs.myVideo, {
-        preload: 'auto',
-        sources: [{
-          src: url,
-          type: 'video/mp4',
-        }]
-      });
-      myMediaSource.addEventListener('sourceopen', () => {
-        let videoTotal = 0
-        let audioTotal = 0
-        const audioSourceBuffer = myMediaSource
-            .addSourceBuffer('audio/mp4; codecs="mp4a.40.2"');
-        const videoSourceBuffer = myMediaSource
-            .addSourceBuffer('video/mp4; codecs="avc1.64001e"');
-        fetch(audioUrl).then((response) =>{
-          audioTotal = response.headers.get('Content-Range').split('/')[1]
-          return response.arrayBuffer();
-        }).then(function(audioData) {
-          audioSourceBuffer.appendBuffer(audioData);
-        });
-        fetch(videoUrl).then((response) => {
-          videoTotal = response.headers.get('Content-Range').split('/')[1]
-          return response.arrayBuffer();
-        }).then((videoData) => {
-          videoSourceBuffer.appendBuffer(videoData);
-        });
-      })
     }
   }
 }
