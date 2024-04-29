@@ -39,18 +39,6 @@ export function getCorrectM3u8File(url) {
 }
 
 /**
- * 判断文件里是否还是个m3u8文件的路径
- */
-function checkM3u8FileHasAnotherM3u8(data, url) {
-    if(/\.m3u8/.test(data)) {
-        const path = data.match(/\n[^\n.]*.m3u8/)[0].replace('\n', '')
-        return getCorrectAnotherM3u8(url, path)
-    } else {
-        return false
-    }
-}
-
-/**
  * 获取正确的M3u8
  * 可能出现 mode1 和 mode4 两种情况
  * @param sourceUrl

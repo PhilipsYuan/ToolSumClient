@@ -152,19 +152,30 @@ async function getUrlAndTitle (url, post, vid) {
                 return {m3u8Url, title}
             }
         }
-    } else if(json?.vl?.vi[0].ul?.m3u8){
-        const m3u8Url = await createM3u8Url(json?.vl?.vi[0].ul?.m3u8, vid, json?.vl?.vi[0].ul.ui[0].url)
-        const title = json?.vl?.vi[0].ti
-        return {m3u8Url, title}
-    } else if(json.vl.vi[0].ul.ui && json.vl.vi[0].ul.ui[0]){
-        const item = json.vl.vi[0].ul.ui[0]
-        const url = item.url + item.hls?.pt
-        const result = await axios.get(url)
-        const m3u8Url = await createM3u8Url(result.data, vid, item.url)
-        const title = json?.vl?.vi[0].ti
-        return {m3u8Url, title}
     } else {
-        return null
+        const ul = json?.vl?.vi[0].ul
+        const viFirst = json?.vl?.vi[0]
+        const title = json?.vl?.vi[0].ti
+        if(ul) {
+            if(ul.m3u8) {
+                const m3u8Url = await createM3u8Url(ul.m3u8, vid, ul.ui[0].url)
+                return {m3u8Url, title}
+            } else if(ul.ui?.[0] && ul.ui[0].hls?.pt) {
+                const item = ul.ui[0]
+                const url = item.url + item.hls?.pt
+                const result = await axios.get(url)
+                const m3u8Url = await createM3u8Url(result.data, vid, item.url)
+                return {m3u8Url, title}
+            } else if(viFirst?.fvkey && viFirst?.fn)  {
+                const item = ul.ui[0]
+                const m3u8Url = item.url + viFirst?.fn + '?vkey=' + viFirst?.fvkey
+                return {m3u8Url, title}
+            } else {
+                return null
+            }
+        } else {
+            return null
+        }
     }
 }
 

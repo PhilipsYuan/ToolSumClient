@@ -20,6 +20,11 @@ import {
     pauseBiliTVDownloadVideo,
     startDownloadBiliVideo
 } from "../videoType/bilibiliVideo/bilibiliVideo";
+import {
+    startDownloadMp4Video,
+  pauseMp4DownloadVideo,
+  continueMp4DownloadVideo
+} from "../videoType/mp4Video/mp4VideoDownload"
 import { getDownloadLinkFromUrl } from "../analysis/analysisLink/analysisDownloadLink"
 import {createVideoDownloadTask} from "../videoDownload";
 import {getDownloadSetting} from "../../settings/settings";
@@ -67,7 +72,7 @@ export async function deleteLoadingRecordAndFile(event, id, callType = 'delete')
         const item = m3u8VideoDownloadingListDB.data.loadingList[index]
         if(item.type === 'magnet') {
             await deleteMagnetLoadingRecordAndFile(item, callType)
-        } else if(item.type === 'biliTV' || item.type === 'haokan') {
+        } else if(item.type === 'biliTV' || item.type === 'haokan' || item.type === 'mp4') {
             const tempPath = path.resolve(tempSourcePath, item.name);
             deleteDirectory(tempPath)
         } else {
@@ -100,6 +105,8 @@ export async function startDownloadVideo(event, id) {
             startDownloadMagnetVideo(item)
         } else if(item.type === 'biliTV' || item.type === 'haokan') {
             startDownloadBiliVideo(item)
+        } else if(item.type === 'mp4') {
+            startDownloadMp4Video(item)
         } else {
             startDownloadM3u8Video(item)
         }
@@ -119,6 +126,8 @@ export async function pauseDownloadVideo(event, id) {
             await pauseMagnetDownloadVideo(item)
         } else if(item.type === 'biliTV' || item.type === 'haokan') {
             await pauseBiliTVDownloadVideo(item)
+        } else if(item.type === 'mp4') {
+            await pauseMp4DownloadVideo(item)
         } else {
             await pauseM3u8DownloadVideo(item)
         }
@@ -139,6 +148,8 @@ export async function continueDownloadVideo(event, id) {
             await continueMagnetDownloadVideo(item)
         } else if(item.type === 'biliTV' || item.type === 'haokan') {
             await continueBiliTVDownloadVideo(item)
+        } else if(item.type === 'mp4') {
+            await continueMp4DownloadVideo(item)
         } else {
             await continueM3u8DownloadVideo(item)
         }
