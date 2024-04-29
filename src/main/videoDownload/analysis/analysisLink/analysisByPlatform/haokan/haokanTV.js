@@ -14,7 +14,7 @@ export async function getHaoKanTVDownloadLink(htmlUrl) {
 
 async function getM3u8Link(htmlUrl) {
   const browser = await pie.connect(app, puppeteer);
-  const windowBrowswer = new BrowserWindow({
+  const windowBrowser = new BrowserWindow({
     show: false, width: 900, height: 600, webPreferences: {
       devTools: true,
       webSecurity: false,
@@ -24,11 +24,11 @@ async function getM3u8Link(htmlUrl) {
       autoplayPolicy: "document-user-activation-required"
     }
   });
-  const page = await global.pie.getPage(browser, windowBrowswer)
+  const page = await global.pie.getPage(browser, windowBrowser)
   await page.setViewport({"width": 475, "height": 867, "isMobile": true})
 
   try {
-    return await windowBrowswer.loadURL(htmlUrl, {})
+    return await windowBrowser.loadURL(htmlUrl, {})
       .then(async (res) => {
         const title = await page.title()
         const curVideoMeta = await page.evaluate(() => window.__PRELOADED_STATE__.curVideoMeta);
@@ -44,7 +44,7 @@ async function getM3u8Link(htmlUrl) {
           audioUrl = 'noNeed'
           videoUrl = (curVideoMeta?.clarityUrl.find((item) => item.key === 'sc') || curVideoMeta?.clarityUrl[0])?.url || curVideoMeta?.playurl;
         }
-        windowBrowswer && windowBrowswer.destroy();
+        windowBrowser && windowBrowser.destroy();
         if(videoUrl) {
           return {videoUrl, audioUrl, title: title?.replace(/\//g, '').replace(/\\/g, '')};
         } else {
@@ -52,11 +52,11 @@ async function getM3u8Link(htmlUrl) {
         }
       })
       .catch((e) => {
-        windowBrowswer && windowBrowswer.destroy();
+        windowBrowser && windowBrowser.destroy();
         return 'error'
       })
   } catch (e) {
-    windowBrowswer && windowBrowswer.destroy();
+    windowBrowser && windowBrowser.destroy();
     return Promise.resolve('error')
   }
 }

@@ -32,6 +32,7 @@ import zhCNJson from  'video.js/dist/lang/zh-CN.json'
 import {getUrlParams} from "../../../utils/url";
 import { addService } from "../../../service/service";
 import { playVideoAndAudio } from './videoAndAudioPlay'
+import {playPZhan} from "./playPzhan";
 videoJs.addLanguage('zh-CN', zhCNJson)
 export default {
   name: "videoPlayPage",
@@ -68,6 +69,8 @@ export default {
     async setVideoConfig() {
       if(this.videoSrc && this.audioSrc) {
         playVideoAndAudio(this.videoSrc, this.audioSrc, this.$refs.myVideo, videoJs)
+      } else if(/51learn\.xyz/.test(this.videoSrc)) {
+        playPZhan(this.$refs.myVideo, this.videoSrc)
       } else {
         const json = /\.mp4/.test(this.videoSrc) ? {
           src: this.videoSrc,

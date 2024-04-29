@@ -236,7 +236,8 @@ async function downloadSecretKey(data, host, tempPath, pathname, cookie) {
             i++
         }
         keys.forEach((item, index) => {
-            m3u8Data = m3u8Data.replace(item, path.resolve(tempPath, `key${index + 1}.key`).replace(/\\/g, '/'))
+            const regex = new RegExp(item, 'g')
+            m3u8Data = m3u8Data.replace(regex, path.resolve(tempPath, `key${index + 1}.key`).replace(/\\/g, '/'))
         })
         await fs.writeFileSync(path.resolve(tempPath, `index.m3u8`), m3u8Data, "utf-8")
     }
@@ -284,7 +285,8 @@ async function downloadMap(data, host, tempPath, pathname, cookie) {
             i++
         }
         keys.forEach((item, index) => {
-            m3u8Data = m3u8Data.replace(item, path.resolve(tempPath, `map${index + 1}.map`).replace(/\\/g, '/'))
+            const regex = new RegExp(item, 'g')
+            m3u8Data = m3u8Data.replace(regex, path.resolve(tempPath, `map${index + 1}.map`).replace(/\\/g, '/'))
         })
         await fs.writeFileSync(path.resolve(tempPath, `index.m3u8`), m3u8Data, "utf-8")
     }

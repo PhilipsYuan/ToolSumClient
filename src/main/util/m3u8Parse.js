@@ -1,6 +1,7 @@
 import {sendTips} from './electronOperations'
 import axios from './source/axios'
 import { getHeaders } from './httpHeaders'
+import {Parser} from 'm3u8-parser'
 
 export function getCorrectM3u8File(url) {
     const headers = getHeaders(url)
@@ -8,28 +9,33 @@ export function getCorrectM3u8File(url) {
         timeout: 60000,
         headers
     })
-        .then(async (res) => {
-            const result = checkM3u8FileHasAnotherM3u8(res.data, url)
-             if(result) {
-                 return axios.get(result, {
-                     timeout: 30000,
-                     headers
-                 })
-                     .then(async (res) => {
-                         return res.data
-                     })
-                     .catch((res) => {
-                         sendTips('m3u8-file-get-failure', 'error', '下载资源失败，请重新尝试或者更换个下载资源!')
-                         return null
-                     })
-             } else {
-                 return res.data
-             }
-        })
-        .catch((res) => {
-            sendTips('m3u8-file-get-failure', 'error', '下载资源失败，请重新尝试或者更换个下载资源!')
-            return null
-        })
+      .then((res) => {
+          const parser = new Parser();
+          parser.push(res.data);
+          parser.end();
+          const parsedManifest = parser.manifest;
+          if(parsedManifest?.segments?.length > 0) {
+              return res.data
+          } else {
+              if(parsedManifest?.playlists?.[0]?.uri) {
+                  const newM3u8Url = getCorrectAnotherM3u8(url, parsedManifest?.playlists?.[0]?.uri)
+                  return axios.get(newM3u8Url, {
+                      timeout: 30000,
+                      headers
+                  })
+                    .then(async (res) => {
+                        return res.data
+                    })
+                    .catch((res) => {
+                        sendTips('m3u8-file-get-failure', 'error', '下载资源失败，请重新尝试或者更换个下载资源!')
+                        return null
+                    })
+              } else {
+                  sendTips('m3u8-file-get-failure', 'error', '下载资源失败，请重新尝试或者更换个下载资源!')
+                  return null
+              }
+          }
+      })
 }
 
 /**
@@ -88,19 +94,18 @@ function getCorrectAnotherM3u8(sourceUrl, targetUrl) {
  * @returns {*[]|*}
  */
 export function getSecretKeys(data) {
-    const maps = data.match(/#EXT-X-KEY[^\n]*\n/g)
-     if(maps && maps.length > 0) {
-         const keys = maps.filter((item) => {
-             return /URI/.test(item) && !/data:text\/plain;base64/.test(item)
-         })
-         if (keys.length > 0) {
-             return keys.map((item) => item.match(/"[^"]*"/)[0].replace(/"/g, ""))
-         } else {
-             return []
-         }
-     } else {
-         return []
-     }
+    const parser = new Parser();
+    parser.push(data);
+    parser.end();
+    const parsedManifest = parser.manifest;
+    if(parsedManifest?.segments?.length > 0) {
+        const segments = parsedManifest.segments
+        const allKeys = segments.filter((item) => item.key).map((item) => item.key.uri);
+        const keys = Array.from(new Set(allKeys))
+        return keys
+    } else {
+        return []
+    }
 }
 
 /**
@@ -109,16 +114,15 @@ export function getSecretKeys(data) {
  * @returns {*[]|*}
  */
 export function getXMap(data) {
-    const maps = data.match(/#EXT-X-MAP[^\n]*\n/g)
-    if(maps && maps.length > 0) {
-        const keys = maps.filter((item) => {
-            return /URI/.test(item)
-        })
-        if (keys.length > 0) {
-            return keys.map((item) => item.match(/"[^"]*"/)[0].replace(/"/g, ""))
-        } else {
-            return []
-        }
+    const parser = new Parser();
+    parser.push(data);
+    parser.end();
+    const parsedManifest = parser.manifest;
+    if(parsedManifest?.segments?.length > 0) {
+        const segments = parsedManifest.segments
+        const allKeys = segments.filter((item) => item.map).map((item) => item.map.uri);
+        const keys = Array.from(new Set(allKeys))
+        return keys
     } else {
         return []
     }
@@ -127,9 +131,15 @@ export function getXMap(data) {
 /**
  * 将m3u8文本转换成url数组, 屏蔽非同源的。
  */
-export function getPlayList(text) {
-    const array = text.split("#EXTINF")
-    const allUrls = array.map((item) => item.match(/\n.*\n/)[0].replace(/\n/g, ''))
-    allUrls.splice(0,1)
-    return allUrls
+export function getPlayList(data) {
+    const parser = new Parser();
+    parser.push(data);
+    parser.end();
+    const parsedManifest = parser.manifest;
+    if(parsedManifest?.segments?.length > 0) {
+        const segments = parsedManifest.segments
+        return segments.map((item) => item.uri)
+    } else {
+        return []
+    }
 }
