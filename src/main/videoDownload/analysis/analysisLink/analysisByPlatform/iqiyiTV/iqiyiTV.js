@@ -153,8 +153,17 @@ function getVid(htmlUrl) {
         .then(async (res) => {
             const data = res.data;
             let tvId = data.match(/"tvId":(\d+),"albumId"/)?.[1]
-            if(/pages\.iqiyi\.com/.test(htmlUrl)) {
+            if(!tvId && /pages\.iqiyi\.com/.test(htmlUrl)) {
                 tvId = data.match(/"tvId":(\d+),"vData"/)?.[1]
+            }
+            if(!tvId && /sports\.iqiyi\.com/.test(htmlUrl)) {
+                const mm = new URL(htmlUrl)
+                const pathParts = mm.pathname.split('/')
+                const key = pathParts[pathParts.length - 1]
+                const id = decode(key, 36);
+                let SEED = "lgqipu";
+                let l_seed = toLong(SEED);
+                tvId = xor(id, l_seed)
             }
             const vid = data.match(/"vid":"(.*?)",/)?.[1] || ''
             let title = data.match(/\.name="([^"]*)"/)?.[1];
@@ -224,3 +233,48 @@ async function getCookieInfo() {
     //     return cookie;
     // }
 }
+
+function decode(str, radix) {
+    const BASE62 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    let result = 0;
+    for (let i = 0; i < str.length; i++) {
+        let digit = BASE62.indexOf(str.charAt(i));
+        result += digit * Math.pow(radix, str.length - (i + 1));
+    }
+    return result;
+}
+
+function str2hex(seed) {
+    var result = "";
+    for (var i = seed.length - 1; i >= 0; i--) {
+        var c = seed.charCodeAt(i);
+        result += c.toString(16);
+    }
+    return result.toString();
+}
+
+function toLong(seed) {
+    return parseInt(str2hex(seed), 16);
+}
+
+function xor(num1, num2) {
+    var b1 = num1.toString(2) + '';
+    var b2 = num2.toString(2) + '';
+    var res = '';
+    if (b1.length > b2.length) {
+        res = b1.slice(0, b1.length - b2.length);
+        b1 = b1.substr(b1.length - b2.length);
+    } else {
+        res = b2.slice(0, b2.length - b1.length);
+        b2 = b2.substr(b2.length - b1.length);
+    }
+    for (var i = 0; i < b1.length; i++) {
+        if (b1[i] === b2[i]) {
+            res += 0;
+        } else {
+            res += 1;
+        }
+    }
+    return parseInt(res, 2);
+}
+
