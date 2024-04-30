@@ -84,7 +84,9 @@ export default {
         htmlUrl: "",
         m3u8Url: "",
         name: "",
-        audioUrl: ''
+        audioUrl: '',
+        // m3u8 格式，mp4格式， videoAndAudio格式（适用于哔哩哔哩和好看视频）
+        videoType: 'm3u8',
       },
       rules: {
         m3u8Url: [
@@ -132,7 +134,7 @@ export default {
                 await this.startAnalysis()
               }
             }
-            const result = await window.electronAPI.createVideoDownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath, this.form.htmlUrl, this.form.audioUrl)
+            const result = await window.electronAPI.createVideoDownloadTask(this.form.m3u8Url, this.form.name, this.downloadPath, this.form.htmlUrl, this.form.audioUrl, this.form.videoType)
             if (result === 'success') {
               useService('getM3u8LoadingList')
               this.changeTab('loading')
@@ -178,6 +180,7 @@ export default {
       this.form.name = ''
       this.form.m3u8Url = ''
       this.form.audioUrl = ''
+      this.form.videoType = 'm3u8'
       this.form.htmlUrl = ''
       this.message = {
         status: 'success',
@@ -252,6 +255,7 @@ export default {
             this.addErrorUrlFun()
           } else if (info.videoUrl) {
             this.form.m3u8Url = info.videoUrl
+            console.log(info)
             if (info.audioUrl) {
               this.form.audioUrl = info.audioUrl
             } else {
@@ -259,6 +263,9 @@ export default {
             }
             if (info.title) {
               this.form.name = info.title
+            }
+            if(info.videoType) {
+              this.form.videoType = info.videoType
             }
             this.message = {
               content: "网页解析完成，发现可下载的链接。",
@@ -295,6 +302,7 @@ export default {
     setHtmlUrl(url, name) {
       this.form.m3u8Url = ''
       this.form.audioUrl = ''
+      this.form.videoType = 'm3u8'
       this.message = {
         status: 'success',
         content: ''

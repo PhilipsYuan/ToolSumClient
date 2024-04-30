@@ -18,13 +18,13 @@ ipcMain.handle('create-video-download-task', createVideoDownloadTask);
  * isUpdate: 判断是更新还是创建
  * loadingId： 是更新的下载任务的Id
  */
- export async function createVideoDownloadTask(event, url, name, outPath, htmlUrl, audioUrl, isUpdate = false, loadingId) {
+ export async function createVideoDownloadTask(event, url, name, outPath, htmlUrl, audioUrl, videoType, isUpdate = false, loadingId) {
     makeDir(outPath)
      if(/magnet:/.test(url)) {
          return await createMagnetDownloadTask(event, url, name, outPath, htmlUrl, audioUrl)
-     } else if(/bilivideo/.test(url) || (url && audioUrl)) {
+     } else if(videoType === 'videoAndAudio') {
          return await createBiliVideoDownloadTask(event, url, name, outPath, htmlUrl, audioUrl, isUpdate, loadingId)
-    } else if(/\.mp4/.test(url)) {
+    } else if(videoType === 'mp4') {
        return await createMp4VideoDownloadTask(event, url, name, outPath, htmlUrl, audioUrl, isUpdate, loadingId)
      } else {
          return await createM3u8DownloadTask(event, url, name, outPath, htmlUrl, audioUrl, isUpdate, loadingId)

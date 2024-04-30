@@ -23,7 +23,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     openDirectoryAndFile: (path) => ipcRenderer.invoke('open-directory-and-file', path),
     getSearchResult: (key) => ipcRenderer.invoke('get-search-result', key),
     openSearchWindow: (key) => ipcRenderer.invoke('open-search-window', key),
-    createVideoDownloadTask: (url, name, outPath, htmlUrl, audioUrl) => ipcRenderer.invoke('create-video-download-task', url, name, outPath, htmlUrl, audioUrl),
+    createVideoDownloadTask: (url, name, outPath, htmlUrl, audioUrl, videoType) => ipcRenderer.invoke('create-video-download-task', url, name, outPath, htmlUrl, audioUrl, videoType),
     checkFileIsExist: (filePath) => ipcRenderer.invoke('check-file-is-exist', filePath),
     openVideoPlayPage: (videoPath, videoName, audioUrl) => ipcRenderer.invoke('open-video-play-page', videoPath, videoName, audioUrl),
     checkShowDisclaimer: () => ipcRenderer.invoke('check-show-disclaimer'),

@@ -26,7 +26,7 @@ export function getTencentTVDownloadLink(htmlUrl) {
             if(result === 'error') {
                 return 'error'
             } else {
-                return {title: result.title, videoUrl: result.m3u8Url}
+                return {title: result.title, videoUrl: result.m3u8Url, videoType: result.videoType || 'm3u8'}
             }
         })
 }
@@ -34,6 +34,7 @@ export function getTencentTVDownloadLink(htmlUrl) {
 async function getM3u8Link(htmlUrl) {
     let m3u8Url = null
     let title = null
+    let videoType = null
     const browser = await pie.connect(app, puppeteer);
     const window = new BrowserWindow({
         show: false, width: 900, height: 600, webPreferences: {
@@ -55,8 +56,9 @@ async function getM3u8Link(htmlUrl) {
                 const vid = getVid(htmlUrl)
                 const info = await getUrlAndTitle(url, post, vid)
                 if(info) {
-                    m3u8Url = info.m3u8Url
-                    title = info.title
+                    m3u8Url = info.m3u8Url;
+                    title = info.title;
+                    videoType = info.videoType || 'm3u8'
                 }
             }
         }
@@ -84,7 +86,7 @@ async function getM3u8Link(htmlUrl) {
                             page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
-                            resolve({m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, '')})
+                            resolve({m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, ''), videoType})
                         } else {
                             index++
                         }
@@ -169,7 +171,8 @@ async function getUrlAndTitle (url, post, vid) {
             } else if(viFirst?.fvkey && viFirst?.fn)  {
                 const item = ul.ui[0]
                 const m3u8Url = item.url + viFirst?.fn + '?vkey=' + viFirst?.fvkey
-                return {m3u8Url, title}
+                const videoType = /\.mp4/.test(viFirst?.fn) ? 'mp4' : 'm3u8'
+                return {m3u8Url, title, videoType: videoType}
             } else {
                 return null
             }

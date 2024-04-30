@@ -115,13 +115,13 @@ function getFreeVideo(tvId, title, cookie) {
                         return {videoUrl: m3u8Url, title: title}
                     } else {
                         const m3u8Url = await createM3u8Url(text, tvId)
-                        return {videoUrl: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, '')}
+                        return {videoUrl: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, ''), videoType: 'm3u8'}
                     }
                 } else if(fs) {
                     const perfectTitle = title?.replace(/\//g, '').replace(/\\/g, '') || ''
                     const m3u8Url = await createM3u8UrlBuyFs(fs, tvId, perfectTitle)
                     if(m3u8Url !== 'error') {
-                        return {videoUrl: m3u8Url, title: perfectTitle}
+                        return {videoUrl: m3u8Url, title: perfectTitle, videoType: 'm3u8'}
                     } else {
                         return 'error'
                     }
@@ -133,7 +133,6 @@ function getFreeVideo(tvId, title, cookie) {
             }
         })
         .catch((e) => {
-            console.log(e)
             const filePath = path.resolve(m3u8UrlMgPath, `${id}.m3u8`)
             if(fs.existsSync(filePath)) {
                 fs.unlinkSync(filePath)

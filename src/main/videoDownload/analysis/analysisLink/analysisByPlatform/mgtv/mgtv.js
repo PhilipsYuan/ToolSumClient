@@ -37,7 +37,7 @@ export async function getMgTvDownloadLink(htmlUrl) {
                     return item.disp
                 })
                 if(matchItem && matchItem.disp && matchItem.disp.info) {
-                    return {videoUrl: matchItem.disp.info, title}
+                    return {videoUrl: matchItem.disp.info, title: title?.replace(/\//g, '').replace(/\\/g, ''), videoType: 'm3u8'}
                 } else {
                     return "error"
                 }
@@ -46,7 +46,7 @@ export async function getMgTvDownloadLink(htmlUrl) {
                     return item.disp
                 })
                 if(matchItem && matchItem.disp && matchItem.disp.info) {
-                    return {videoUrl: matchItem.disp.info, title: title?.replace(/\//g, '').replace(/\\/g, '')}
+                    return {videoUrl: matchItem.disp.info, title: title?.replace(/\//g, '').replace(/\\/g, ''), videoType: 'm3u8'}
                 } else {
                     return "error"
                 }

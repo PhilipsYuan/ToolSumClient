@@ -165,5 +165,5 @@ export async function updateDownloadVideo(event, loadingRecordId) {
     item.pause = false
     const result = await getDownloadLinkFromUrl(null, item.htmlUrl)
     const output = await getDownloadSetting().downloadPath
-    await createVideoDownloadTask(null, result.videoUrl, item.name, output, item.htmlUrl, null, true, item.id)
+    await createVideoDownloadTask(null, result.videoUrl, item.name, output, item.htmlUrl, result.audioUrl || '', result.videoType || 'm3u8', true, item.id)
 }

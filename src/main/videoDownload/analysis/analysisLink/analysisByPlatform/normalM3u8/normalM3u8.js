@@ -68,7 +68,7 @@ async function getM3u8Link(htmlUrl) {
                             page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
-                            resolve({m3u8Url: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, '')})
+                            resolve({m3u8Url: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, ''), videoType: 'm3u8'})
                         } else {
                             index++
                         }

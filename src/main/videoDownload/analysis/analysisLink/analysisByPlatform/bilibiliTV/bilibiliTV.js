@@ -60,7 +60,7 @@ function getInfoFromPlayInfo(data) {
         const title = data.match(/title="(.*?)"/)?.[1]?.replaceAll?.(/\\|\/|:|\*|\?|"|<|>|\|/g, '');
 
         if (videoUrl && audioUrl) {
-            return { videoUrl, audioUrl, title };
+            return { videoUrl, audioUrl, title: title?.replace(/\//g, '').replace(/\\/g, ''), videoType: 'videoAndAudio'};
         }
         return 'error'
     }
@@ -107,7 +107,7 @@ async function getInfoFromNextData(data, epId) {
                         const audioUrl = audioItem.baseUrl ?? (audioItem.backupUrl?.[0] ?? audioItem.backup_url?.[0]);
                         const title = data.match(/<title>(.*)<\/title>/)?.[1].split('-')[0].trim();
                         if (videoUrl && audioUrl) {
-                            return {videoUrl, audioUrl, title};
+                            return {videoUrl, audioUrl, title: title?.replace(/\//g, '').replace(/\\/g, ''), videoType: 'videoAndAudio'};
                         } else {
                             return 'error'
                         }
