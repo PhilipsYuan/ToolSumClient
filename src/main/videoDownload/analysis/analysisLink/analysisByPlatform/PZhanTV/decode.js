@@ -2436,7 +2436,6 @@ const params =  secretFun(param1, t , null)
 const randomString = ['6eIZ4cxM5pqzUXcF', '84UZNK33cSVylz6Y', 'jeSWRcTwHyAKwJDB', 'i1hvJx9vuRt5zEBS', '1Yy1KOa75R7cnmkg', '4MVTQQAJlMpUIAiL', 'T0RVp7KIPamrtQ33', '8HbPxhX6fjhhhwok', 'ugvseZc5Kkj8ecmV', 'G7i3OPcfNhBnAYpc']
 
 export function sendRequest(data, host, jwtToken, accessToken) {
-  console.log(data)
   // const time = (new Date()).getTime()
   const time = 1714395648562
   const timeRandom = randomString[time % 10];
