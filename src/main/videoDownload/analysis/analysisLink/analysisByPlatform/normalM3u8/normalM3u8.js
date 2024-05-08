@@ -30,6 +30,8 @@ async function getM3u8Link(htmlUrl) {
             preload: path.join(__dirname, 'preload.js')
         }
     });
+    window.webContents.userAgent = getUserAgent(htmlUrl)
+    window.webContents.setUserAgent(getUserAgent(htmlUrl));
     const page = await global.pie.getPage(browser, window)
     await page.setViewport({"width": 475, "height": 867, "isMobile": true})
     // 启动request拦截器。拦截一些没有用的请求
