@@ -23,6 +23,7 @@ async function getM3u8Link(htmlUrl) {
         show: false, width: 900, height: 600, webPreferences: {
             devTools: true,
             webSecurity: false,
+            nodeIntegration: true,
             allowRunningInsecureContent: true,
             experimentalFeatures: true,
             webviewTag: true,
@@ -30,10 +31,27 @@ async function getM3u8Link(htmlUrl) {
             preload: path.join(__dirname, 'preload.js')
         }
     });
+    // window.webContents.openDevTools();
     window.webContents.userAgent = getUserAgent(htmlUrl)
     window.webContents.setUserAgent(getUserAgent(htmlUrl));
     const page = await global.pie.getPage(browser, window)
     await page.setViewport({"width": 475, "height": 867, "isMobile": true})
+
+    page.on('requestfinished', async(request) => {
+        const url = request.url()
+        if(url === htmlUrl) {
+            await page.evaluate(() => {
+                console.log('here')
+                Object.defineProperty(navigator, 'platform', {
+                    get: function() {
+                        return 'iPhone';
+                    }
+                });
+            })
+        }
+
+    })
+
     // 启动request拦截器。拦截一些没有用的请求
     await page.setRequestInterception(true)
     page.on('request', (request) => {
@@ -46,6 +64,7 @@ async function getM3u8Link(htmlUrl) {
             request.continue();
         }
     });
+
     async function responseFun (response) {
         const url = response.url()
         if (/m3u8/.test(url)) {
