@@ -15,7 +15,6 @@ export function getNormalM3u8Link(htmlUrl) {
         })
 }
 
-
 async function getM3u8Link(htmlUrl) {
     let m3u8Url = null
     const browser = await pie.connect(app, puppeteer);
@@ -34,6 +33,7 @@ async function getM3u8Link(htmlUrl) {
     // window.webContents.openDevTools();
     window.webContents.userAgent = getUserAgent(htmlUrl)
     window.webContents.setUserAgent(getUserAgent(htmlUrl));
+
     const page = await global.pie.getPage(browser, window)
     await page.setViewport({"width": 475, "height": 867, "isMobile": true})
 
@@ -41,7 +41,6 @@ async function getM3u8Link(htmlUrl) {
         const url = request.url()
         if(url === htmlUrl) {
             await page.evaluate(() => {
-                console.log('here')
                 Object.defineProperty(navigator, 'platform', {
                     get: function() {
                         return 'iPhone';
