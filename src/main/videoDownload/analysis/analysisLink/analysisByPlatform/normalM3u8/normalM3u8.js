@@ -48,7 +48,6 @@ async function getM3u8Link(htmlUrl) {
                 });
             })
         }
-
     })
 
     // 启动request拦截器。拦截一些没有用的请求
