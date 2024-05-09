@@ -33,6 +33,7 @@ import {getUrlParams} from "../../../utils/url";
 import { addService } from "../../../service/service";
 import { playVideoAndAudio } from './videoAndAudioPlay'
 import {playPZhan} from "./playPzhan";
+import axios from '../../../utils/axios'
 videoJs.addLanguage('zh-CN', zhCNJson)
 export default {
   name: "videoPlayPage",
@@ -72,7 +73,8 @@ export default {
       } else if(/51learn\.xyz/.test(this.videoSrc)) {
         playPZhan(this.$refs.myVideo, this.videoSrc)
       } else {
-        const json = /\.mp4/.test(this.videoSrc) ? {
+        const videoType = await this.checkVideoType()
+        const json = videoType === 'mp4' ? {
           src: this.videoSrc,
           type: 'video/mp4',
           codecs: 'avc1'
@@ -93,6 +95,23 @@ export default {
     },
     closeWindow() {
       window.electronAPI.closeVideoPlayWindow()
+    },
+    async checkVideoType() {
+      if(/file:\/\//.test(this.videoSrc)) {
+        if(/\.mp4/.test(this.videoSrc)) {
+          return 'mp4'
+        } else {
+          return 'm3u8'
+        }
+      } else {
+        const response = await axios.options(this.videoSrc)
+        const contentType = response.headers.getContentType();
+        if(/mp4/.test(contentType)) {
+          return 'mp4'
+        } else {
+          return 'm3u8'
+        }
+      }
     }
   }
 }

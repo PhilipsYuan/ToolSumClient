@@ -10,13 +10,14 @@ export function getNormalM3u8Link(htmlUrl) {
             if(result === 'error') {
                 return 'error'
             } else {
-                return {title: result.title, videoUrl: result.m3u8Url}
+                return {title: result.title, videoUrl: result.m3u8Url, videoType: result.videoType || 'm3u8'}
             }
         })
 }
 
 async function getM3u8Link(htmlUrl) {
     let m3u8Url = null
+    let mp4Url = null
     const browser = await pie.connect(app, puppeteer);
     const window = new BrowserWindow({
         show: false, width: 900, height: 600, webPreferences: {
@@ -69,6 +70,8 @@ async function getM3u8Link(htmlUrl) {
             const text = await response.text()
             if(/#EXT-X-ENDLIST|#EXTM3U/.test(text))
                 m3u8Url = url
+        } else if(response.headers()['content-type'] === 'video/mp4') {
+            mp4Url = url
         }
     }
     page.on('response', responseFun);
@@ -83,11 +86,16 @@ async function getM3u8Link(htmlUrl) {
                     let index = 0
                     const interval = setInterval(() => {
                         console.log(`检测次数：${index + 1}`)
-                        if (m3u8Url || index > 10) {
+                        if (m3u8Url || index > 12) {
                             page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
                             resolve({m3u8Url: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, ''), videoType: 'm3u8'})
+                        } else if(index > 6 && mp4Url) {
+                            page.removeListener('response', responseFun);
+                            clearInterval(interval);
+                            window && window.destroy();
+                            resolve({m3u8Url: mp4Url, title: title?.replace(/\//g, '').replace(/\\/g, ''), videoType: 'mp4'})
                         } else {
                             index++
                         }
