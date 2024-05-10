@@ -33,7 +33,7 @@ import {getUrlParams} from "../../../utils/url";
 import { addService } from "../../../service/service";
 import { playVideoAndAudio } from './videoAndAudioPlay'
 import {playPZhan} from "./playPzhan";
-import axios from '../../../utils/axios'
+import axios from 'axios'
 videoJs.addLanguage('zh-CN', zhCNJson)
 export default {
   name: "videoPlayPage",
@@ -104,13 +104,22 @@ export default {
           return 'm3u8'
         }
       } else {
-        const response = await axios.options(this.videoSrc)
-        const contentType = response.headers.getContentType();
-        if(/mp4/.test(contentType)) {
-          return 'mp4'
-        } else {
-          return 'm3u8'
+        try {
+          const response = await axios.options(this.videoSrc)
+          const contentType = response.headers.getContentType();
+          if(/mp4/.test(contentType)) {
+            return 'mp4'
+          } else {
+            return 'm3u8'
+          }
+        } catch(e) {
+          if(/mp4/.test(this.videoSrc)) {
+            return 'mp4'
+          } else {
+            return 'm3u8'
+          }
         }
+
       }
     }
   }
