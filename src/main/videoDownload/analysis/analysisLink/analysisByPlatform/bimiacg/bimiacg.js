@@ -6,6 +6,7 @@ import { isBlackRequest } from '../../../../../util/const/abortRequest'
 import { getUserAgent} from "../../../../../util/const/userAgentSetting";
 import fs from "fs";
 import {makeDir} from "../../../../../util/fs";
+import {Parser} from 'm3u8-parser'
 const basePath = app.getPath('userData')
 const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
 makeDir(tempM3u8UrlPath)
@@ -35,7 +36,7 @@ async function getM3u8Link(htmlUrl) {
       allowRunningInsecureContent: true,
       experimentalFeatures: true,
       webviewTag: true,
-      autoplayPolicy: "document-user-activation-required",
+      autoplayPolicy: "user-gesture-required",
       preload: path.join(__dirname, 'preload.js')
     }
   });
@@ -100,7 +101,7 @@ async function getM3u8Link(htmlUrl) {
               window && window.destroy();
               const localM3u8Url = await createM3u8Url(m3u8Url, title)
               resolve({m3u8Url: localM3u8Url, title: title?.replace(/;|；|\\|\//g, ''), videoType: 'm3u8'})
-            } else if(index > 6 && mp4Url) {
+            } else if(index > 3 && mp4Url) {
               page.removeListener('response', responseFun);
               clearInterval(interval);
               window && window.destroy();
@@ -127,12 +128,43 @@ async function getM3u8Link(htmlUrl) {
  */
 async function createM3u8Url(m3u8Url, title) {
   const res = await axios.get(m3u8Url)
-  console.log(res.data)
   const perfectTitle = title?.replace(/;|；|\\|\//g, '').substr(0, 8)
-  console.log(perfectTitle)
   const filePath = path.resolve(m3u8UrlMgPath, `${perfectTitle}.m3u8`)
-  // await fs.writeFileSync(filePath, JSON.stringify(json), "utf-8")
-  await fs.writeFileSync(filePath, res.data, "utf-8")
+  const m3u8Data = addBYTERANGEInM3u8(res.data)
+  await fs.writeFileSync(filePath, m3u8Data, "utf-8")
   return filePath
 }
+
+
+function addBYTERANGEInM3u8(m3u8Data) {
+  const parser = new Parser();
+  parser.push(m3u8Data);
+  parser.end();
+  const parsedManifest = parser.manifest;
+  parsedManifest.segments.forEach((item) => {
+    item.byterange = {
+      length: 10000000,
+      offset: 8
+    }
+  })
+  return generateM3U8String(parsedManifest)
+}
+
+function generateM3U8String(manifest) {
+  let result = `#EXTM3U\n`;
+  if (manifest.version) {
+    result += `#EXT-X-VERSION:${manifest.version}\n`;
+  }
+  if (manifest.targetDuration) {
+    result += `#EXT-X-TARGETDURATION:${manifest.targetDuration}\n`;
+  }
+  manifest.segments.forEach(segment => {
+    result += `#EXTINF:${segment.duration},\n#EXT-X-BYTERANGE:${segment.byterange.length}@${segment.byterange.offset}\n${segment.uri}\n`;
+  });
+  if (manifest.endList) {
+    result += `#EXT-X-ENDLIST\n`;
+  }
+  return result;
+}
+
 
