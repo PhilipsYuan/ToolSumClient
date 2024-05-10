@@ -3,6 +3,7 @@ import puppeteer from "../../../../../util/source/puppeteer-core";
 import path from "path";
 import { isBlackRequest } from '../../../../../util/const/abortRequest'
 import { getUserAgent} from "../../../../../util/const/userAgentSetting";
+import { perfectTitleName } from "../../../../../util/url"
 
 export function getNormalM3u8Link(htmlUrl) {
     return getM3u8Link(htmlUrl)
@@ -90,12 +91,12 @@ async function getM3u8Link(htmlUrl) {
                             page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
-                            resolve({m3u8Url: m3u8Url, title: title?.replace(/;|；|\\|\//g, ''), videoType: 'm3u8'})
+                            resolve({m3u8Url: m3u8Url, title: perfectTitleName(title), videoType: 'm3u8'})
                         } else if(index > 6 && mp4Url) {
                             page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
-                            resolve({m3u8Url: mp4Url, title: title?.replace(/;|；|\\|\//g, ''), videoType: 'mp4'})
+                            resolve({m3u8Url: mp4Url, title: perfectTitleName(title), videoType: 'mp4'})
                         } else {
                             index++
                         }

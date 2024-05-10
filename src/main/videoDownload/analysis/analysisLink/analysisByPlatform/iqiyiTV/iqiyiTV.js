@@ -8,7 +8,7 @@ import { createM3u8UrlBuyFs } from './f4vToM3u8'
 // import dayjs from 'dayjs'
 import host from "../../../../../../renderer/src/utils/const/host";
 import {makeDir} from "../../../../../util/fs";
-import { removeUrlParams } from "../../../../../util/url";
+import {perfectTitleName, removeUrlParams} from "../../../../../util/url";
 const basePath = app.getPath('userData')
 const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
 makeDir(tempM3u8UrlPath)
@@ -115,10 +115,10 @@ function getFreeVideo(tvId, title, cookie) {
                         return {videoUrl: m3u8Url, title: title}
                     } else {
                         const m3u8Url = await createM3u8Url(text, tvId)
-                        return {videoUrl: m3u8Url, title: title?.replace(/;|；|\\|\//g, ''), videoType: 'm3u8'}
+                        return {videoUrl: m3u8Url, title: perfectTitleName(title), videoType: 'm3u8'}
                     }
                 } else if(fs) {
-                    const perfectTitle = title?.replace(/;|；|\\|\//g, '') || ''
+                    const perfectTitle = perfectTitleName(title)
                     const m3u8Url = await createM3u8UrlBuyFs(fs, tvId, perfectTitle)
                     if(m3u8Url !== 'error') {
                         return {videoUrl: m3u8Url, title: perfectTitle, videoType: 'm3u8'}
@@ -171,7 +171,7 @@ function getVid(htmlUrl) {
                 title = data.match(/name":"([^"]+)","playUrl"/)?.[1] || data.match(/<title>([^<]*)<\/title>/)?.[1]
             }
             const payMark = data.match(/"payMark":(\d+),/)?.[1] || '';
-            return {tvId, vid, title: title?.replace(/;|；|\\|\//g, ''), payMark}
+            return {tvId, vid, title: perfectTitleName(title), payMark}
         })
         .catch((e) => {
             return null

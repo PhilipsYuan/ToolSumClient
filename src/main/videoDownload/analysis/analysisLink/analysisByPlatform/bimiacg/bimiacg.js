@@ -7,6 +7,7 @@ import { getUserAgent} from "../../../../../util/const/userAgentSetting";
 import fs from "fs";
 import {makeDir} from "../../../../../util/fs";
 import {Parser} from 'm3u8-parser'
+import {perfectTitleName} from "../../../../../util/url";
 const basePath = app.getPath('userData')
 const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
 makeDir(tempM3u8UrlPath)
@@ -100,12 +101,12 @@ async function getM3u8Link(htmlUrl) {
               clearInterval(interval);
               window && window.destroy();
               const localM3u8Url = await createM3u8Url(m3u8Url, title)
-              resolve({m3u8Url: localM3u8Url, title: title?.replace(/;|；|\\|\//g, ''), videoType: 'm3u8'})
+              resolve({m3u8Url: localM3u8Url, title: perfectTitleName(title), videoType: 'm3u8'})
             } else if(index > 3 && mp4Url) {
               page.removeListener('response', responseFun);
               clearInterval(interval);
               window && window.destroy();
-              resolve({m3u8Url: mp4Url, title: title?.replace(/;|；|\\|\//g, ''), videoType: 'mp4'})
+              resolve({m3u8Url: mp4Url, title: perfectTitleName(title), videoType: 'mp4'})
             } else {
               index++
             }
@@ -128,7 +129,7 @@ async function getM3u8Link(htmlUrl) {
  */
 async function createM3u8Url(m3u8Url, title) {
   const res = await axios.get(m3u8Url)
-  const perfectTitle = title?.replace(/;|；|\\|\//g, '').substr(0, 8)
+  const perfectTitle = perfectTitleName(title).substr(0, 8)
   const filePath = path.resolve(m3u8UrlMgPath, `${perfectTitle}.m3u8`)
   const m3u8Data = addBYTERANGEInM3u8(res.data)
   await fs.writeFileSync(filePath, m3u8Data, "utf-8")

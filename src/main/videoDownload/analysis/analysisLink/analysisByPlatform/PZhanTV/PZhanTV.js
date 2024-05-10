@@ -1,4 +1,4 @@
-import {getUrlParams} from "../../../../../util/url";
+import {getUrlParams, perfectTitleName} from "../../../../../util/url";
 import {sendRequest, decryptRequestData, randomCode} from "./decode";
 let jwtToken = null
 let accessToken = null
@@ -42,7 +42,7 @@ export async function getPZhanTVDownloadLink (htmlUrl) {
     const perfectVideoInfo = decryptRequestData(videoInfo)
     if(perfectVideoInfo?.result?.vod?.vodFullPlayUrl?.[0]?.addr) {
       const url = `https://qaa.51learn.xyz${perfectVideoInfo.result.vod.vodFullPlayUrl[0].addr}`
-      return {videoUrl: url, title: perfectVideoInfo?.result?.vod?.title?.replace(/;|；|\\|\//g, '') || '', videoType: 'm3u8'};
+      return {videoUrl: url, title: perfectTitleName(perfectVideoInfo?.result?.vod?.title), videoType: 'm3u8'};
     } else {
       return "error"
     }

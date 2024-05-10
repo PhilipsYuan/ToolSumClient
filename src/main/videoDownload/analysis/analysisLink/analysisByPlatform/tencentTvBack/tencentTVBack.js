@@ -7,6 +7,7 @@ import {getPlayList} from "../../../../../util/m3u8Parse";
 import { decryptProcess } from "./getVinFo";
 import { getVideoInfo } from './addLoginVersion'
 import axios from "../../../../../util/source/axios";
+import {perfectTitleName} from "../../../../../util/url";
 
 /**
  * 如果是免费的视频，m3u8文件在proxyhttp直接获取。
@@ -86,7 +87,7 @@ async function getM3u8Link(htmlUrl) {
                             page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
-                            resolve({m3u8Url, title: title?.replace(/;|；|\\|\//g, ''), videoType})
+                            resolve({m3u8Url, title: perfectTitleName(title), videoType})
                         } else {
                             index++
                         }

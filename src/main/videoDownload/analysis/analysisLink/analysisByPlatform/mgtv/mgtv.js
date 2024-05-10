@@ -1,6 +1,7 @@
 import axios from '../../../../../util/source/axios'
 // import dayjs from "dayjs";
 import host from "../../../../../../renderer/src/utils/const/host";
+import {perfectTitleName} from "../../../../../util/url";
 
 // let cookieInfo = null
 
@@ -37,7 +38,7 @@ export async function getMgTvDownloadLink(htmlUrl) {
                     return item.disp
                 })
                 if(matchItem && matchItem.disp && matchItem.disp.info) {
-                    return {videoUrl: matchItem.disp.info, title: title?.replace(/;|；|\\|\//g, ''), videoType: 'm3u8'}
+                    return {videoUrl: matchItem.disp.info, title: perfectTitleName(title), videoType: 'm3u8'}
                 } else {
                     return "error"
                 }
@@ -46,7 +47,7 @@ export async function getMgTvDownloadLink(htmlUrl) {
                     return item.disp
                 })
                 if(matchItem && matchItem.disp && matchItem.disp.info) {
-                    return {videoUrl: matchItem.disp.info, title: title?.replace(/;|；|\\|\//g, ''), videoType: 'm3u8'}
+                    return {videoUrl: matchItem.disp.info, title: perfectTitleName(title), videoType: 'm3u8'}
                 } else {
                     return "error"
                 }

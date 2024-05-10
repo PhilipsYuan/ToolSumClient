@@ -1,5 +1,6 @@
 import {app, BrowserWindow} from "electron";
 import puppeteer from "../../../../../util/source/puppeteer-core";
+import {perfectTitleName} from "../../../../../util/url";
 
 export async function getHaoKanTVDownloadLink(htmlUrl) {
   return getM3u8Link(htmlUrl)
@@ -46,7 +47,7 @@ async function getM3u8Link(htmlUrl) {
         }
         windowBrowser && windowBrowser.destroy();
         if(videoUrl) {
-          return {videoUrl, audioUrl, title: title?.replace(/;|；|\\|\//g, ''), videoType: 'videoAndAudio'};
+          return {videoUrl, audioUrl, title: perfectTitleName(title), videoType: 'videoAndAudio'};
         } else {
           return 'error'
         }

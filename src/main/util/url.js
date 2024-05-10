@@ -15,3 +15,7 @@ export function getUrlParams(url) {
 
     return params;
 }
+
+export function perfectTitleName(title) {
+    return title?.replace(/[^\w\u4e00-\u9fa5]/g, '') || '';
+}
