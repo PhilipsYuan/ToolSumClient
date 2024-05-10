@@ -46,7 +46,7 @@ async function getM3u8Link(htmlUrl) {
         }
         windowBrowser && windowBrowser.destroy();
         if(videoUrl) {
-          return {videoUrl, audioUrl, title: title?.replace(/\//g, '').replace(/\\/g, ''), videoType: 'videoAndAudio'};
+          return {videoUrl, audioUrl, title: title?.replace(/;|；|\\|\//g, ''), videoType: 'videoAndAudio'};
         } else {
           return 'error'
         }

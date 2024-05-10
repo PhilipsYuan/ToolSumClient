@@ -90,12 +90,12 @@ async function getM3u8Link(htmlUrl) {
                             page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
-                            resolve({m3u8Url: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, ''), videoType: 'm3u8'})
+                            resolve({m3u8Url: m3u8Url, title: title?.replace(/;|；|\\|\//g, ''), videoType: 'm3u8'})
                         } else if(index > 6 && mp4Url) {
                             page.removeListener('response', responseFun);
                             clearInterval(interval);
                             window && window.destroy();
-                            resolve({m3u8Url: mp4Url, title: title?.replace(/\//g, '').replace(/\\/g, ''), videoType: 'mp4'})
+                            resolve({m3u8Url: mp4Url, title: title?.replace(/;|；|\\|\//g, ''), videoType: 'mp4'})
                         } else {
                             index++
                         }

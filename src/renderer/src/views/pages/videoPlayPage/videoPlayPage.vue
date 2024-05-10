@@ -27,7 +27,7 @@
 <script>
 import 'video.js/dist/video-js.css'
 import videoJs from 'video.js'
-import '@videojs/http-streaming'
+import '../../../utils/source/videojs-http-streaming.es'
 import zhCNJson from  'video.js/dist/lang/zh-CN.json'
 import {getUrlParams} from "../../../utils/url";
 import { addService } from "../../../service/service";

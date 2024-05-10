@@ -115,10 +115,10 @@ function getFreeVideo(tvId, title, cookie) {
                         return {videoUrl: m3u8Url, title: title}
                     } else {
                         const m3u8Url = await createM3u8Url(text, tvId)
-                        return {videoUrl: m3u8Url, title: title?.replace(/\//g, '').replace(/\\/g, ''), videoType: 'm3u8'}
+                        return {videoUrl: m3u8Url, title: title?.replace(/;|；|\\|\//g, ''), videoType: 'm3u8'}
                     }
                 } else if(fs) {
-                    const perfectTitle = title?.replace(/\//g, '').replace(/\\/g, '') || ''
+                    const perfectTitle = title?.replace(/;|；|\\|\//g, '') || ''
                     const m3u8Url = await createM3u8UrlBuyFs(fs, tvId, perfectTitle)
                     if(m3u8Url !== 'error') {
                         return {videoUrl: m3u8Url, title: perfectTitle, videoType: 'm3u8'}
@@ -171,7 +171,7 @@ function getVid(htmlUrl) {
                 title = data.match(/name":"([^"]+)","playUrl"/)?.[1] || data.match(/<title>([^<]*)<\/title>/)?.[1]
             }
             const payMark = data.match(/"payMark":(\d+),/)?.[1] || '';
-            return {tvId, vid, title: title?.replace(/\//g, '').replace(/\\/g, ''), payMark}
+            return {tvId, vid, title: title?.replace(/;|；|\\|\//g, ''), payMark}
         })
         .catch((e) => {
             return null
