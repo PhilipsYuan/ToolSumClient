@@ -52,6 +52,12 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
 
+app.on('certificate-error', function(event, webContents, url, error,
+                                     certificate, callback) {
+  event.preventDefault();
+  callback(true);
+});
+
 
 app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the

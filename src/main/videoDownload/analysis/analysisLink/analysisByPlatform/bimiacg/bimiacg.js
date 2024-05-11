@@ -4,6 +4,7 @@ import puppeteer from "../../../../../util/source/puppeteer-core";
 import path from "path";
 import { isBlackRequest } from '../../../../../util/const/abortRequest'
 import { getUserAgent} from "../../../../../util/const/userAgentSetting";
+import { generateM3U8String } from "../../../../../util/m3u8Parse"
 import fs from "fs";
 import {makeDir} from "../../../../../util/fs";
 import {Parser} from 'm3u8-parser'
@@ -76,10 +77,9 @@ async function getM3u8Link(htmlUrl) {
 
   async function responseFun (response) {
     const url = response.url()
-    if (/m3u8/.test(url)) {
-      const text = await response.text()
-      if(/#EXT-X-ENDLIST|#EXTM3U/.test(text))
-        m3u8Url = url
+    const text = await response.text()
+    if(/#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
+      m3u8Url = url
     } else if(response.headers()['content-type'] === 'video/mp4') {
       mp4Url = url
     }
@@ -100,7 +100,10 @@ async function getM3u8Link(htmlUrl) {
               page.removeListener('response', responseFun);
               clearInterval(interval);
               window && window.destroy();
-              const localM3u8Url = await createM3u8Url(m3u8Url, title)
+              let localM3u8Url = m3u8Url
+              if(m3u8Url) {
+                localM3u8Url = await createM3u8Url(m3u8Url, title)
+              }
               resolve({m3u8Url: localM3u8Url, title: perfectTitleName(title), videoType: 'm3u8'})
             } else if(index > 3 && mp4Url) {
               page.removeListener('response', responseFun);
@@ -150,22 +153,4 @@ function addBYTERANGEInM3u8(m3u8Data) {
   })
   return generateM3U8String(parsedManifest)
 }
-
-function generateM3U8String(manifest) {
-  let result = `#EXTM3U\n`;
-  if (manifest.version) {
-    result += `#EXT-X-VERSION:${manifest.version}\n`;
-  }
-  if (manifest.targetDuration) {
-    result += `#EXT-X-TARGETDURATION:${manifest.targetDuration}\n`;
-  }
-  manifest.segments.forEach(segment => {
-    result += `#EXTINF:${segment.duration},\n#EXT-X-BYTERANGE:${segment.byterange.length}@${segment.byterange.offset}\n${segment.uri}\n`;
-  });
-  if (manifest.endList) {
-    result += `#EXT-X-ENDLIST\n`;
-  }
-  return result;
-}
-
 

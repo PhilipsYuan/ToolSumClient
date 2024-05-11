@@ -45,7 +45,7 @@ export function getCorrectM3u8File(url) {
  * @param targetUrl
  * @returns {string|*}
  */
-function getCorrectAnotherM3u8(sourceUrl, targetUrl) {
+export function getCorrectAnotherM3u8(sourceUrl, targetUrl) {
     if(/^http/.test(targetUrl)) {
         return targetUrl
     } else {
@@ -130,4 +130,26 @@ export function getPlayList(data) {
     } else {
         return []
     }
+}
+
+/**
+ *
+ * @param manifest 是 m3u8-parser 获取的实例
+ * @returns {string}
+ */
+export function generateM3U8String(manifest) {
+    let result = `#EXTM3U\n`;
+    if (manifest.version) {
+        result += `#EXT-X-VERSION:${manifest.version}\n`;
+    }
+    if (manifest.targetDuration) {
+        result += `#EXT-X-TARGETDURATION:${manifest.targetDuration}\n`;
+    }
+    manifest.segments.forEach(segment => {
+        result += `#EXTINF:${segment.duration},\n#EXT-X-BYTERANGE:${segment.byterange.length}@${segment.byterange.offset}\n${segment.uri}\n`;
+    });
+    if (manifest.endList) {
+        result += `#EXT-X-ENDLIST\n`;
+    }
+    return result;
 }
