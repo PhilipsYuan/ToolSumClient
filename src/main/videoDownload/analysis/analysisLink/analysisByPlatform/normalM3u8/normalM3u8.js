@@ -29,6 +29,7 @@ export function getNormalM3u8Link(htmlUrl) {
 async function getM3u8Link(htmlUrl) {
     let m3u8Url = null
     let mp4Url = null
+    let m3u8Data = null
     const browser = await pie.connect(app, puppeteer);
     const window = new BrowserWindow({
         show: false, width: 900, height: 600, webPreferences: {
@@ -80,6 +81,7 @@ async function getM3u8Link(htmlUrl) {
         const text = await response.text()
         if(/#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
             m3u8Url = url
+            m3u8Data = text
         } else if(response.headers()['content-type'] === 'video/mp4') {
             mp4Url = url
         }
@@ -102,7 +104,7 @@ async function getM3u8Link(htmlUrl) {
                             window && window.destroy();
                             let localM3u8Url = m3u8Url
                             if(m3u8Url) {
-                                localM3u8Url = await getPerfectM3u8Url(m3u8Url, title)
+                                localM3u8Url = await getPerfectM3u8Url(m3u8Url, m3u8Data, title)
                             }
                             resolve({m3u8Url: localM3u8Url, title: perfectTitleName(title), videoType: 'm3u8'})
                         } else if(index > 6 && mp4Url) {
@@ -127,11 +129,7 @@ async function getM3u8Link(htmlUrl) {
     }
 }
 
-async function getPerfectM3u8Url(m3u8Url, title) {
-    const res = await axios.get(m3u8Url, {
-        timeout: 60000,
-    })
-    const m3u8Data = res.data
+async function getPerfectM3u8Url(m3u8Url, m3u8Data, title) {
     const parser = new Parser();
     parser.push(m3u8Data);
     parser.end();
