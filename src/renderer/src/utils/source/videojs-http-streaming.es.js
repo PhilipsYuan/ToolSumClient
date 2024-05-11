@@ -14787,7 +14787,7 @@ const handleSegmentBytes = ({
     segment.container = detectContainerForBytes(bytesAsUint8Array);
   }
 
-  if (segment.container !== 'ts' && segment.container !== 'aac' && segment.container !== 'h264') {
+  if (segment.container !== 'ts' && segment.container !== 'aac' && segment.container !== 'h264' && segment.container !== '') {
     trackInfoFn(segment, {
       hasAudio: false,
       hasVideo: false
