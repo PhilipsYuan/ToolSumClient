@@ -216,8 +216,8 @@ function getVid (htmlUrl) {
 function buildAbsoluteURL(e, t, r= {alwaysNormalize: true}) {
     const n = /^([^\/?#]*)([^]*)$/;
     if (r = r || {},
-        e = e.trim(),
-        !(t = t.trim())) {
+        e = e?.trim(),
+        !(t = t?.trim())) {
         if (!r.alwaysNormalize)
             return e;
         const i = parseURL(e);

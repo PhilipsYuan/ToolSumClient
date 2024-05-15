@@ -141,6 +141,7 @@ export default {
               this.createLoading = false
               await this.costUserBenefit()
             } else {
+              this.addErrorUrlFun()
               this.createLoading = false
               this.getM3u8FileFailureMessage('error', '下载资源失败，请重新尝试或者更换个下载资源!')
             }
@@ -344,10 +345,16 @@ export default {
     },
     addErrorUrlFun() {
       if(this.form.htmlUrl) {
+        let errorUrl = null
+        if(this.form.m3u8Url) {
+          errorUrl = this.form.htmlUrl + '|' + this.form.m3u8Url
+        } else {
+          errorUrl = this.form.htmlUrl
+        }
         let user = getUser()
         let data = {
           uid: user?.uid || 'noUser',
-          errorUrl: this.form.htmlUrl.substring(0, 395)
+          errorUrl: errorUrl.substring(0, 395)
         }
         addErrorUrl(data)
       }

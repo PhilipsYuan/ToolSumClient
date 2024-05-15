@@ -79,7 +79,9 @@ async function getM3u8Link(htmlUrl) {
     async function responseFun (response) {
         const url = response.url()
         const text = await response.text()
-        if(response.headers()['content-type'] !== 'application/javascript' && /#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
+        if(!/javascript/.test(response.headers()['content-type'])
+          && !/html/.test(response.headers()['content-type'])
+          && /#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
             m3u8Url = url
             m3u8Data = text
         } else if(response.headers()['content-type'] === 'video/mp4') {
