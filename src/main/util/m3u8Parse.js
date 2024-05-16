@@ -6,7 +6,7 @@ import {Parser} from 'm3u8-parser'
 export function getCorrectM3u8File(url) {
     const headers = getHeaders(url)
     return axios.get(url, {
-        timeout: 60000,
+        timeout: 3000,
         headers
     })
       .then((res) => {
