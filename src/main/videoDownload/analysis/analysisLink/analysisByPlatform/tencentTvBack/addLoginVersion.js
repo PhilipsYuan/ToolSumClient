@@ -40,8 +40,9 @@ function changeVinfoparam(vinfo, loginInfo) {
     const bb = cc.replace('logintoken=', `logintoken=${loginToken}`)
     // hevclv: 28 表示h265格式， hevclv:31 表示h264格式
     const dd = bb.replace(/hevclv=[^&]*&/, 'hevclv=31&')
-    const ee = dd.replace(/&drm=\d+$/, '&drm=40')
-    return ee
+    // 这个问题需要详细的调查，drm到底有什么影响，有的无法访问。 先关闭支持庆余年
+    // const ee = dd.replace(/&drm=\d+$/, '&drm=40')
+    return dd
 }
 
 function changeSspAdParam(sspAdParam, loginInfo) {
