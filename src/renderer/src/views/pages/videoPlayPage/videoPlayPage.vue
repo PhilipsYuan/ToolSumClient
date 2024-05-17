@@ -45,12 +45,14 @@ export default {
       audioSrc: '',
       audioElement: '',
       isMac: false,
+      sourceVideoType: null
     }
   },
   mounted() {
     addService('changeVideoPlayItem', this.changeVideoPlayItem.bind(this))
     this.isMac = /macintosh|mac os x/i.test(navigator.userAgent);
     const params = getUrlParams(window.location.href)
+    this.sourceVideoType = params.videoType
     if(/http/.test(params.view)) {
       this.videoSrc = params.view
     } else {
@@ -73,8 +75,10 @@ export default {
       } else if(/51learn\.xyz/.test(this.videoSrc)) {
         playPZhan(this.$refs.myVideo, this.videoSrc)
       } else {
-        const videoType = await this.checkVideoType()
-        const json = videoType === 'mp4' ? {
+        if(!this.sourceVideoType || (this.sourceVideoType != 'mp4' && this.sourceVideoType != 'm3u8')) {
+          this.sourceVideoType = await this.checkVideoType()
+        }
+        const json = this.sourceVideoType === 'mp4' ? {
           src: this.videoSrc,
           type: 'video/mp4',
           codecs: 'avc1'
@@ -105,12 +109,18 @@ export default {
         }
       } else {
         try {
-          const response = await axios.options(this.videoSrc)
-          const contentType = response.headers.getContentType();
-          if(/mp4/.test(contentType)) {
+          if(/\.mp4/.test(this.videoSrc)) {
             return 'mp4'
-          } else {
+          } else if(/\.m3u8/.test(this.videoSrc)) {
             return 'm3u8'
+          } else {
+            const response = await axios.options(this.videoSrc)
+            const contentType = response.headers.getContentType();
+            if(/mp4/.test(contentType)) {
+              return 'mp4'
+            } else {
+              return 'm3u8'
+            }
           }
         } catch(e) {
           if(/mp4/.test(this.videoSrc)) {
@@ -119,7 +129,6 @@ export default {
             return 'm3u8'
           }
         }
-
       }
     }
   }

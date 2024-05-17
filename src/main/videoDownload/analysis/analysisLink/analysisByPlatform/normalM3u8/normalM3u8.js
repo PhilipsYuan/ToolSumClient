@@ -78,14 +78,16 @@ async function getM3u8Link(htmlUrl) {
 
     async function responseFun (response) {
         const url = response.url()
-        const text = await response.text()
-        if(!/javascript/.test(response.headers()['content-type'])
-          && !/html/.test(response.headers()['content-type'])
-          && /#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
-            m3u8Url = url
-            m3u8Data = text
-        } else if(response.headers()['content-type'] === 'video/mp4') {
+        const contentType = response.headers()['content-type']
+        if(contentType == 'video/mp4') {
             mp4Url = url
+        } else if (!/javascript/.test(contentType)
+          && !/html/.test(contentType)) {
+            const text = await response.text()
+            if(/#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
+                m3u8Url = url
+                m3u8Data = text
+            }
         }
     }
     page.on('response', responseFun);

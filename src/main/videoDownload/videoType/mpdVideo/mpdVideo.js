@@ -11,7 +11,7 @@ export async function createMpdVideoDownloadTask(event, url, name, outPath, audi
     const id = shortId.generate()
     const json = {
         id: id,
-        type: 'biliTV',
+        type: 'mpd',
         name: name,
         m3u8Url: url,
         message: {

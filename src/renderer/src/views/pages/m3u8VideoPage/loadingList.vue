@@ -90,7 +90,6 @@ export default {
   },
   async mounted() {
     await this.getLoadingList()
-    console.log(this.list)
     addService("getM3u8LoadingList", this.getLoadingList.bind(this))
     addService("m3u8VideoDownloadSuccess", this.m3u8VideoDownloadSuccess.bind(this))
     addService('deleteM3u8LoadingSuccess', this.deleteSuccess.bind(this))
@@ -110,9 +109,9 @@ export default {
         await this.updateDownloadInfo(item, '打开中...\n之前存储信息已过期，下载信息会被清除。')
         await this.getLoadingList()
         let newItem = this.list.find((i) => i.id === item.id)
-        window.electronAPI.openVideoPlayPage(newItem.m3u8Url, newItem.name, newItem.audioUrl);
+        window.electronAPI.openVideoPlayPage(newItem.m3u8Url, newItem.name, newItem.audioUrl, newItem.type);
       } else {
-        window.electronAPI.openVideoPlayPage(item.m3u8Url, item.name, item.audioUrl);
+        window.electronAPI.openVideoPlayPage(item.m3u8Url, item.name, item.audioUrl, item.type);
       }
     },
 

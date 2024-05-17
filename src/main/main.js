@@ -80,10 +80,11 @@ app.whenReady().then(() => {
   })
   const RequestFilter = {
     urls: ['https://*.mgtv.com/*', 'https://*.bilivideo.cn/*', 'https://*.bilivideo.com/*', 'https://*.smtcdns.com/*',
-    'https://*.bdstatic.com/*']
+    'https://*.bdstatic.com/*', 'https://mpvideo.qpic.cn/*']
   }
   session.defaultSession.webRequest.onBeforeSendHeaders(RequestFilter, (details, callback) => {
     let refer = ''
+    let Origin = ''
     if(/mgtv/.test(details.url)) {
       refer = 'https://www.mgtv.com'
     } else if(/bilivideo/.test(details.url)) {
@@ -92,8 +93,14 @@ app.whenReady().then(() => {
       refer = 'https://v.qq.com/'
     } else  if(/bdstatic\.com/.test(details.url)) {
       refer = 'https://haokan.baidu.com/'
+    } else if(/https:\/\/mpvideo/.test(details.url)) {
+      refer = 'https://mp.weixin.qq.com/'
+      Origin = 'https://mp.weixin.qq.com/'
     }
     details.requestHeaders['Referer'] = refer
+    if(Origin) {
+      details.requestHeaders['Origin'] = Origin
+    }
     callback({ requestHeaders: details.requestHeaders })
   })
 })
