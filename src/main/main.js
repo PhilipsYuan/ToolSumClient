@@ -96,6 +96,7 @@ app.whenReady().then(() => {
     } else if(/https:\/\/mpvideo/.test(details.url)) {
       refer = 'https://mp.weixin.qq.com/'
       Origin = 'https://mp.weixin.qq.com/'
+      details.requestHeaders['Sec-Fetch-Mode'] = 'cors'
     }
     details.requestHeaders['Referer'] = refer
     if(Origin) {
