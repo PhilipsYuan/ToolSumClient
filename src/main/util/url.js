@@ -17,5 +17,5 @@ export function getUrlParams(url) {
 }
 
 export function perfectTitleName(title) {
-    return title?.replace(/[^\w\u4e00-\u9fa5]/g, '') || '';
+    return title?.replace(/[^\w\u4e00-\u9fa5\u3040-\u309F\u30A0-\u30FF]/g, '') || '';
 }

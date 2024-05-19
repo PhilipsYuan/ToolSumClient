@@ -7,6 +7,7 @@ import { getIQiYiTVDownloadLink } from "./analysisByPlatform/iqiyiTV/iqiyiTV";
 import { getHaoKanTVDownloadLink } from './analysisByPlatform/haokan/haokanTV';
 import { getPZhanTVDownloadLink } from "./analysisByPlatform/PZhanTV/PZhanTV";
 import { getBimiacgLink} from './analysisByPlatform/bimiacg/bimiacg'
+import {getInsTVDownloadLink} from "./analysisByPlatform/insTV/insTV";
 import { getTencentTVDownloadLink as test} from "./analysisByPlatform/tencentTV/tencentTV"
 
 ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
@@ -31,6 +32,8 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
             return await getPZhanTVDownloadLink(htmlUrl)
         } else if(/bimiacg/.test(htmlUrl)) {
             return await getBimiacgLink(htmlUrl)
+        } else if(/instv[^.]*\.com/) {
+            return await getInsTVDownloadLink(htmlUrl)
         } else {
             return await getNormalM3u8Link(htmlUrl)
         }
