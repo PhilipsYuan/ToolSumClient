@@ -32,7 +32,7 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
             return await getPZhanTVDownloadLink(htmlUrl)
         } else if(/bimiacg/.test(htmlUrl)) {
             return await getBimiacgLink(htmlUrl)
-        } else if(/instv[^.]*\.com/) {
+        } else if(/instv[^.]*\.com/.test(htmlUrl)) {
             return await getInsTVDownloadLink(htmlUrl)
         } else {
             return await getNormalM3u8Link(htmlUrl)
