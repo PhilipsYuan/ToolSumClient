@@ -6,7 +6,7 @@ import {Parser} from 'm3u8-parser'
 export function getCorrectM3u8File(url) {
     const headers = getHeaders(url)
     return axios.get(url, {
-        timeout: 3000,
+        timeout: 15000,
         headers
     })
       .then((res) => {
@@ -20,7 +20,7 @@ export function getCorrectM3u8File(url) {
               if(parsedManifest?.playlists?.[0]?.uri) {
                   const newM3u8Url = getCorrectAnotherM3u8(url, parsedManifest?.playlists?.[0]?.uri)
                   return axios.get(newM3u8Url, {
-                      timeout: 30000,
+                      timeout: 15000,
                       headers
                   })
                     .then(async (res) => {
