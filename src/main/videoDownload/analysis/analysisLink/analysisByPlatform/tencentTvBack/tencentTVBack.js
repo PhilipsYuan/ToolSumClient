@@ -232,12 +232,16 @@ async function getPerfectUrl(htmlUrl) {
             // 只有cid，而没有vid
             const res = await axios.get(url)
             const window = {}
-            const matchString = res.data.match(/<script>(window\.__PINIA__.*?)<\/script>/)[1]
-            eval(matchString)
-            const vid = window?.__PINIA__?.global?.coverInfo?.video_ids[0];
-            const cid = window?.__PINIA__?.global?.currentCid;
-            if(vid && cid) {
-                return `https://v.qq.com/x/cover/${cid}/${vid}.html`
+            const matchString = res.data.match(/<script>(window\.__PINIA__.*?)<\/script>/)?.[1]
+            if (matchString) {
+                eval(matchString)
+                const vid = window?.__PINIA__?.global?.coverInfo?.video_ids[0];
+                const cid = window?.__PINIA__?.global?.currentCid;
+                if(vid && cid) {
+                    return `https://v.qq.com/x/cover/${cid}/${vid}.html`
+                } else {
+                    return url
+                }
             } else {
                 return url
             }

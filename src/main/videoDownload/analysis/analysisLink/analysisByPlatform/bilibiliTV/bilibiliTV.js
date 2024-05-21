@@ -45,7 +45,7 @@ export async function getBiliTVDownloadLink(htmlUrl) {
 }
 
 function getInfoFromPlayInfo(data) {
-    const infoString = data.match(/<script>window\.__playinfo__=({.*})<\/script><script>/)?.[1]
+    const infoString = data.match(/<script>window\.__playinfo__=(.*?)<\/script>/)?.[1]
     const info = infoString ? JSON.parse(infoString) : null;
     if(info) {
         const videoInfoList = info?.data?.dash?.video
