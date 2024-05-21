@@ -1,3 +1,8 @@
+/**
+ * qq 链接的类型
+ * 1. https://v.qq.com/x/cover/mzc002002kqssyu.html -- 只显示第一集
+ * 2. https://v.qq.com/x/cover/mzc002002kqssyu/y4100wiglir.html --最常见的
+ */
 import {app, BrowserWindow} from "electron";
 import puppeteer from "../../../../../util/source/puppeteer-core";
 import path from "path";
@@ -21,7 +26,8 @@ makeDir(tempM3u8UrlPath)
 const m3u8UrlMgPath = path.resolve(tempM3u8UrlPath, 'tencent')
 makeDir(m3u8UrlMgPath)
 
-export function getTencentTVDownloadLink(htmlUrl) {
+export async function getTencentTVDownloadLink(htmlUrl) {
+    htmlUrl = await getPerfectUrl(htmlUrl)
     return getM3u8Link(htmlUrl)
         .then((result) => {
             if(result === 'error') {
@@ -208,6 +214,39 @@ function getVid (htmlUrl) {
         vid = new Date().getTime()
     }
     return vid
+}
+
+/**
+ * 获取合理的url
+ * 如何链接里只有cid时，需要解析出vid，然后拼接出带vid的链接。
+ * example: https://v.qq.com/x/cover/mzc002002kqssyu.html
+ */
+async function getPerfectUrl(htmlUrl) {
+    const url = htmlUrl.split('?')[0]
+    const urlInstance = new URL(url)
+    const paths = urlInstance.pathname.split('/')
+    const coverIndex = paths.findIndex((item) => item === 'cover');
+    if(coverIndex > -1) {
+        const nextItem = paths[coverIndex + 1]
+        if(/html/.test(nextItem)) {
+            // 只有cid，而没有vid
+            const res = await axios.get(url)
+            const window = {}
+            const matchString = res.data.match(/<script>(window\.__PINIA__.*?)<\/script>/)[1]
+            eval(matchString)
+            const vid = window?.__PINIA__?.global?.coverInfo?.video_ids[0];
+            const cid = window?.__PINIA__?.global?.currentCid;
+            if(vid && cid) {
+                return `https://v.qq.com/x/cover/${cid}/${vid}.html`
+            } else {
+                return url
+            }
+        } else {
+           return url
+        }
+    } else {
+        return url
+    }
 }
 
 /**
