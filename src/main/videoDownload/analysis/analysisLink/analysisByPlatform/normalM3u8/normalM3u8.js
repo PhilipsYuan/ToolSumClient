@@ -131,6 +131,10 @@ async function getM3u8Link(htmlUrl) {
                             index++
                         }
                     }, 1000)
+                    window.on('close', () => {
+                        interval && clearInterval(interval);
+                        resolve('error')
+                    })
                 })
                 return promise
             })
