@@ -45,12 +45,11 @@ async function getM3u8Link(htmlUrl) {
       preload: path.join(__dirname, 'preload.js')
     }
   });
-  window.webContents.openDevTools();
-  window.webContents.userAgent = getUserAgent(htmlUrl)
-  window.webContents.setUserAgent(getUserAgent(htmlUrl));
+  // window.webContents.openDevTools();
+  window.webContents.userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
+  window.webContents.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36');
 
   const page = await global.pie.getPage(browser, window)
-  // await page.setViewport({"width": 475, "height": 867, "isMobile": true})
 
   page.on('requestfinished', async(request) => {
     const url = request.url()
@@ -123,7 +122,7 @@ async function getM3u8Link(htmlUrl) {
   page.on('response', responseFun);
   try {
     return await window.loadURL(htmlUrl, {
-      userAgent: getUserAgent(htmlUrl)
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
     })
       .then(async (res) => {
         const title = await page.title()

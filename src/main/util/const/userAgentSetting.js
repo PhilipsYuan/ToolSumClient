@@ -1,7 +1,8 @@
 const chromeSupportUrl = [
   'v.ccdi.gov.cn',
   'tv.cctv.com',
-  'jijunjie.com'
+  'jijunjie.com',
+  'pornhub.com'
 ];
 
 export function getUserAgent(htmlUrl) {

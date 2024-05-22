@@ -80,11 +80,12 @@ app.whenReady().then(() => {
   })
   const RequestFilter = {
     urls: ['https://*.mgtv.com/*', 'https://*.bilivideo.cn/*', 'https://*.bilivideo.com/*', 'https://*.smtcdns.com/*',
-    'https://*.bdstatic.com/*', 'https://mpvideo.qpic.cn/*']
+    'https://*.bdstatic.com/*', 'https://mpvideo.qpic.cn/*', 'https://*.eporner.com/*']
   }
   session.defaultSession.webRequest.onBeforeSendHeaders(RequestFilter, (details, callback) => {
     let refer = ''
     let Origin = ''
+    let SecFetchSite = null
     if(/mgtv/.test(details.url)) {
       refer = 'https://www.mgtv.com'
     } else if(/bilivideo/.test(details.url)) {
@@ -97,10 +98,17 @@ app.whenReady().then(() => {
       refer = 'https://mp.weixin.qq.com/'
       Origin = 'https://mp.weixin.qq.com/'
       details.requestHeaders['Sec-Fetch-Mode'] = 'cors'
+    } else if(/eporner\.com/.test(details.url)) {
+      refer = 'https://www.eporner.com/'
+      Origin = 'https://www.eporner.com'
+      SecFetchSite = 'same-site'
     }
     details.requestHeaders['Referer'] = refer
     if(Origin) {
       details.requestHeaders['Origin'] = Origin
+    }
+    if(SecFetchSite) {
+      details.requestHeaders['Sec-Fetch-Site'] = SecFetchSite
     }
     callback({ requestHeaders: details.requestHeaders })
   })
