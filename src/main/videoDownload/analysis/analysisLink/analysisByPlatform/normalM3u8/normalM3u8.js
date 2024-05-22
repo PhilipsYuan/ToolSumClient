@@ -4,6 +4,7 @@ import path from "path";
 import { isBlackRequest } from '../../../../../util/const/abortRequest'
 import { getUserAgent} from "../../../../../util/const/userAgentSetting";
 import { perfectTitleName } from "../../../../../util/url"
+import { getCheckRule } from '../../../../../util/const/downloadURLMap';
 import { getCorrectAnotherM3u8, generateM3U8String } from "../../../../../util/m3u8Parse"
 import {makeDir} from "../../../../../util/fs";
 import axios from "../../../../../util/source/axios";
@@ -30,9 +31,10 @@ async function getM3u8Link(htmlUrl) {
     let m3u8Url = null
     let mp4Url = null
     let m3u8Data = null
+    const checkRule = getCheckRule(htmlUrl)
     const browser = await pie.connect(app, puppeteer);
     const window = new BrowserWindow({
-        show: false, width: 900, height: 600, webPreferences: {
+        show: true, width: 900, height: 600, webPreferences: {
             devTools: true,
             webSecurity: false,
             nodeIntegration: true,
@@ -43,7 +45,7 @@ async function getM3u8Link(htmlUrl) {
             preload: path.join(__dirname, 'preload.js')
         }
     });
-    // window.webContents.openDevTools();
+    window.webContents.openDevTools();
     window.webContents.userAgent = getUserAgent(htmlUrl)
     window.webContents.setUserAgent(getUserAgent(htmlUrl));
 
@@ -83,10 +85,19 @@ async function getM3u8Link(htmlUrl) {
             mp4Url = url
         } else if (!/javascript/.test(contentType)
           && !/html/.test(contentType)) {
-            const text = await response.text()
-            if(/#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
-                m3u8Url = url
-                m3u8Data = text
+            if(checkRule) {
+                const regex = new RegExp(checkRule);
+                if(regex.test(url)) {
+                    const text = await response.text()
+                    m3u8Url = url
+                    m3u8Data = text
+                }
+            } else {
+                const text = await response.text()
+                if(/#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
+                    m3u8Url = url
+                    m3u8Data = text
+                }
             }
         }
     }
