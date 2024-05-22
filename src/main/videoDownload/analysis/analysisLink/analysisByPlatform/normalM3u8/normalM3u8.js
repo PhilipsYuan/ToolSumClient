@@ -81,22 +81,40 @@ async function getM3u8Link(htmlUrl) {
     async function responseFun (response) {
         const url = response.url()
         const contentType = response.headers()['content-type']
-        if(contentType == 'video/mp4') {
-            mp4Url = url
-        } else if (!/javascript/.test(contentType)
-          && !/html/.test(contentType)) {
-            if(checkRule) {
-                const regex = new RegExp(checkRule);
-                if(regex.test(url)) {
-                    const text = await response.text()
-                    m3u8Url = url
-                    m3u8Data = text
+        if(checkRule) {
+            if(checkRule.type === 'm3u8') {
+                if (!/javascript/.test(contentType)
+                  && !/html/.test(contentType)) {
+                    const regex = new RegExp(checkRule.check);
+                    if(regex.test(url)) {
+                        const text = await response.text()
+                        m3u8Url = url
+                        m3u8Data = text
+                    }
                 }
-            } else {
-                const text = await response.text()
-                if(/#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
-                    m3u8Url = url
-                    m3u8Data = text
+            } else if(checkRule.type === 'mp4') {
+                if(contentType == 'video/mp4') {
+                    mp4Url = url
+                }
+            }
+        } else {
+            if(contentType == 'video/mp4') {
+                mp4Url = url
+            } else if (!/javascript/.test(contentType)
+              && !/html/.test(contentType)) {
+                if(checkRule) {
+                    const regex = new RegExp(checkRule);
+                    if(regex.test(url)) {
+                        const text = await response.text()
+                        m3u8Url = url
+                        m3u8Data = text
+                    }
+                } else {
+                    const text = await response.text()
+                    if(/#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
+                        m3u8Url = url
+                        m3u8Data = text
+                    }
                 }
             }
         }
