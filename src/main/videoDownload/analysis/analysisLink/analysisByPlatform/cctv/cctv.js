@@ -1,20 +1,37 @@
 import axios from "../../../../../util/source/axios";
 import {perfectTitleName} from "../../../../../util/url";
 export async function getCCTVDownloadLink(htmlUrl) {
+  console.log('here')
   if(/VID/.test(htmlUrl)) {
+    console.log('here1')
     const vid = extractVid(htmlUrl)
     if(vid) {
       return await getInfoNewContentInfo(vid)
     } else {
       return 'error'
     }
-  } else {
+  } else if(/guid/.test(htmlUrl)){
+    console.log('here2')
     const guid = extractGuid(htmlUrl)
     if(guid) {
       return await getInfoFromHttpVideoInfo(guid)
     } else {
       return 'error'
     }
+  } else {
+    console.log('here3')
+    return await getInfoFromHtml(htmlUrl)
+  }
+}
+
+async function getInfoFromHtml(htmlUrl) {
+  const response = await axios.get(htmlUrl)
+  console.log(response.data.match)
+  const vid = response?.data?.match(/videoCenterId: "(.*?)"/)?.[1]
+  if(vid) {
+    return await getInfoFromHttpVideoInfo(vid)
+  } else {
+    return 'error'
   }
 }
 
@@ -51,9 +68,9 @@ async function getInfoNewContentInfo (vid) {
 }
 
 function extractVid(htmlUrl) {
-  const map = htmlUrl.match(/VID([a-zA-Z0-9]+)/)
-  if(map && map[0]) {
-    return map[0]
+  const map = htmlUrl.match(/\/VID([a-zA-Z0-9]+)/)
+  if(map && map[1]) {
+    return `VID${map[1]}`
   } else {
     return null
   }
