@@ -4,7 +4,8 @@
 const needOpenWebList = [
   'gaodun.com',
   'recu.me',
-  'pornhub.com'
+  'pornhub.com',
+  'bipot.vip'
 ]
 
 export function getNeedOpen(htmlUrl) {
