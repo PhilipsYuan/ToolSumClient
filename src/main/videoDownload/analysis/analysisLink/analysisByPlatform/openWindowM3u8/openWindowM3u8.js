@@ -2,7 +2,6 @@ import {app, BrowserWindow} from "electron";
 import puppeteer from "../../../../../util/source/puppeteer-core";
 import path from "path";
 import { isBlackRequest } from '../../../../../util/const/abortRequest'
-import { getUserAgent} from "../../../../../util/const/userAgentSetting";
 import { perfectTitleName } from "../../../../../util/url"
 import { getCheckRule } from '../../../../../util/const/downloadURLMap';
 import { getCorrectAnotherM3u8, generateM3U8String } from "../../../../../util/m3u8Parse"
