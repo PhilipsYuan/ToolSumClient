@@ -6,6 +6,8 @@ import {m3u8VideoDownloadingListDB} from "../../../db/db";
 import childProcess from "child_process";
 import {newFinishedRecord} from "../../finishList/finishList";
 import {sendTips} from "../../../util/electronOperations";
+import {Parser} from 'm3u8-parser'
+import axios from "../../../util/source/axios"
 import os from "os";
 const binary = os.platform() === 'win32' ? 'ffmpeg.exe' : 'ffmpeg';
 const ffmpegPath = path.resolve(__dirname, binary);
@@ -64,12 +66,13 @@ async function UpdateLoadingRecord (data, id) {
  * 开始进行下载
  * @param item
  */
-export function startDownloadCCTVVideo(item) {
+export async function startDownloadCCTVVideo(item) {
   let processedTime = 0;
   item.message = {
     status: 'success',
     content: `下载中...`
   }
+  const videoTime = await getVideoLength(item.m3u8Url)
   let command = `${ffmpegPath} -i "${item.m3u8Url}" -c copy -bsf:a aac_adtstoasc "${item.outputPath}"`
   const exec = childProcess.spawn(command, {
     maxBuffer: 5 * 1024 * 1024,
@@ -85,7 +88,10 @@ export function startDownloadCCTVVideo(item) {
       const currentTime = hours * 3600 + minutes * 60 + seconds;
       if (!isNaN(currentTime) && currentTime > processedTime) {
         processedTime = currentTime;
-        console.log(`Progress: ${(processedTime / 60).toFixed(2)} minutes processed`);
+        item.message = {
+          status: 'success',
+          content: `已完成${((processedTime / videoTime)*100).toFixed(2)}%`
+        }
       }
     }
   });
@@ -99,4 +105,33 @@ export function startDownloadCCTVVideo(item) {
     await deleteLoadingRecordAndFile(null, item.id, 'success')
     sendTips('m3u8-download-video-success', item.id)
   });
+}
+
+
+async function getVideoLength(m3u8Url) {
+  const URLInstance = new URL(m3u8Url)
+  const response = await axios.get(m3u8Url)
+  if(response?.data) {
+    const parser = new Parser();
+    parser.push(response.data);
+    parser.end();
+    const parsedManifest = parser.manifest;
+    const uri = parsedManifest?.playlists?.[0]?.uri
+    if(uri) {
+      const res = await axios.get(`${URLInstance.origin}${uri}`)
+      const secondParser = new Parser()
+      secondParser.push(res.data);
+      secondParser.end();
+      const secondParsedManifest = secondParser.manifest;
+      let time = 0
+      secondParsedManifest.segments.forEach((item) => {
+        time = item.duration + time
+      })
+      return time
+    } else {
+      return 600
+    }
+  } else {
+    return 600
+  }
 }
