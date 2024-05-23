@@ -76,6 +76,8 @@ export async function deleteLoadingRecordAndFile(event, id, callType = 'delete')
         } else if(item.type === 'biliTV' || item.type === 'haokan' || item.type === 'mp4') {
             const tempPath = path.resolve(tempSourcePath, item.name);
             deleteDirectory(tempPath)
+        } else if(/cctv|cntv/.test(item.htmlUrl) || /cctv|cntv/.test(item.m3u8Url)) {
+            // nothing to do
         } else {
             await deleteM3u8loadingRecordAndFile(item)
         }

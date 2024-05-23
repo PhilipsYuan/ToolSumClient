@@ -76,8 +76,7 @@ export function startDownloadCCTVVideo(item) {
     shell: true
   });
   exec.stderr.on('data', (info) => {
-    // console.log('2222222：' + info)
-    const stderrStr = data.toString();
+    const stderrStr = info.toString();
     const timeMatch = stderrStr.match(/time=(\d{2}):(\d{2}):(\d{2})/);
     if (timeMatch) {
       const hours = parseInt(timeMatch[1], 10);
