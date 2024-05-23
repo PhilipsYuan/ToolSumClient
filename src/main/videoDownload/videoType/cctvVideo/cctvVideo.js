@@ -65,6 +65,7 @@ async function UpdateLoadingRecord (data, id) {
  * @param item
  */
 export function startDownloadCCTVVideo(item) {
+  let processedTime = 0;
   item.message = {
     status: 'success',
     content: `下载中...`
@@ -75,7 +76,19 @@ export function startDownloadCCTVVideo(item) {
     shell: true
   });
   exec.stderr.on('data', (info) => {
-    console.log('2222222：' + info)
+    // console.log('2222222：' + info)
+    const stderrStr = data.toString();
+    const timeMatch = stderrStr.match(/time=(\d{2}):(\d{2}):(\d{2})/);
+    if (timeMatch) {
+      const hours = parseInt(timeMatch[1], 10);
+      const minutes = parseInt(timeMatch[2], 10);
+      const seconds = parseInt(timeMatch[3], 10);
+      const currentTime = hours * 3600 + minutes * 60 + seconds;
+      if (!isNaN(currentTime) && currentTime > processedTime) {
+        processedTime = currentTime;
+        console.log(`Progress: ${(processedTime / 60).toFixed(2)} minutes processed`);
+      }
+    }
   });
   exec.stderr.on('close', async () => {
     await newFinishedRecord({
