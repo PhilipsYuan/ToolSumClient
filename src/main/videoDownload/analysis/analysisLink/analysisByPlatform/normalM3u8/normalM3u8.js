@@ -34,7 +34,7 @@ async function getM3u8Link(htmlUrl) {
     const checkRule = getCheckRule(htmlUrl)
     const browser = await pie.connect(app, puppeteer);
     const window = new BrowserWindow({
-        show: true, width: 900, height: 600, webPreferences: {
+        show: false, width: 900, height: 600, webPreferences: {
             devTools: true,
             webSecurity: false,
             nodeIntegration: true,
@@ -45,7 +45,7 @@ async function getM3u8Link(htmlUrl) {
             preload: path.join(__dirname, 'preload.js')
         }
     });
-    window.webContents.openDevTools();
+    // window.webContents.openDevTools();
     window.webContents.userAgent = getUserAgent(htmlUrl)
     window.webContents.setUserAgent(getUserAgent(htmlUrl));
 

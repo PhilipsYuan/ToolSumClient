@@ -1,6 +1,6 @@
 const chromeSupportUrl = [
   'v.ccdi.gov.cn',
-  'tv.cctv.com',
+  'cctv.com',
   'jijunjie.com',
   'pornhub.com'
 ];
