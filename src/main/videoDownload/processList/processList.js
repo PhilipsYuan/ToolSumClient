@@ -25,6 +25,7 @@ import {
   pauseMp4DownloadVideo,
   continueMp4DownloadVideo
 } from "../videoType/mp4Video/mp4VideoDownload"
+import { startDownloadCCTVVideo } from "../videoType/cctvVideo/cctvVideo";
 import { getDownloadLinkFromUrl } from "../analysis/analysisLink/analysisDownloadLink"
 import {createVideoDownloadTask} from "../videoDownload";
 import {getDownloadSetting} from "../../settings/settings";
@@ -107,6 +108,8 @@ export async function startDownloadVideo(event, id) {
             startDownloadBiliVideo(item)
         } else if(item.type === 'mp4') {
             startDownloadMp4Video(item)
+        } else if(/cctv|cntv/.test(item.htmlUrl) || /cctv|cntv/.test(item.m3u8Url)) {
+            startDownloadCCTVVideo(item)
         } else {
             startDownloadM3u8Video(item)
         }
