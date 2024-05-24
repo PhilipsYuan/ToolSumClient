@@ -10,6 +10,7 @@ import {makeDir} from "../../../../../util/fs";
 import axios from "../../../../../util/source/axios";
 import {Parser} from 'm3u8-parser'
 import fs from "fs";
+import {runSpecialOperation} from "./specialOperation";
 const basePath = app.getPath('userData')
 const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
 makeDir(tempM3u8UrlPath)
@@ -51,6 +52,8 @@ async function getM3u8Link(htmlUrl) {
 
     const page = await global.pie.getPage(browser, window)
     await page.setViewport({"width": 475, "height": 867, "isMobile": true})
+
+    runSpecialOperation(htmlUrl, page, window)
 
     page.on('requestfinished', async(request) => {
         const url = request.url()
