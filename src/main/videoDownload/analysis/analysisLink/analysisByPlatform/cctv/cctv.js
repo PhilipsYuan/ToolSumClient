@@ -1,9 +1,8 @@
 import axios from "../../../../../util/source/axios";
 import {perfectTitleName} from "../../../../../util/url";
+
 export async function getCCTVDownloadLink(htmlUrl) {
-  console.log('here')
   if(/VID/.test(htmlUrl)) {
-    console.log('here1')
     const vid = extractVid(htmlUrl)
     if(vid) {
       return await getInfoNewContentInfo(vid)
@@ -11,7 +10,6 @@ export async function getCCTVDownloadLink(htmlUrl) {
       return 'error'
     }
   } else if(/guid/.test(htmlUrl)){
-    console.log('here2')
     const guid = extractGuid(htmlUrl)
     if(guid) {
       return await getInfoFromHttpVideoInfo(guid)
@@ -19,7 +17,6 @@ export async function getCCTVDownloadLink(htmlUrl) {
       return 'error'
     }
   } else {
-    console.log('here3')
     return await getInfoFromHtml(htmlUrl)
   }
 }
