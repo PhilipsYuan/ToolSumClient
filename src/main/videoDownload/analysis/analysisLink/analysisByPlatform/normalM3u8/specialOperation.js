@@ -1,5 +1,5 @@
 export function runSpecialOperation(htmlUrl, page, window) {
-  if(/bipot.vip/.test(htmlUrl)) {
+  if(/bipot\.vip/.test(htmlUrl)) {
     bipotFun(window)
   }
 }
