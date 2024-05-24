@@ -50,10 +50,6 @@ async function getM3u8Link(htmlUrl) {
   // window.webContents.openDevTools();
   window.webContents.userAgent = getUserAgent(htmlUrl)
   window.webContents.setUserAgent(getUserAgent(htmlUrl));
-  window.webContents.on('will-navigate', (details) => {
-    e.preventDefault();
-  });
-
 
   const page = await global.pie.getPage(browser, window)
   await page.setViewport({"width": 475, "height": 867, "isMobile": true})
