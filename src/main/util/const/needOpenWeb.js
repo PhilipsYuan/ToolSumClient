@@ -2,8 +2,6 @@
  * 需要打开网页，让用户自己点击操作后，才可以进行下载的
  */
 const needOpenWebList = [
-  'gaodun.com',
-  'recu.me',
   'pornhub.com'
 ]
 

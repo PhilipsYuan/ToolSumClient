@@ -1,14 +1,15 @@
 import {app, BrowserWindow} from "electron";
 import puppeteer from "../../../../../util/source/puppeteer-core";
 import path from "path";
-import { isBlackRequest } from '../../../../../util/const/abortRequest'
-import { perfectTitleName } from "../../../../../util/url"
-import { getCheckRule } from '../../../../../util/const/downloadURLMap';
-import { getCorrectAnotherM3u8, generateM3U8String } from "../../../../../util/m3u8Parse"
+import {isBlackRequest} from '../../../../../util/const/abortRequest'
+import {perfectTitleName} from "../../../../../util/url"
+import {getCheckRule} from '../../../../../util/const/downloadURLMap';
+import {getCorrectAnotherM3u8, generateM3U8String} from "../../../../../util/m3u8Parse"
 import {makeDir} from "../../../../../util/fs";
 import axios from "../../../../../util/source/axios";
 import {Parser} from 'm3u8-parser'
 import fs from "fs";
+
 const basePath = app.getPath('userData')
 const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
 makeDir(tempM3u8UrlPath)
@@ -18,7 +19,7 @@ makeDir(m3u8UrlMgPath)
 export function getOpenWindowDownloadLink(htmlUrl) {
   return getM3u8Link(htmlUrl)
     .then((result) => {
-      if(result === 'error') {
+      if (result === 'error') {
         return 'error'
       } else {
         return {title: result.title, videoUrl: result.m3u8Url, videoType: result.videoType || 'm3u8'}
@@ -50,12 +51,12 @@ async function getM3u8Link(htmlUrl) {
 
   const page = await global.pie.getPage(browser, window)
 
-  page.on('requestfinished', async(request) => {
+  page.on('requestfinished', async (request) => {
     const url = request.url()
-    if(url === htmlUrl) {
+    if (url === htmlUrl) {
       await page.evaluate(() => {
         Object.defineProperty(navigator, 'platform', {
-          get: function() {
+          get: function () {
             return 'iPhone';
           }
         });
@@ -76,40 +77,40 @@ async function getM3u8Link(htmlUrl) {
     }
   });
 
-  async function responseFun (response) {
+  async function responseFun(response) {
     const url = response.url()
     const contentType = response.headers()['content-type']
-    if(checkRule) {
-      if(checkRule.type === 'm3u8') {
+    if (checkRule) {
+      if (checkRule.type === 'm3u8') {
         if (!/javascript/.test(contentType)
           && !/html/.test(contentType)) {
           const regex = new RegExp(checkRule.check);
-          if(regex.test(url)) {
+          if (regex.test(url)) {
             const text = await response.text()
             m3u8Url = url
             m3u8Data = text
           }
         }
-      } else if(checkRule.type === 'mp4') {
-        if(contentType == 'video/mp4') {
+      } else if (checkRule.type === 'mp4') {
+        if (contentType == 'video/mp4') {
           mp4Url = url
         }
       }
     } else {
-      if(contentType == 'video/mp4') {
+      if (contentType == 'video/mp4') {
         mp4Url = url
       } else if (!/javascript/.test(contentType)
         && !/html/.test(contentType)) {
-        if(checkRule) {
+        if (checkRule) {
           const regex = new RegExp(checkRule);
-          if(regex.test(url)) {
+          if (regex.test(url)) {
             const text = await response.text()
             m3u8Url = url
             m3u8Data = text
           }
         } else {
           const text = await response.text()
-          if(/#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
+          if (/#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
             m3u8Url = url
             m3u8Data = text
           }
@@ -134,11 +135,11 @@ async function getM3u8Link(htmlUrl) {
               clearInterval(interval);
               window && window.destroy();
               let localM3u8Url = m3u8Url
-              if(m3u8Url) {
+              if (m3u8Url) {
                 localM3u8Url = await getPerfectM3u8Url(m3u8Url, m3u8Data, title)
               }
               resolve({m3u8Url: localM3u8Url, title: perfectTitleName(title), videoType: 'm3u8'})
-            } else if(index > 6 && mp4Url) {
+            } else if (index > 6 && mp4Url) {
               page.removeListener('response', responseFun);
               clearInterval(interval);
               window && window.destroy();
@@ -170,13 +171,13 @@ async function getPerfectM3u8Url(m3u8Url, m3u8Data, title) {
   parser.end();
   const parsedManifest = parser.manifest;
   try {
-    if(parsedManifest.segments?.length > 0) {
+    if (parsedManifest.segments?.length > 0) {
       const perfectTitle = perfectTitleName(title).substr(0, 8)
       const filePath = path.resolve(m3u8UrlMgPath, `${perfectTitle}.m3u8`)
       const correctUrl = getCorrectAnotherM3u8(m3u8Url, parsedManifest.segments[0].uri)
       const tsData = await axios.get(correctUrl)
       const subData = tsData.data.substr(0, 8)
-      if(/PNG/gi.test(subData)) {
+      if (/PNG/gi.test(subData)) {
         parsedManifest.segments.forEach((item) => {
           item.byterange = {
             length: 10000000,
