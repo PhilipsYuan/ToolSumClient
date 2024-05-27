@@ -21,10 +21,10 @@ makeDir(m3u8UrlMgPath)
 export function getNormalM3u8Link(htmlUrl) {
   return getM3u8Link(htmlUrl)
     .then((result) => {
-      if (result === 'error') {
-        return 'error'
+      if (result !== 'error' && result?.m3u8Url) {
+        return {title: result?.title || '', videoUrl: result.m3u8Url, videoType: result?.videoType || 'm3u8'}
       } else {
-        return {title: result.title, videoUrl: result.m3u8Url, videoType: result.videoType || 'm3u8'}
+        return 'error'
       }
     })
 }
