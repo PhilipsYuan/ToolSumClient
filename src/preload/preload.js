@@ -52,7 +52,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     sendSearchPageUrlLoadFail: (callback) => ipcRenderer.on('search-page-url-load-Fail', callback),
     changeSearchPageUrl: (callback) => ipcRenderer.on('change-search-page-url', callback),
     changeVideoPlayItem: (callback) => ipcRenderer.on('change-video-play-item', callback),
-    openAboutXhl: (callback) => ipcRenderer.on('open-about-xhl', callback)
+    openAboutXhl: (callback) => ipcRenderer.on('open-about-xhl', callback),
+    m3u8AnalysisOpenWindow: (callback) => ipcRenderer.on('m3u8-analysis-open-window', callback)
 })
 
 window.addEventListener('DOMContentLoaded', () => {

@@ -23,7 +23,6 @@ export async function getCCTVDownloadLink(htmlUrl) {
 
 async function getInfoFromHtml(htmlUrl) {
   const response = await axios.get(htmlUrl)
-  console.log(response.data.match)
   const vid = response?.data?.match(/videoCenterId: "(.*?)"/)?.[1]
   if(vid) {
     return await getInfoFromHttpVideoInfo(vid)

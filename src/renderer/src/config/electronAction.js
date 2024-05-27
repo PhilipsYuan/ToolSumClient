@@ -39,3 +39,7 @@ window.electronAPI.changeVideoPlayItem(async(event, videoPath, videoName) => {
 window.electronAPI.openAboutXhl(async(event, version) => {
     useService('openAboutXhl', version)
 })
+
+window.electronAPI.m3u8AnalysisOpenWindow(async(event, version) => {
+    useService('m3u8AnalysisOpenWindow')
+})

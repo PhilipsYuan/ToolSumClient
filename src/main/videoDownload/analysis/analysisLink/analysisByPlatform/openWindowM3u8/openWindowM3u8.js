@@ -9,6 +9,7 @@ import {makeDir} from "../../../../../util/fs";
 import axios from "../../../../../util/source/axios";
 import {Parser} from 'm3u8-parser'
 import fs from "fs";
+import {sendTips} from "../../../../../util/electronOperations";
 
 const basePath = app.getPath('userData')
 const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
@@ -17,6 +18,7 @@ const m3u8UrlMgPath = path.resolve(tempM3u8UrlPath, 'normalM3u8')
 makeDir(m3u8UrlMgPath)
 
 export function getOpenWindowDownloadLink(htmlUrl) {
+  sendTips('m3u8-analysis-open-window')
   return getM3u8Link(htmlUrl)
     .then((result) => {
       if (result === 'error') {
@@ -34,7 +36,7 @@ async function getM3u8Link(htmlUrl) {
   const checkRule = getCheckRule(htmlUrl)
   const browser = await pie.connect(app, puppeteer);
   const window = new BrowserWindow({
-    show: true, width: 1200, height: 700, webPreferences: {
+    show: true, width: 1200, height: 700, y: 500, webPreferences: {
       devTools: true,
       webSecurity: false,
       nodeIntegration: true,
@@ -46,6 +48,8 @@ async function getM3u8Link(htmlUrl) {
     }
   });
   // window.webContents.openDevTools();
+  const position = window.getPosition()
+  window.setPosition(position[0], position[1] + 30)
   window.webContents.userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36';
   window.webContents.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36');
 

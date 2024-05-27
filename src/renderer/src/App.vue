@@ -1,6 +1,6 @@
 <template>
   <div v-if="loadingSuccess">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
@@ -31,6 +31,7 @@ export default {
   mounted() {
     addService('showScreenLoadingMessage', this.showScreenLoadingMessage.bind(this));
     addService('closeScreenLoadingMessage', this.closeScreenLoadingMessage.bind(this));
+    addService('m3u8AnalysisOpenWindow', this.m3u8AnalysisOpenWindow.bind(this))
   },
   methods: {
     goPath(path) {
@@ -45,6 +46,12 @@ export default {
     },
     closeScreenLoadingMessage() {
       this.loading && this.loading.close()
+    },
+    m3u8AnalysisOpenWindow() {
+      this.$message.success({
+        message: '页面需要您进行操作到达视频页面或者者点击播放，才能解析出视频链接，请操作下',
+        duration: 6000
+      })
     }
   }
 }
