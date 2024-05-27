@@ -163,8 +163,10 @@ async function getM3u8Link(htmlUrl) {
         return promise
       })
       .catch((e) => {
-        window && window.destroy();
-        return 'error'
+        setTimeout(() => {
+          window && window.destroy();
+          return 'error'
+        }, 14 * 1000)
       })
   } catch (e) {
     window && window.destroy();
