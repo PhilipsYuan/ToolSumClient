@@ -98,12 +98,12 @@ async function getM3u8Link(htmlUrl) {
           }
         }
       } else if (checkRule.type === 'mp4') {
-        if (contentType == 'video/mp4') {
+        if (contentType == 'video/mp4' || contentType == 'audio/mp4') {
           mp4Url = url
         }
       }
     } else {
-      if (contentType == 'video/mp4') {
+      if (contentType == 'video/mp4' || contentType == 'audio/mp4') {
         mp4Url = url
       } else if (!/javascript/.test(contentType)
         && !/html/.test(contentType)) {
