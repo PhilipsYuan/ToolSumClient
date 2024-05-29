@@ -137,7 +137,7 @@ async function getM3u8Link(htmlUrl) {
           let index = 0
           const interval = setInterval(async () => {
             console.log(`检测次数：${index + 1}`)
-            if (m3u8Url || index > 12) {
+            if (m3u8Url || index > 18) {
               page.removeListener('response', responseFun);
               clearInterval(interval);
               window && window.destroy();
