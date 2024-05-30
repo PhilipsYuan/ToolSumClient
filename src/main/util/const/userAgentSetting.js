@@ -5,7 +5,8 @@ const chromeSupportUrl = [
   'pornhub.com',
   'ijujitv.cc',
   'huixusy.com',
-  'theyarehuge.com'
+  'theyarehuge.com',
+  'zlyka1.com'
 ];
 
 export function getUserAgent(htmlUrl) {
