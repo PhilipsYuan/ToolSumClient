@@ -4,7 +4,8 @@
 const needOpenWebList = [
   // 'pornhub.com'
   'duboku.tv',
-  'tnaflix.com'
+  'tnaflix.com',
+  'w.yangshipin.cn'
 ]
 
 export function getNeedOpen(htmlUrl) {
