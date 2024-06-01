@@ -42,6 +42,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     confirmSearchWindow: (url) => ipcRenderer.send('confirm-search-window', url),
     closeSearchWindow: () => ipcRenderer.send('close-search-window'),
     closeVideoPlayWindow: () => ipcRenderer.send('close-video-play-window'),
+    responseHttpGetRequest: (type, response) => ipcRenderer.send('response-http-get-request', type, response),
 
     // 主进程到渲染器进程
     getM3u8FileFailureTips: (callback) => ipcRenderer.on('m3u8-file-get-failure', callback),
@@ -53,7 +54,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     changeSearchPageUrl: (callback) => ipcRenderer.on('change-search-page-url', callback),
     changeVideoPlayItem: (callback) => ipcRenderer.on('change-video-play-item', callback),
     openAboutXhl: (callback) => ipcRenderer.on('open-about-xhl', callback),
-    m3u8AnalysisOpenWindow: (callback) => ipcRenderer.on('m3u8-analysis-open-window', callback)
+    m3u8AnalysisOpenWindow: (callback) => ipcRenderer.on('m3u8-analysis-open-window', callback),
+    sendHttpGetRequest: (callback => ipcRenderer.on('send-http-get-request', callback))
 })
 
 window.addEventListener('DOMContentLoaded', () => {

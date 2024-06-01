@@ -13,6 +13,7 @@ import {getNeedOpen} from "../../../util/const/needOpenWeb";
 import {getCCTVDownloadLink} from "./analysisByPlatform/cctv/cctv";
 import { getTencentTVDownloadLink as test} from "./analysisByPlatform/tencentTV/tencentTV"
 import getCnPornHubDownloadLink from "./analysisByPlatform/cnPornHub/cnPornHub";
+import {getTnaflixTVDownloadLink} from "./analysisByPlatform/tnaflixTV/tnaflixTV";
 
 ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
 
@@ -42,6 +43,8 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
             return await getInsTVDownloadLink(htmlUrl)
         } else if(/cn\.pornhub\.com/.test(htmlUrl)) {
             return await getCnPornHubDownloadLink(htmlUrl)
+        } else if (/tnaflix\.com/.test(htmlUrl)) {
+            return await getTnaflixTVDownloadLink(htmlUrl)
         } else if(getNeedOpen(htmlUrl)) {
             return await getOpenWindowDownloadLink(htmlUrl)
         } else {

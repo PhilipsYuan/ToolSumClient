@@ -44,6 +44,7 @@
     "cliui": "^8.0.1",
     "cross-fetch": "^4.0.0",
     "dayjs": "^1.11.8",
+    "dplayer": "^1.27.1",
     "electron": "^28.2.1",
     "electron-icon-builder": "^2.0.1",
     "electron-reload": "^2.0.0-alpha.1",
@@ -51,6 +52,7 @@
     "env": "^0.0.2",
     "get-port": "^7.0.0",
     "lowdb": "^6.0.0",
+    "m3u8-parser": "^7.1.0",
     "modclean": "^3.0.0-beta.1",
     "nodemailer": "^6.9.3",
     "postcss": "^8.4.23",
@@ -68,12 +70,11 @@
     "vue": "^3.2.47",
     "vue-router": "4",
     "webtorrent": "1.9.7",
-    "xml2js": "^0.6.2",
-    "dplayer": "^1.27.1",
-    "m3u8-parser": "^7.1.0"
+    "xml2js": "^0.6.2"
   },
   "dependencies": {
     "child_process": "^1.0.2",
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "htmlparser2": "^9.1.0"
   }
 }

@@ -1,3 +1,4 @@
+import axios from "../utils/axios";
 /**
  * Api 监听来自main进程的发起的请求
  */
@@ -42,4 +43,10 @@ window.electronAPI.openAboutXhl(async(event, version) => {
 
 window.electronAPI.m3u8AnalysisOpenWindow(async(event, version) => {
     useService('m3u8AnalysisOpenWindow')
+})
+
+window.electronAPI.sendHttpGetRequest(async(event, url, type) => {
+    const response = await axios.get(url)
+    console.log(response.data)
+    window.electronAPI.responseHttpGetRequest(type,response.data)
 })
