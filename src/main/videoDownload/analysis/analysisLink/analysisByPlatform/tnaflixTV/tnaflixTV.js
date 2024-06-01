@@ -26,7 +26,6 @@ export async function getTnaflixTVDownloadLink(htmlUrl) {
             const item = item720 ? item720 : item480 ? item480 : item360 ? item360 : item240 ? item240 : '';
             if(item) {
               resolve({videoUrl: item.attribs.src, title: perfectTitleName(videoName), videoType: 'mp4'})
-              return {}
             } else {
               resolve("error")
             }

@@ -1,41 +1,51 @@
-import axios from "../../../../../util/source/axios";
+import {sendTips} from "../../../../../util/electronOperations";
+import {ipcMain} from "electron";
+import vm from 'vm'
+import {perfectTitleName} from "../../../../../util/url";
 
+ipcMain.on('response-http-get-request', getHttpInfo)
+let response = null
 
-
-export default function getWhoresHubTVDownloadLink (htmlUrl) {
-  console.log("here")
-  return axios.get(htmlUrl, {
-    timeout: 20000,
+export async function getWhoresHubTVDownloadLink (htmlUrl) {
+  response = null
+  sendTips("send-http-get-request", htmlUrl , 'whoreshub')
+  const promise = new Promise((resolve) => {
+    let index = 0
+    const interval = setInterval(() => {
+      if(response || index > 8) {
+        clearInterval(interval)
+        if(response) {
+          const jsonString = response?.match(/var flashvars = (\{[^;]*);/)[1]
+          if(jsonString) {
+            vm.runInThisContext(`json=${jsonString}`)
+            if(json) {
+              const title = json.video_title
+              const videoUrl = json.video_alt_url3 ? json.video_alt_url3 : json.video_alt_url2 ? json.video_alt_url2 : json.video_alt_url
+                ? json.video_alt_url : json.video_url ? json.video_url : '';
+              if(videoUrl) {
+                resolve({videoUrl, title: perfectTitleName(title), videoType: 'mp4'})
+              } else {
+                resolve("error")
+              }
+            } else {
+              resolve("error")
+            }
+          } else {
+            resolve("error")
+          }
+        } else {
+          resolve("error")
+        }
+      } else {
+        index ++
+      }
+    }, 1000)
   })
-    .then((res) => {
-      console.log(res.data)
-    })
-    .catch((res) => {
-      console.log(res)
-    })
-  // fetch("https://www.whoreshub.com/videos/275159/mompov-lena-35-year-old-busty-petite-asian-first-timer/", {
-  //   "headers": {
-  //     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-  //     "accept-language": "zh-CN,zh;q=0.9,ja;q=0.8",
-  //     "cache-control": "no-cache",
-  //     "pragma": "no-cache",
-  //     "priority": "u=0, i",
-  //     "sec-ch-ua": "\"Google Chrome\";v=\"125\", \"Chromium\";v=\"125\", \"Not.A/Brand\";v=\"24\"",
-  //     "sec-ch-ua-mobile": "?0",
-  //     "sec-ch-ua-platform": "\"macOS\"",
-  //     "sec-fetch-dest": "document",
-  //     "sec-fetch-mode": "navigate",
-  //     "sec-fetch-site": "none",
-  //     "sec-fetch-user": "?1",
-  //     "upgrade-insecure-requests": "1"
-  //   },
-  //   "referrerPolicy": "strict-origin-when-cross-origin",
-  //   "body": null,
-  //   "method": "GET",
-  //   "mode": "cors",
-  //   "credentials": "include"
-  // })
-  //   .then((res) => {
-  //     console.log(res)
-  //   })
+  return promise
+}
+
+function getHttpInfo(event, type, res) {
+  if(type === 'whoreshub') {
+    response = res
+  }
 }

@@ -47,6 +47,5 @@ window.electronAPI.m3u8AnalysisOpenWindow(async(event, version) => {
 
 window.electronAPI.sendHttpGetRequest(async(event, url, type) => {
     const response = await axios.get(url)
-    console.log(response.data)
     window.electronAPI.responseHttpGetRequest(type,response.data)
 })
