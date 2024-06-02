@@ -15,7 +15,7 @@ import { getTencentTVDownloadLink as test} from "./analysisByPlatform/tencentTV/
 import getCnPornHubDownloadLink from "./analysisByPlatform/cnPornHub/cnPornHub";
 import {getTnaflixTVDownloadLink} from "./analysisByPlatform/tnaflixTV/tnaflixTV";
 import {getWhoresHubTVDownloadLink} from "./analysisByPlatform/whoreshubTV/whoreshubTV"
-
+import axios from '../../../util/source/axios'
 ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
 
 /**
@@ -40,8 +40,6 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
             return await getPZhanTVDownloadLink(htmlUrl)
         } else if(/bimiacg/.test(htmlUrl)) {
             return await getBimiacgLink(htmlUrl)
-        } else if(/instv[^.]*\.com/.test(htmlUrl)) {
-            return await getInsTVDownloadLink(htmlUrl)
         } else if(/cn\.pornhub\.com/.test(htmlUrl)) {
             return await getCnPornHubDownloadLink(htmlUrl)
         } else if (/tnaflix\.com/.test(htmlUrl)) {
@@ -51,12 +49,26 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
         } else if(getNeedOpen(htmlUrl)) {
             return await getOpenWindowDownloadLink(htmlUrl)
         } else {
-            return await getNormalM3u8Link(htmlUrl)
+            return await checkOtherInfo(htmlUrl)
         }
     } catch (e) {
         console.log(e)
         return "error"
     }
+}
 
+async function checkOtherInfo(htmlUrl) {
+    const res = await axios.get(htmlUrl, {
+        timeout: 3000
+    });
+    if(res.data) {
+        if(/INS AV/.test(res.data)) {
+            return await getInsTVDownloadLink(htmlUrl)
+        } else {
+            return await getNormalM3u8Link(htmlUrl)
+        }
+    } else {
+        return await getNormalM3u8Link(htmlUrl)
+    }
 }
 
