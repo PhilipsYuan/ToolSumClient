@@ -111,7 +111,7 @@ export async function pauseMp4DownloadVideo(item) {
  * @returns {Promise<void>}
  */
 export async function continueMp4DownloadVideo(item) {
-  startDownloadBiliVideo(item)
+  startDownloadMp4Video(item)
 }
 
 
