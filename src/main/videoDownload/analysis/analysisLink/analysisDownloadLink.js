@@ -44,12 +44,12 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
             return await getCnPornHubDownloadLink(htmlUrl)
         } else if (/tnaflix\.com/.test(htmlUrl)) {
             return await getTnaflixTVDownloadLink(htmlUrl)
-        } else if(/whoreshub\.com/.test(htmlUrl)) {
+        } else if(/whoreshub\.com/.test(htmlUrl) || /theyarehuge\.com/.test(htmlUrl)) {
             return await getWhoresHubTVDownloadLink(htmlUrl)
         } else if(getNeedOpen(htmlUrl)) {
             return await getOpenWindowDownloadLink(htmlUrl)
         } else {
-            return await checkOtherInfo(htmlUrl)
+            return await getNormalM3u8Link(htmlUrl)
         }
     } catch (e) {
         console.log(e)
