@@ -49,7 +49,7 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
         } else if(getNeedOpen(htmlUrl)) {
             return await getOpenWindowDownloadLink(htmlUrl)
         } else {
-            return await getNormalM3u8Link(htmlUrl)
+            return await checkOtherInfo(htmlUrl)
         }
     } catch (e) {
         console.log(e)
@@ -58,17 +58,24 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
 }
 
 async function checkOtherInfo(htmlUrl) {
-    const res = await axios.get(htmlUrl, {
-        timeout: 3000
-    });
-    if(res.data) {
-        if(/INS AV/.test(res.data)) {
-            return await getInsTVDownloadLink(htmlUrl)
-        } else {
-            return await getNormalM3u8Link(htmlUrl)
-        }
-    } else {
-        return await getNormalM3u8Link(htmlUrl)
-    }
+    console.log('here')
+    return axios.get(htmlUrl, {
+        timeout: 4000
+    })
+      .then(async (res) => {
+          if(res.data) {
+              if(/INS AV/.test(res.data)) {
+                  return await getInsTVDownloadLink(htmlUrl)
+              } else {
+                  return await getNormalM3u8Link(htmlUrl)
+              }
+          } else {
+              return await getNormalM3u8Link(htmlUrl)
+          }
+      })
+      .catch(async () => {
+          return await getNormalM3u8Link(htmlUrl)
+      })
+
 }
 
