@@ -58,7 +58,6 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
 }
 
 async function checkOtherInfo(htmlUrl) {
-    console.log('here')
     return axios.get(htmlUrl, {
         timeout: 4000
     })
