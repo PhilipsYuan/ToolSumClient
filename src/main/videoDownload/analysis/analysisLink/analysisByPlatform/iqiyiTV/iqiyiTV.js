@@ -19,7 +19,7 @@ makeDir(m3u8UrlMgPath)
 
 export async function getIQiYiTVDownloadLink (url) {
     const htmlUrl = removeUrlParams(url)
-    const { tvId, vid, title, payMark } = await getVid(htmlUrl)
+    const { tvId, title, payMark } = await getVid(htmlUrl)
     if(payMark == 0) {
         return getFreeVideo(tvId, title)
     } else if(Number(payMark) > 0) {
@@ -133,6 +133,7 @@ function getFreeVideo(tvId, title, cookie) {
             }
         })
         .catch((e) => {
+            console.log(e)
             const filePath = path.resolve(m3u8UrlMgPath, `${id}.m3u8`)
             if(fs.existsSync(filePath)) {
                 fs.unlinkSync(filePath)
@@ -165,17 +166,37 @@ function getVid(htmlUrl) {
                 let l_seed = toLong(SEED);
                 tvId = xor(id, l_seed)
             }
-            const vid = data.match(/"vid":"(.*?)",/)?.[1] || ''
-            let title = data.match(/\.name="([^"]*)"/)?.[1];
-            if(!title) {
-                title = data.match(/name":"([^"]+)","playUrl"/)?.[1] || data.match(/<title>([^<]*)<\/title>/)?.[1]
+            if(tvId) {
+                let title = data.match(/\.name="([^"]*)"/)?.[1];
+                if(!title) {
+                    title = data.match(/name":"([^"]+)","playUrl"/)?.[1] || data.match(/<title>([^<]*)<\/title>/)?.[1]
+                }
+                const payMark = data.match(/"payMark":(\d+),/)?.[1] || '';
+                return {tvId, title: perfectTitleName(title), payMark}
+            } else {
+                return getBySecondWay(htmlUrl)
             }
-            const payMark = data.match(/"payMark":(\d+),/)?.[1] || '';
-            return {tvId, vid, title: perfectTitleName(title), payMark}
         })
         .catch((e) => {
+            console.log(e)
             return null
         })
+}
+
+async function getBySecondWay (htmlUrl) {
+   return axios.get('https://mesh.if.iqiyi.com/player/lw/lwplay/accelerator.js', {
+        headers: {
+            'User-Agent':
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36',
+            referer: htmlUrl,
+        }
+    })
+      .then((res) => {
+          const window = {}
+          eval(res.data)
+          return {tvId: window.QiyiPlayerProphetData.tvid, title: window.QiyiPlayerProphetData.a.data.originRes.vdi.tl,
+              payMark: window.QiyiPlayerProphetData.videoInfo.payMark}
+      })
 }
 
 async function createMpdUrl(m3u8Text, id) {
