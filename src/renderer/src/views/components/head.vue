@@ -105,10 +105,18 @@ export default {
         const currentVersionList = this.currentVersion.split('.')
         if(newVersionList[0] > currentVersionList[0]) {
           return true
-        } else if(newVersionList[1] > currentVersionList[1]) {
-          return true
-        } else if(newVersionList[2] > currentVersionList[2]) {
-          return true
+        } else if(newVersionList[0] === currentVersionList[0]) {
+          if(newVersionList[1] > currentVersionList[1]) {
+            return true
+          } else if(newVersionList[1] === currentVersionList[1]) {
+            if(newVersionList[2] > currentVersionList[2]) {
+              return true
+            } else {
+              return false
+            }
+          } else {
+            return false
+          }
         } else {
           return false
         }
