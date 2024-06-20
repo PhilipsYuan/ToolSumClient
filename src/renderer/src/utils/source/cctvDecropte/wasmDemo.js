@@ -1,6 +1,6 @@
 import {generateWasm} from './wasmGenerate.js'
-const CNTVH5PlayerModule = CNTVModule()
-export const translateForm = (e, t) => {
+
+export const translateForm = (e, t, CNTVH5PlayerModule) => {
   // const CNTVH5PlayerModule = await generateWasm()
   let i = 0;
   let n = 0;

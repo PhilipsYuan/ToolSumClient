@@ -27,7 +27,7 @@ export async function openVideoPlayPage(event, videoPath, videoName, audioUrl, v
                 webviewTag: true
             },
         });
-        // window.webContents.openDevTools();
+        window.webContents.openDevTools();
         addWindow("selfVideoPlayWindow", window, '')
         window.on('closed', () => {
             deleteWindow("selfVideoPlayWindow")
