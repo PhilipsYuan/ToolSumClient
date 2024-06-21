@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import '../../../utils/source/cctvDecropte/h5.worker'
 import 'video.js/dist/video-js.css'
 import videoJs from 'video.js'
 import '../../../utils/source/videojs-http-streaming.es'
@@ -34,7 +33,6 @@ import {getUrlParams} from "../../../utils/url";
 import { addService } from "../../../service/service";
 import { playVideoAndAudio } from './videoAndAudioPlay'
 import {playPZhan} from "./playPzhan";
-import{translateForm} from '../../../utils/source/cctvDecropte/wasmDemo'
 import axios from 'axios'
 videoJs.addLanguage('zh-CN', zhCNJson)
 export default {
@@ -89,45 +87,8 @@ export default {
           type: 'application/x-mpegURL',
         }
         this.player = videoJs(this.$refs.myVideo, {
-          // html5: {
-          //   vhs: {
-          //     overrideNative: true
-          //   },
-          //   nativeAudioTracks: false,
-          //   nativeVideoTracks: false
-          // },
           preload: 'auto',
           sources: [json]
-        });
-        this.player.on('xhr-hooks-ready', () => {
-
-        });
-        const CNTVH5PlayerModule = CNTVModule()
-        // _0x208b67
-        console.log(CNTVH5PlayerModule)
-        CNTVH5PlayerModule.onRuntimeInitialized = function() {
-          console.log("onRuntimeInitialized")
-          // self.moduleInitialized = !0,
-          // self.module = this,
-          // self.postMessage({
-          //   action: "setModuleInitialized",
-          //   isInit: !0
-          // })
-          CNTVH5PlayerModule._emscripten_start_fetch(5272768)
-        }
-        this.player.ready(() => {
-          const playerResponseHook = (request, error, response) => {
-            const body = new Uint8Array(response.body)
-            console.log(body[32222])
-            const data = translateForm(body, 1, CNTVH5PlayerModule)
-            console.log(data[32222])
-            if(body === data) {
-              console.log("true")
-            }
-            response.body = data
-            return response
-          };
-          this.player.tech().vhs.xhr.onResponse(playerResponseHook);
         });
       }
     },
