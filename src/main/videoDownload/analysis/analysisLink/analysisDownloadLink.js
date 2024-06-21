@@ -32,7 +32,7 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
             return await getIQiYiTVDownloadLink(htmlUrl)
         } else if(/v\.qq\.com/.test(htmlUrl)) {
             return await getTencentTVDownloadLink(htmlUrl)
-        } else if (/cctv\.com|cctv\.cn|v\.ccdi\.gov\.cn/.test(htmlUrl)) {
+        } else if (/cctv\.com|cctv\.cn|v\.ccdi\.gov\.cn|12371\.cn/.test(htmlUrl)) {
             return await getCCTVDownloadLink(htmlUrl)
         } else if (/haokan\.baidu\.com/.test(htmlUrl)) {
             return await getHaoKanTVDownloadLink(htmlUrl)

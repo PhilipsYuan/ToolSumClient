@@ -2,22 +2,26 @@ import axios from "../../../../../util/source/axios";
 import {perfectTitleName} from "../../../../../util/url";
 
 export async function getCCTVDownloadLink(htmlUrl) {
-  if(/VID/.test(htmlUrl)) {
-    const vid = extractVid(htmlUrl)
-    if(vid) {
-      return await getInfoNewContentInfo(vid)
-    } else {
-      return 'error'
-    }
-  } else if(/guid/.test(htmlUrl)){
-    const guid = extractGuid(htmlUrl)
-    if(guid) {
-      return await getInfoFromHttpVideoInfo(guid)
-    } else {
-      return 'error'
-    }
-  } else {
+  if(/12371\.cn/.test(htmlUrl)) {
     return await getInfoFromHtml(htmlUrl)
+  } else {
+    if(/VID/.test(htmlUrl)) {
+      const vid = extractVid(htmlUrl)
+      if(vid) {
+        return await getInfoNewContentInfo(vid)
+      } else {
+        return 'error'
+      }
+    } else if(/guid/.test(htmlUrl)){
+      const guid = extractGuid(htmlUrl)
+      if(guid) {
+        return await getInfoFromHttpVideoInfo(guid)
+      } else {
+        return 'error'
+      }
+    } else {
+      return await getInfoFromHtml(htmlUrl)
+    }
   }
 }
 
@@ -26,8 +30,14 @@ async function getInfoFromHtml(htmlUrl) {
   const vid = response?.data?.match(/videoCenterId: "(.*?)"/)?.[1]
   if(vid) {
     return await getInfoFromHttpVideoInfo(vid)
-  } else {
-    return 'error'
+  } else{
+    const guid0 = response?.data?.match(/guid_0="(.*?)"/)?.[1]
+    const guid = response?.data.match(/guid[| ]=[| ]"(.*?)"/)?.[1]
+    if(guid0 || guid) {
+      return await getInfoFromHttpVideoInfo(guid0 || guid)
+    } else {
+      return 'error'
+    }
   }
 }
 
