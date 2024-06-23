@@ -157,7 +157,7 @@ function getVid(htmlUrl) {
             if(!tvId && /pages\.iqiyi\.com/.test(htmlUrl)) {
                 tvId = data.match(/"tvId":(\d+),"vData"/)?.[1]
             }
-            if(!tvId && /sports\.iqiyi\.com/.test(htmlUrl)) {
+            if(!tvId && /\/\/sports\.iqiyi\.com/.test(htmlUrl)) {
                 const mm = new URL(htmlUrl)
                 const pathParts = mm.pathname.split('/')
                 const key = pathParts[pathParts.length - 1]
@@ -166,6 +166,7 @@ function getVid(htmlUrl) {
                 let l_seed = toLong(SEED);
                 tvId = xor(id, l_seed)
             }
+
             if(tvId) {
                 let title = data.match(/\.name="([^"]*)"/)?.[1];
                 if(!title) {
@@ -174,7 +175,12 @@ function getVid(htmlUrl) {
                 const payMark = data.match(/"payMark":(\d+),/)?.[1] || '';
                 return {tvId, title: perfectTitleName(title), payMark}
             } else {
-                return getBySecondWay(htmlUrl)
+                const info = await getBySecondWay(htmlUrl)
+                if(info.tvId) {
+                    return info
+                } else {
+                    return await getSportVideo(htmlUrl)
+                }
             }
         })
         .catch((e) => {
@@ -194,9 +200,43 @@ async function getBySecondWay (htmlUrl) {
       .then((res) => {
           const window = {}
           eval(res.data)
-          return {tvId: window.QiyiPlayerProphetData.tvid, title: window.QiyiPlayerProphetData.a.data.originRes.vdi.tl,
-              payMark: window.QiyiPlayerProphetData.videoInfo.payMark}
+          if(window.QiyiPlayerProphetData.tvid) {
+              return {tvId: window.QiyiPlayerProphetData.tvid, title: window.QiyiPlayerProphetData.a.data.originRes.vdi.tl,
+                  payMark: window.QiyiPlayerProphetData.videoInfo.payMark}
+          } else {
+              return  'error'
+          }
       })
+}
+
+/**
+ * 获取爱奇艺体育视频
+ * @returns {Promise<void>}
+ */
+async function getSportVideo(htmlUrl) {
+    if(/ssports\.iqiyi\.com/.test(htmlUrl)) {
+        const urlInstance = new URL(htmlUrl)
+        const paths = urlInstance.pathname.split('/')
+        const id = paths[2]
+        if(id) {
+            return axios.get(`https://ssports.iqiyi.com/json/articleDetail/V/appArticleDetail_${id}.json`, {
+                headers: {
+                    'User-Agent':
+                      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36',
+                    referer: htmlUrl,
+                }
+            })
+              .then((res) => {
+                  return {tvId: res.data?.retData?.commonBaseInfo?.qipuid, title: res.data?.retData?.specialBaseInfo.title,
+                      payMark: 1}
+
+              })
+        } else {
+            return 'error'
+        }
+    } else {
+        return "error"
+    }
 }
 
 async function createMpdUrl(m3u8Text, id) {

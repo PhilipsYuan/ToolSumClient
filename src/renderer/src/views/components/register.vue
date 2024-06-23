@@ -44,6 +44,7 @@ import {addService} from '../../service/service';
 import {register, checkUserName, sendValidateCode, checkEmailIsRegister } from '../../api/user';
 import PDialog from "../UIComponents/PDialog.vue";
 import { View, Hide } from '@element-plus/icons-vue'
+import {checkEmailCanRegister} from "../../utils/url";
 export default {
   name: 'register',
   components: {PDialog},
@@ -171,20 +172,24 @@ export default {
             userFrom: this.isMac ? 1 : 2
           }
           this.requestLoading = true
-          register(json)
-              .then((res) => {
-                this.requestLoading = false
-                if (res.data.code === 200) {
-                  this.close()
-                  this.$message.success('注册成功啦，可以进行登录喽！')
-                } else {
-                  this.$message.error(res.data.message)
-                }
-              })
-              .catch(() => {
-                this.requestLoading = false
-                this.$message.success('注册失败，稍后再试，或者给我们发送邮件(xiaohualun1@gmail.com)，我们会尽快修复，并通知您！')
-              })
+          if(checkEmailCanRegister(this.form.email)) {
+            register(json)
+                .then((res) => {
+                  this.requestLoading = false
+                  if (res.data.code === 200) {
+                    this.close()
+                    this.$message.success('注册成功啦，可以进行登录喽！')
+                  } else {
+                    this.$message.error(res.data.message)
+                  }
+                })
+                .catch(() => {
+                  this.requestLoading = false
+                  this.$message.success('注册失败，稍后再试，或者给我们发送邮件(xiaohualun1@gmail.com)，我们会尽快修复，并通知您！')
+                })
+          } else {
+            this.$message.error('临时邮箱无法注册账号，请更换邮箱！')
+          }
         }
       });
     },

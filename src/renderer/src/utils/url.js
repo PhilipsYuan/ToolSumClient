@@ -11,3 +11,7 @@ export function getUrlParams(url) {
 
     return params;
 }
+
+export function checkEmailCanRegister(email) {
+    return !/yopmail\.net|chacuo\.net|027168\.com/.test(email)
+}
