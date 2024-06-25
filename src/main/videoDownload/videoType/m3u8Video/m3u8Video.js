@@ -39,7 +39,6 @@ async function createOtherM3u8DownloadTask(url, name, outPath, htmlUrl, isUpdate
         if (checkOutputFileNotExist(null, outputPath)) {
             const tempPath = path.resolve(tempSourcePath, name);
             makeDir(tempPath)
-            // const info = JSON.parse(getFileInfo(url))
             const info = getFileInfo(url)
             const m3u8Data = await downloadSecretKey(info, null, tempPath, null, null)
             const urls = getPlayList(info)
@@ -101,9 +100,10 @@ function createNormalM3u8DownloadTask(url, name, outPath, htmlUrl, isUpdate, loa
             const tempPath = path.resolve(tempSourcePath, name);
             makeDir(tempPath)
             return getCorrectM3u8File(url)
-                .then(async (data) => {
+                .then(async (res) => {
+                    const data = res.data
                     if (data) {
-                        const urlObject = new URL(url);
+                        const urlObject = new URL(res.url);
                         const host = `${urlObject.protocol}//${urlObject.host}`
                         let m3u8Data = await downloadSecretKey(data, host, tempPath, urlObject.pathname)
                         m3u8Data = await downloadMap(m3u8Data, host, tempPath, urlObject.pathname)

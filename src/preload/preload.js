@@ -55,7 +55,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     changeVideoPlayItem: (callback) => ipcRenderer.on('change-video-play-item', callback),
     openAboutXhl: (callback) => ipcRenderer.on('open-about-xhl', callback),
     m3u8AnalysisOpenWindow: (callback) => ipcRenderer.on('m3u8-analysis-open-window', callback),
-    sendHttpGetRequest: (callback => ipcRenderer.on('send-http-get-request', callback))
+    sendHttpGetRequest: (callback => ipcRenderer.on('send-http-get-request', callback)),
+    sendHaijiaoSignRequest: (callback => ipcRenderer.on('send-haijiao-sign-request', callback))
 })
 
 window.addEventListener('DOMContentLoaded', () => {

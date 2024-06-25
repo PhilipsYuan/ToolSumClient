@@ -15,7 +15,7 @@ export function getCorrectM3u8File(url) {
           parser.end();
           const parsedManifest = parser.manifest;
           if(parsedManifest?.segments?.length > 0) {
-              return res.data
+              return {data: res.data, url: url}
           } else {
               if(parsedManifest?.playlists?.[0]?.uri) {
                   const newM3u8Url = getCorrectAnotherM3u8(url, parsedManifest?.playlists?.[0]?.uri)
@@ -24,7 +24,7 @@ export function getCorrectM3u8File(url) {
                       headers
                   })
                     .then(async (res) => {
-                        return res.data
+                        return {data: res.data, url: newM3u8Url}
                     })
                     .catch((res) => {
                         sendTips('m3u8-file-get-failure', 'error', '下载资源失败，请重新尝试或者更换个下载资源!')

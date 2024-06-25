@@ -16,6 +16,7 @@ import getCnPornHubDownloadLink from "./analysisByPlatform/cnPornHub/cnPornHub";
 import {getTnaflixTVDownloadLink} from "./analysisByPlatform/tnaflixTV/tnaflixTV";
 import {getWhoresHubTVDownloadLink} from "./analysisByPlatform/whoreshubTV/whoreshubTV"
 import axios from '../../../util/source/axios'
+import {getHaiJiaoTvDownloadLink} from "./analysisByPlatform/haijiao/haijiaoTV";
 ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
 
 /**
@@ -46,6 +47,8 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
             return await getTnaflixTVDownloadLink(htmlUrl)
         } else if(/whoreshub\.com/.test(htmlUrl) || /theyarehuge\.com/.test(htmlUrl)) {
             return await getWhoresHubTVDownloadLink(htmlUrl)
+        } else if(/haijiao\.com/.test(htmlUrl)) {
+            return await getHaiJiaoTvDownloadLink(htmlUrl)
         } else if(getNeedOpen(htmlUrl)) {
             return await getOpenWindowDownloadLink(htmlUrl)
         } else {
