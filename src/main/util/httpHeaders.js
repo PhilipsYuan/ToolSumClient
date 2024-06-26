@@ -6,5 +6,9 @@ export function getHeaders(url) {
         headers.Origin = 'https://www.mgtv.com'
         headers.Referer = 'https://www.mgtv.com/'
     }
+    if(/hjstore/.test(url)) {
+        headers.Origin = 'https://haijiao.com';
+        headers.Referer = 'https://haijiao.com/'
+    }
     return headers
 }

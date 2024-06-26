@@ -68,6 +68,8 @@ async function checkOtherInfo(htmlUrl) {
           if(res.data) {
               if(/INS AV/.test(res.data)) {
                   return await getInsTVDownloadLink(htmlUrl)
+              } else if(/We're sorry but user doesn't work properly without JavaScript enabled. Please enable it to continue./.test(res.data)) {
+                  return await getHaiJiaoTvDownloadLink(htmlUrl)
               } else {
                   return await getNormalM3u8Link(htmlUrl)
               }

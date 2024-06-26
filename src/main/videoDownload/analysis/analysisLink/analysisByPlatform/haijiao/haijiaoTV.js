@@ -1,3 +1,7 @@
+/**
+ * 参考链接
+ * https://haijiao.com/post/details?pid=1374774
+ */
 import dayjs from "dayjs";
 import{ decryptApi } from "./decryptApi";
 import {app, BrowserWindow, ipcMain} from "electron";
@@ -5,6 +9,13 @@ import {sendTips} from "../../../../../util/electronOperations";
 import puppeteer from "../../../../../util/source/puppeteer-core";
 import path from "path";
 import {perfectTitleName} from "../../../../../util/url";
+import fs from "fs";
+import {makeDir} from "../../../../../util/fs";
+const basePath = app.getPath('userData')
+const tempM3u8UrlPath = path.resolve(basePath, 'm3u8Video', 'tempM3u8Url');
+makeDir(tempM3u8UrlPath)
+const m3u8UrlMgPath = path.resolve(tempM3u8UrlPath, 'haijiao')
+makeDir(m3u8UrlMgPath)
 
 ipcMain.on('response-http-get-request', getHttpInfo)
 
@@ -32,9 +43,10 @@ async function getM3u8DownloadLink(htmlUrl) {
   const loginInfo = await getLoginInfo(htmlUrl, origin)
   let m3u8Url = null
   let m3u8Data = null
+  let title = null
   const browser = await pie.connect(app, puppeteer);
   const window = new BrowserWindow({
-    show: true, width: 900, height: 600, webPreferences: {
+    show: false, width: 900, height: 600, webPreferences: {
       devTools: true,
       webSecurity: false,
       nodeIntegration: true,
@@ -73,10 +85,17 @@ async function getM3u8DownloadLink(htmlUrl) {
     const url = response.url()
     const text = await response.text()
     const contentType = response.headers()['content-type']
-    if(contentType !== 'application/javascript') {
-      if (/#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
-        m3u8Url = url
-        m3u8Data = text
+    if(/api\/topic\/\d+$/.test(url)) {
+      const data = JSON.parse(text).data
+      const d = decryptApi();
+      const videoInfo = JSON.parse(d.Base64.decode(d.Base64.decode(d.Base64.decode(data))))
+      title = videoInfo.title
+    } else {
+      if(contentType !== 'application/javascript') {
+        if (/#EXT-X-ENDLIST|#EXTM3U/.test(text)) {
+          m3u8Url = url
+          m3u8Data = text
+        }
       }
     }
   }
@@ -85,7 +104,6 @@ async function getM3u8DownloadLink(htmlUrl) {
   try {
     return await window.loadURL(htmlUrl)
       .then(async (res) => {
-        const title = await page.title()
         const promise = new Promise((resolve) => {
           let index = 0
           const interval = setInterval(async () => {
@@ -94,7 +112,11 @@ async function getM3u8DownloadLink(htmlUrl) {
               page.removeListener('response', responseFun);
               clearInterval(interval);
               window && window.destroy();
-              resolve({m3u8Url: m3u8Url, title: perfectTitleName(title), videoType: 'm3u8'})
+              let localM3u8Url = m3u8Url
+              if(m3u8Url) {
+                localM3u8Url = await createM3u8Url(m3u8Data, perfectTitleName(title))
+              }
+              resolve({m3u8Url: localM3u8Url, title: perfectTitleName(title), videoType: 'm3u8'})
             } else {
               index++
             }
@@ -143,6 +165,12 @@ export async function getLoginInfo(htmlUrl, origin) {
     });
     return promise;
   }
+}
+
+async function createM3u8Url(m3u8Text, id) {
+  const filePath = path.resolve(m3u8UrlMgPath, `${id}.m3u8`)
+  await fs.writeFileSync(filePath, m3u8Text, "utf-8")
+  return filePath
 }
 
 function getHttpInfo(event, type, res) {
