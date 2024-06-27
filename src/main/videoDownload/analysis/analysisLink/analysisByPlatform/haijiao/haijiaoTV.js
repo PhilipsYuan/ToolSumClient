@@ -1,6 +1,8 @@
 /**
  * 参考链接
  * https://hj2404cb0b.top/post/details?pid=1379328
+ * https://haijiao.com/post/details?pid=759894
+ *
  */
 import dayjs from "dayjs";
 import {sendTips} from "../../../../../util/electronOperations";
@@ -44,43 +46,9 @@ async function getM3u8DownloadLink(htmlUrl) {
   if(attachment) {
     const attachId = attachment.id
     const attachInfo = await getAttachInfo(`${origin}/api/attachment`, loginInfo.uid, loginInfo.token, htmlUrl, attachId, sourceId)
-    console.log(attachInfo)
     const videoInfo = JSON.parse(d.Base64.decode(d.Base64.decode(d.Base64.decode(attachInfo.data))))
     const url = `${origin}${videoInfo?.remoteUrl}`;
     return {m3u8Url: url, title: perfectTitleName(title), videoType: 'm3u8'}
-
-    // const headers = {
-    //   "accept": "application/json, text/plain, */*",
-    //   "accept-language": "zh-CN,zh;q=0.9,ja;q=0.8",
-    //   "cache-control": "no-cache",
-    //   "content-type": "application/json",
-    //   "pcver": "2",
-    //   "pragma": "no-cache",
-    //   "priority": "u=1, i",
-    //   "sec-fetch-dest": "empty",
-    //   "sec-fetch-mode": "cors",
-    //   "sec-fetch-site": "same-origin",
-    //   "x-user-id": loginInfo.uid,
-    //   "x-user-token": loginInfo.token,
-    //   "cookie": `token=${loginInfo.token}; uid=${loginInfo.uid};`,
-    //   "Referer": htmlUrl,
-    //   "Referrer-Policy": "strict-origin-when-cross-origin"
-    // }
-    // return fetch(`${origin}/api/attachment`, {
-    //   "headers": headers,
-    //   "body": `{\"id\":${attachId},\"resource_id\":${sourceId},\"resource_type\":\"topic\",\"line\":\"\"}`,
-    //   "method": "POST"
-    // })
-    //   .then(async (res) => {
-    //     const info = await res.text();
-    //     const attachment = JSON.parse(info)
-    //     const videoInfo = JSON.parse(d.Base64.decode(d.Base64.decode(d.Base64.decode(attachment.data))))
-    //     const url = `${origin}${videoInfo.remoteUrl}`;
-    //     return {m3u8Url: url, title: perfectTitleName(title), videoType: 'm3u8'}
-    //   })
-    //   .catch((e) => {
-    //     console.log(e)
-    //   })
   } else {
     return 'error'
   }

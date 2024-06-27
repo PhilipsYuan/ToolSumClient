@@ -256,7 +256,6 @@ export default {
             this.addErrorUrlFun()
           } else if (info.videoUrl) {
             this.form.m3u8Url = info.videoUrl
-            console.log(info)
             if (info.audioUrl) {
               this.form.audioUrl = info.audioUrl
             } else {

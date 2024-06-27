@@ -1,30 +1,22 @@
 import {sendTips} from './electronOperations'
-import axios from './source/axios'
-import { getHeaders } from './httpHeaders'
 import {Parser} from 'm3u8-parser'
+import {requestGet} from "./request";
 
 export function getCorrectM3u8File(url) {
-    const headers = getHeaders(url)
-    return axios.get(url, {
-        timeout: 15000,
-        headers
-    })
+    return requestGet(url)
       .then((res) => {
           const parser = new Parser();
-          parser.push(res.data);
+          parser.push(res);
           parser.end();
           const parsedManifest = parser.manifest;
           if(parsedManifest?.segments?.length > 0) {
-              return {data: res.data, url: url}
+              return {data: res, url: url}
           } else {
               if(parsedManifest?.playlists?.[0]?.uri) {
                   const newM3u8Url = getCorrectAnotherM3u8(url, parsedManifest?.playlists?.[0]?.uri)
-                  return axios.get(newM3u8Url, {
-                      timeout: 15000,
-                      headers
-                  })
+                  requestGet(newM3u8Url)
                     .then(async (res) => {
-                        return {data: res.data, url: newM3u8Url}
+                        return {data: res, url: newM3u8Url}
                     })
                     .catch((res) => {
                         sendTips('m3u8-file-get-failure', 'error', '下载资源失败，请重新尝试或者更换个下载资源!')
