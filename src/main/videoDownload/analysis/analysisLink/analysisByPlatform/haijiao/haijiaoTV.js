@@ -109,7 +109,6 @@ function getTopicInfo(url) {
 }
 
 function getAttachInfo (url, uid, token, htmlUrl, attachId, sourceId) {
-  console.log(url, uid, token, htmlUrl, attachId, sourceId)
   attachResponse = null
   sendTips("send-haijiao-attach-request", url , 'haijiao3', uid, token, htmlUrl, attachId, sourceId)
   const promise = new Promise((resolve) => {
