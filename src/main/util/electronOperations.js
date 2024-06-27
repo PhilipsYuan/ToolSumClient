@@ -15,9 +15,9 @@ ipcMain.handle('get-file-content', getFileContent)
  * @param param2
  * @param param3
  */
-export function sendTips (name, param1, param2, param3) {
+export function sendTips (name, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10) {
     if(global.mainWindow && !global.mainWindow.isDestroyed()) {
-        global.mainWindow && global.mainWindow.webContents.send(name, param1, param2, param3)
+        global.mainWindow && global.mainWindow.webContents.send(name, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10)
     }
 }
 
