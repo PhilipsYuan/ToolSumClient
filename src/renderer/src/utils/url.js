@@ -373,7 +373,9 @@ export function checkEmailCanRegister(email) {
         'laafd.com',
         'txcct.com',
         'rteet.com',
-        'dpptd.com'
+        'dpptd.com',
+        'linshiyou.com',
+        'youxiang.dev'
     ]
     const item = blackMailDomain.find((item) => {
         const regex = new RegExp(item)

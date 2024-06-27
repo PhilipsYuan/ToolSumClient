@@ -81,3 +81,17 @@ window.electronAPI.sendHaijiaoSignRequest(async(event, url, type) => {
           console.log(error);
       });
 })
+
+window.electronAPI.sendHaijiaoTopicRequest((event, url, type) => {
+    axios.get(url, {
+        headers: {
+            "content-type": "application/json",
+        }
+    })
+      .then((response) => {
+          window.electronAPI.responseHttpGetRequest(type,response.data)
+      })
+      .catch((error) => {
+          console.log(error);
+      });
+})

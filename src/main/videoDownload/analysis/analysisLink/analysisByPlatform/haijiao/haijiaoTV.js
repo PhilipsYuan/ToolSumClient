@@ -4,14 +4,14 @@
  */
 import dayjs from "dayjs";
 import {sendTips} from "../../../../../util/electronOperations";
-import axios from "../../../../../util/source/axios";
 import {decryptApi} from "./decryptApi";
 import {ipcMain} from "electron";
 import {perfectTitleName} from "../../../../../util/url";
 
 ipcMain.on('response-http-get-request', getHttpInfo)
 
-let response = null
+let loginResponse = null
+let TopicResponse = null
 const haiJInfo = {
   expireTime: '',
   token: null,
@@ -36,8 +36,8 @@ async function getM3u8DownloadLink(htmlUrl) {
   let origin = urlInstance.origin;
   const loginInfo = await getLoginInfo(htmlUrl, origin)
   const sourceId = urlInstance.searchParams.get('pid')
-  const sourceResponse = await axios.get(`${origin}/api/topic/${sourceId}`)
-  const sourceInfo = JSON.parse(d.Base64.decode(d.Base64.decode(d.Base64.decode(sourceResponse.data.data))))
+  const sourceResponse = await getTopicInfo(`${origin}/api/topic/${sourceId}`)
+  const sourceInfo = JSON.parse(d.Base64.decode(d.Base64.decode(d.Base64.decode(sourceResponse.data))))
   const title = sourceInfo.title;
   const attachment = sourceInfo.attachments.find((item) => item.category === 'video');
   if(attachment) {
@@ -85,16 +85,16 @@ async function getLoginInfo(htmlUrl, origin) {
   if(haiJInfo.token && dayjs(currentTime).isBefore(dayjs(haiJInfo.expireTime))) {
     return Promise.resolve(haiJInfo)
   } else {
-    response = null;
-    sendTips("send-haijiao-sign-request", htmlUrl , 'haijiao')
+    loginResponse = null;
+    sendTips("send-haijiao-sign-request", htmlUrl , 'haijiao1')
     const promise = new Promise((resolve) => {
       let index = 0
       const interval = setInterval(async () => {
-        if(response || index > 8) {
+        if(loginResponse || index > 8) {
           clearInterval(interval)
-          if(response) {
+          if(loginResponse) {
             const d = decryptApi();
-            const uerInfo = JSON.parse(d.Base64.decode(d.Base64.decode(d.Base64.decode(response.data))))
+            const uerInfo = JSON.parse(d.Base64.decode(d.Base64.decode(d.Base64.decode(loginResponse.data))))
             haiJInfo.token = uerInfo.token;
             haiJInfo.domain = origin
             haiJInfo.expireTime = dayjs(currentTime).add(1, 'hour');
@@ -112,8 +112,31 @@ async function getLoginInfo(htmlUrl, origin) {
   }
 }
 
+function getTopicInfo(url) {
+  TopicResponse = null
+  sendTips("send-haijiao-topic-request", url , 'haijiao2')
+  const promise = new Promise((resolve) => {
+    let index = 0
+    const interval = setInterval(async () => {
+      if(TopicResponse || index > 8) {
+        clearInterval(interval)
+        if(TopicResponse) {
+          resolve(TopicResponse)
+        } else {
+          resolve("error")
+        }
+      } else {
+        index ++
+      }
+    }, 1000)
+  });
+  return promise;
+}
+
 function getHttpInfo(event, type, res) {
-  if(type === 'haijiao') {
-    response = res
+  if(type === 'haijiao1') {
+    loginResponse = res
+  } else if(type === 'haijiao2'){
+    TopicResponse = res
   }
 }
