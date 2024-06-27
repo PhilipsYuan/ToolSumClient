@@ -17,6 +17,9 @@ export const requestGet = (url) => {
       timeout: 15000,
       headers
     })
+      .then((res) => {
+        return res.data
+      })
   }
 
 }

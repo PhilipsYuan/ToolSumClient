@@ -101,7 +101,7 @@ function createNormalM3u8DownloadTask(url, name, outPath, htmlUrl, isUpdate, loa
             makeDir(tempPath)
             return getCorrectM3u8File(url)
                 .then(async (res) => {
-                    const data = res.data
+                    const data = res?.data
                     if (data) {
                         const urlObject = new URL(res.url);
                         const host = `${urlObject.protocol}//${urlObject.host}`
