@@ -126,8 +126,9 @@ async function getUrlAndTitle (url, post, vid) {
         const m3u8String = result.match(/(#EXTM3U.*#EXT-X-ENDLIST)/)?.[1].replace(/\\n/g, '\n').replace(/\\u0026/g, '&');
         if(m3u8String) {
             const hosts = result.match(/"(https:\/\/[^"]*)"/g)
-            if(hosts.length > 6) {
-                const matchHosts = hosts.filter((item) => item.length > 100)
+            console.log(hosts)
+            if(hosts.length > 4) {
+                const matchHosts = hosts.filter((item) => item.length > 60)
                 const clearHosts = matchHosts.map((item) => item.replace('"', ''))
                 const allUrls = getPlayList(m3u8String)
                 let host = ''
