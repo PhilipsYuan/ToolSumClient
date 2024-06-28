@@ -7,7 +7,8 @@ const chromeSupportUrl = [
   'zlyka1.com',
   'hemaha.com',
   'www.yangshipin.cn',
-  '12371.cn'
+  '12371.cn',
+  '1905.com'
 ];
 
 export function getUserAgent(htmlUrl) {

@@ -17,6 +17,7 @@ import {getTnaflixTVDownloadLink} from "./analysisByPlatform/tnaflixTV/tnaflixTV
 import {getWhoresHubTVDownloadLink} from "./analysisByPlatform/whoreshubTV/whoreshubTV"
 import axios from '../../../util/source/axios'
 import {getHaiJiaoTvDownloadLink} from "./analysisByPlatform/haijiao/haijiaoTV";
+import {getMovie1905TVLink} from "./analysisByPlatform/movie1905/movie1905TV";
 ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
 
 /**
@@ -49,6 +50,8 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
             return await getWhoresHubTVDownloadLink(htmlUrl)
         } else if(/haijiao\.com/.test(htmlUrl)) {
             return await getHaiJiaoTvDownloadLink(htmlUrl)
+        } else if(/1905.com/.test(htmlUrl)) {
+            return await getMovie1905TVLink(htmlUrl)
         } else if(getNeedOpen(htmlUrl)) {
             return await getOpenWindowDownloadLink(htmlUrl)
         } else {

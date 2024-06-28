@@ -14,7 +14,7 @@ export function getCorrectM3u8File(url) {
           } else {
               if(parsedManifest?.playlists?.[0]?.uri) {
                   const newM3u8Url = getCorrectAnotherM3u8(url, parsedManifest?.playlists?.[0]?.uri)
-                  requestGet(newM3u8Url)
+                  return requestGet(newM3u8Url)
                     .then(async (res) => {
                         return {data: res, url: newM3u8Url}
                     })

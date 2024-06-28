@@ -10,5 +10,8 @@ export function getHeaders(url) {
         headers.Origin = 'https://haijiao.com';
         headers.Referer = 'https://haijiao.com/'
     }
+    if(/res\.cuieyi\.com/.test(url)) {
+        headers.Referer = 'http://3.xx306.lol/'
+    }
     return headers
 }
