@@ -53,12 +53,13 @@ async function getM3u8Link(htmlUrl) {
       const quality = data?.quality;
       const sign = data?.sign;
       title = data.title
-      if(path?.sd && quality?.sd && sign?.sd) {
-        m3u8Url = quality.sd.host + sign.sd.sign + path.sd.path
-      } else if(path?.hd && quality?.hd && sign?.hd){
-        m3u8Url = quality.hd.host + sign.hd.sign + path.hd.path
-      } else if(path?.uhd && quality?.uhd && sign?.uhd)
+      if(path?.uhd && quality?.uhd && sign?.uhd) {
         m3u8Url = quality.uhd.host + sign.uhd.sign + path.uhd.path
+      }else if(path?.hd && quality?.hd && sign?.hd){
+        m3u8Url = quality.hd.host + sign.hd.sign + path.hd.path
+      } else if(path?.sd && quality?.sd && sign?.sd) {
+        m3u8Url = quality.sd.host + sign.sd.sign + path.sd.path
+      }
     }
   }
 
