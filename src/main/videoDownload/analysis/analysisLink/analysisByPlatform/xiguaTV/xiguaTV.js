@@ -38,6 +38,12 @@ async function getM3u8Link(htmlUrl) {
   });
   const page = await global.pie.getPage(browser, window)
 
+  page.once('load', async () => {
+    await page.evaluate(() => {
+      localStorage.setItem('xgplayer_pc_localSettings-all', '{"volume":0.6,"definition":"1080p","definitionSetDate":"2024/6/30"}');
+    });
+  });
+
   async function responseFun(response) {
     const url = response.url()
     const contentType = response.headers()['content-type']

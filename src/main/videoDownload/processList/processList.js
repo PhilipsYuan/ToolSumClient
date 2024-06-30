@@ -73,7 +73,7 @@ export async function deleteLoadingRecordAndFile(event, id, callType = 'delete')
         const item = m3u8VideoDownloadingListDB.data.loadingList[index]
         if(item.type === 'magnet') {
             await deleteMagnetLoadingRecordAndFile(item, callType)
-        } else if(item.type === 'biliTV' || item.type === 'haokan' || item.type === 'mp4') {
+        } else if(item.type === 'biliTV' || item.type === 'haokan' || item.type === 'mp4' || item.type === 'V&A') {
             const tempPath = path.resolve(tempSourcePath, item.name);
             deleteDirectory(tempPath)
         } else if(/cctv|cntv/.test(item.htmlUrl) || /cctv|cntv/.test(item.m3u8Url)) {

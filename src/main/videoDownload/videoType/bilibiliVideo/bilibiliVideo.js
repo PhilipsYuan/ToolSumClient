@@ -130,9 +130,9 @@ export async function continueBiliTVDownloadVideo(item) {
 }
 
 function combineVideo(tempPath, videoPath, audioPath, item) {
-    let command = `${ffmpegPath} -y -i "${videoPath}" -i "${audioPath}" -c copy "${item.outputPath}"`
+    let command = `${ffmpegPath} -y -i "${videoPath}" -i "${audioPath}" -c:v libx265 -c:a libfdk_aac -b:a 192k -progress - -c copy "${item.outputPath}"`
     if(item.audioUrl === 'noNeed') {
-        command = `${ffmpegPath} -y -i "${videoPath}" -c copy "${item.outputPath}"`
+        command = `${ffmpegPath} -allowed_extensions ALL -protocol_whitelist "file,http,crypto,tcp,https,tls" -y -i "${videoPath}" -c:v libx265 -c:a aac -progress - -c copy "${item.outputPath}"`
     }
     const exec = childProcess.spawn(command, {
         maxBuffer: 5 * 1024 * 1024,
