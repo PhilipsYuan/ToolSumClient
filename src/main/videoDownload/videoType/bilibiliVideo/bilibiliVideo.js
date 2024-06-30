@@ -240,7 +240,9 @@ function getRefer(url) {
         return 'https://www.bilibili.com'
     } else if(/bdstatic/.test(url)) {
         return 'https://haokan.baidu.com/'
-    } else {
+    } else if(/ixigua\.com/.test(url)) {
+        return 'https://www.ixigua.com/'
+    } else  {
         return ''
     }
 }

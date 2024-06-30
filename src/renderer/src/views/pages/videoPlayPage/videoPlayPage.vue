@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="w-full h-[calc(100%-68px)]">
-      <div class="text-xs text-center text-gray-400 my-1">如出现播放失败，建议使用系统播放或者其他视频播放器（例如：迅雷影音）</div>
+      <div class="text-xs text-center text-gray-400 my-1">如播放失败，建议下载后再播放。如下载视频播放失败，建议使用系统播放或其他视频播放器（例如：迅雷影音）</div>
       <video id="my-video" ref="myVideo"
              class="video-js vjs-default-skin w-full h-full object-fill" autoplay controls>
       </video>

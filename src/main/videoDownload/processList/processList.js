@@ -106,7 +106,7 @@ export async function startDownloadVideo(event, id) {
         }
         if(item.type === 'magnet') {
             startDownloadMagnetVideo(item)
-        } else if(item.type === 'biliTV' || item.type === 'haokan') {
+        } else if(item.type === 'biliTV' || item.type === 'haokan' || item.type === 'V&A') {
             startDownloadBiliVideo(item)
         } else if(item.type === 'mp4') {
             startDownloadMp4Video(item)
@@ -129,7 +129,7 @@ export async function pauseDownloadVideo(event, id) {
         const item = m3u8VideoDownloadingListDB.data.loadingList[index];
         if(item.type === 'magnet') {
             await pauseMagnetDownloadVideo(item)
-        } else if(item.type === 'biliTV' || item.type === 'haokan') {
+        } else if(item.type === 'biliTV' || item.type === 'haokan' || item.type === 'V&A') {
             await pauseBiliTVDownloadVideo(item)
         } else if(item.type === 'mp4') {
             await pauseMp4DownloadVideo(item)
@@ -151,7 +151,7 @@ export async function continueDownloadVideo(event, id) {
         item.pause = false
         if(item.type === 'magnet') {
             await continueMagnetDownloadVideo(item)
-        } else if(item.type === 'biliTV' || item.type === 'haokan') {
+        } else if(item.type === 'biliTV' || item.type === 'haokan' || item.type === 'V&A') {
             await continueBiliTVDownloadVideo(item)
         } else if(item.type === 'mp4') {
             await continueMp4DownloadVideo(item)

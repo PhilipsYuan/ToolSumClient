@@ -133,7 +133,7 @@ function downloadBFile(type, cancelToken, item, url, fullFileName, progressCallb
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36',
-        referer: '',
+        referer: getRefer(url),
         'Range': `bytes=${item.lastVideoDownloadPosition}-`
       },
       onDownloadProgress: (progressEvent) => {
@@ -197,6 +197,18 @@ function createCancelTokens (item) {
   }
   return {
     videoCancelToken,
+  }
+}
+
+function getRefer(url) {
+  if(/bilivideo/.test(url)) {
+    return 'https://www.bilibili.com'
+  } else if(/bdstatic/.test(url)) {
+    return 'https://haokan.baidu.com/'
+  } else if(/ixigua\.com/.test(url)) {
+    return 'https://www.ixigua.com/'
+  } else  {
+    return ''
   }
 }
 

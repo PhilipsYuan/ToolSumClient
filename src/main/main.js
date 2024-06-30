@@ -80,7 +80,8 @@ app.whenReady().then(() => {
   })
   const RequestFilter = {
     urls: ['https://*.mgtv.com/*', 'https://*.bilivideo.cn/*', 'https://*.bilivideo.com/*', 'https://*.smtcdns.com/*',
-    'https://*.bdstatic.com/*', 'https://mpvideo.qpic.cn/*', 'https://*.eporner.com/*', 'https://*.ptx.li/*', 'https://*.whoreshub.com/*']
+    'https://*.bdstatic.com/*', 'https://mpvideo.qpic.cn/*', 'https://*.eporner.com/*', 'https://*.ptx.li/*', 'https://*.whoreshub.com/*',
+    'https://*.ixigua.com/*']
   }
   session.defaultSession.webRequest.onBeforeSendHeaders(RequestFilter, (details, callback) => {
     let refer = ''
@@ -106,6 +107,8 @@ app.whenReady().then(() => {
       refer = 'https://www.whoreshub.com/'
     } else if(/whoreshub\.com/.test(details.url)) {
       refer = 'https://www.whoreshub.com/'
+    } else if(/ixigua\.com/.test(details.url)) {
+      refer = 'https://www.ixigua.com/'
     }
     details.requestHeaders['Referer'] = refer
     if(Origin) {
