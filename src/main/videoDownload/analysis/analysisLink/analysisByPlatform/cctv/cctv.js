@@ -6,7 +6,7 @@ import axios from "../../../../../util/source/axios";
 import {perfectTitleName} from "../../../../../util/url";
 
 export async function getCCTVDownloadLink(htmlUrl) {
-  if(/12371\.cn/.test(htmlUrl)) {
+  if(/12371\.cn|tv.cctv.com/.test(htmlUrl)) {
     return await getInfoFromHtml(htmlUrl)
   } else {
     if(/VID/.test(htmlUrl)) {

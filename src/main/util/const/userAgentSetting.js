@@ -8,7 +8,8 @@ const chromeSupportUrl = [
   'hemaha.com',
   'www.yangshipin.cn',
   '12371.cn',
-  '1905.com'
+  '1905.com',
+  'miguvideo.com'
 ];
 
 export function getUserAgent(htmlUrl) {
