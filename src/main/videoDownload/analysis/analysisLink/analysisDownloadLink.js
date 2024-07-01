@@ -19,6 +19,7 @@ import axios from '../../../util/source/axios'
 import {getHaiJiaoTvDownloadLink} from "./analysisByPlatform/haijiao/haijiaoTV";
 import {getMovie1905TVLink} from "./analysisByPlatform/movie1905/movie1905TV";
 import {getXiGuaTVLink} from "./analysisByPlatform/xiguaTV/xiguaTV";
+import {getXhamsterTVLink} from "./analysisByPlatform/xhamsterTV/xhamsterTV";
 ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
 
 /**
@@ -49,10 +50,12 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
             return await getWhoresHubTVDownloadLink(htmlUrl)
         } else if(/haijiao\.com/.test(htmlUrl)) {
             return await getHaiJiaoTvDownloadLink(htmlUrl)
-        } else if(/1905.com/.test(htmlUrl)) {
+        } else if(/1905\.com/.test(htmlUrl)) {
             return await getMovie1905TVLink(htmlUrl);
-        } else if(/ixigua.com/.test(htmlUrl)) {
+        } else if(/ixigua\.com/.test(htmlUrl)) {
             return await getXiGuaTVLink(htmlUrl);
+        } else if(/xhamster\.com/.test(htmlUrl)) {
+            return await getXhamsterTVLink(htmlUrl)
         } else if(getNeedOpen(htmlUrl)) {
             return await getOpenWindowDownloadLink(htmlUrl)
         } else {
