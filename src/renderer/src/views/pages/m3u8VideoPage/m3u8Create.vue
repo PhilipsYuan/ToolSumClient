@@ -262,7 +262,7 @@ export default {
               this.form.audioUrl = '';
             }
             if (info.title) {
-              this.form.name = info.title
+              this.form.name = info.title.substring(0, 40)
             }
             if(info.videoType) {
               this.form.videoType = info.videoType

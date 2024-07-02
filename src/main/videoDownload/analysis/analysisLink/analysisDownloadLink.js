@@ -20,6 +20,7 @@ import {getHaiJiaoTvDownloadLink} from "./analysisByPlatform/haijiao/haijiaoTV";
 import {getMovie1905TVLink} from "./analysisByPlatform/movie1905/movie1905TV";
 import {getXiGuaTVLink} from "./analysisByPlatform/xiguaTV/xiguaTV";
 import {getXhamsterTVLink} from "./analysisByPlatform/xhamsterTV/xhamsterTV";
+import {getPornMasterTVLink} from "./analysisByPlatform/pornmasterTV/pornMasterTV";
 ipcMain.handle('get-download-link-from-url', getDownloadLinkFromUrl)
 
 /**
@@ -56,6 +57,8 @@ export async function getDownloadLinkFromUrl(event, htmlUrl) {
             return await getXiGuaTVLink(htmlUrl);
         } else if(/xhamster\.com/.test(htmlUrl)) {
             return await getXhamsterTVLink(htmlUrl)
+        } else if(/pornmaster\.fun/.test(htmlUrl)) {
+            return await getPornMasterTVLink(htmlUrl)
         } else if(getNeedOpen(htmlUrl)) {
             return await getOpenWindowDownloadLink(htmlUrl)
         } else {
