@@ -1,9 +1,14 @@
 import {sendTips} from './electronOperations'
 import {Parser} from 'm3u8-parser'
 import {requestGet} from "./request";
+import {getHeaders} from "./httpHeaders"
 
 export function getCorrectM3u8File(url) {
-    return requestGet(url)
+    const headers = getHeaders(url)
+    return requestGet(url, {
+        timeout: 15000,
+        headers
+    })
       .then((res) => {
           const parser = new Parser();
           parser.push(res);
@@ -14,7 +19,10 @@ export function getCorrectM3u8File(url) {
           } else {
               if(parsedManifest?.playlists?.[0]?.uri) {
                   const newM3u8Url = getCorrectAnotherM3u8(url, parsedManifest?.playlists?.[0]?.uri)
-                  return requestGet(newM3u8Url)
+                  return requestGet(newM3u8Url, {
+                      timeout: 15000,
+                      headers
+                  })
                     .then(async (res) => {
                         return {data: res, url: newM3u8Url}
                     })

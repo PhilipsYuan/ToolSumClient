@@ -1,5 +1,4 @@
 import axios from "./source/axios";
-import {getHeaders} from "./httpHeaders";
 import {sendTips} from "./electronOperations";
 import {ipcMain} from "electron";
 
@@ -8,15 +7,29 @@ let response = null
 
 ipcMain.on('response-http-get-request', getHttpInfo)
 
-export const requestGet = (url) => {
-  if(/haijiao\.com/.test(url)) {
+const fromClientDomain = [
+  'haijiao.com',
+  'xhcdn.com'
+]
+
+export const requestGet = (url, config, forClient= false) => {
+  const item = fromClientDomain.find((item) => {
+    const regex = new RegExp(item)
+    return regex.test(url)
+  })
+  if(item || forClient) {
     return requestFromClient(url)
   } else {
-    const headers = getHeaders(url)
-    return axios.get(url, {
-      timeout: 15000,
-      headers
-    })
+    let configDefault = {
+      timeout: 15000
+    }
+    let configJson = null
+    if(config) {
+      configJson = {...configDefault, ...config}
+    } else {
+      configJson = configDefault
+    }
+    return axios.get(url, configJson)
       .then((res) => {
         return res.data
       })
