@@ -36,8 +36,9 @@ async function getInfoFromHtml(htmlUrl) {
     return await getInfoFromHttpVideoInfo(vid)
   } else{
     const guid0 = response?.data?.match(/guid_0="(.*?)"/)?.[1]
-    const guid = response?.data.match(/guid[| ]=[| ]"(.*?)"/)?.[1]
+    const guid = response?.data.match(/guid\s*=\s*"(.*?)"/)?.[1]
     const guid3 = response?.data.match(/htmlVideoCode--](.*?),/)?.[1]
+    console.log(guid, guid0, guid3)
     if(guid0 || guid || guid3) {
       return await getInfoFromHttpVideoInfo(guid0 || guid || guid3)
     } else {
